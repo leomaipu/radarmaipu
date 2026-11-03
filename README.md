@@ -4,6 +4,27 @@ Portal web progresivo para consultar, sobre un punto del mapa de Maipú, la call
 y las patentes comerciales próximas. Esta versión es un MVP de backend con datos del catastro
 municipal y de patentes 2026.
 
+## Prueba en tu computador
+
+Requisito: Python 3.11 o superior y conexión a internet.
+
+- **Linux / macOS**: en la carpeta del proyecto, ejecuta `bash scripts/prueba_local.sh`.
+- **Windows**: en PowerShell, ejecuta `powershell -ExecutionPolicy Bypass -File scripts\prueba_local.ps1`.
+
+El script hace tres cosas:
+1. Instala dependencias fijadas (`requirements.txt`) en un entorno `.venv` local.
+2. Corre las pruebas automatizadas.
+3. Ejecuta `medir.py`, que consulta a gis.maipu.cl solo conteos y valores de campos no
+   personales y guarda el resultado en `informe_medicion.md`. Ese informe responde los
+   temas pendientes 1 y 2 de la lista de abajo.
+
+Para cargar datos reales: `.venv/bin/python cargar.py` (Windows: `.\.venv\Scripts\python.exe cargar.py`).
+Para abrir la API: `.venv/bin/uvicorn app.api:app --port 8000` y visitar `http://127.0.0.1:8000/docs`.
+
+Si el script no puede conectarse al GIS desde tu red, el informe lo indicará. En ese caso
+revisa que tu computador tenga salida a `gis.maipu.cl` (algunas redes institucionales la
+bloquean).
+
 ## Protección de datos personales
 
 - Solo se cargan campos de una lista blanca (`app/privacy.py`). RUT, razón social,
