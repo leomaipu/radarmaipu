@@ -26,4 +26,9 @@ def normalize_patente(feature: dict, layer: str) -> dict | None:
     attrs = {k: clean_text(v) for k, v in attrs.items()}
     attrs["estado_normalizado"] = estado_normalizado(attrs.get("estado_pat"))
     attrs["Status_DESC"] = descripcion_status(attrs.get("Status"))
-    return {**attrs, "capa": layer, "lon": geom["x"], "lat": geom["y"]}
+    # ArcGIS entrega x/y = "NaN" si la dirección no se geocodificó. Se conserva el registro
+    # sin punto: la re-geocodificación puede asignárselo a partir de DIRECCION.
+    con_punto = isinstance(geom["x"], (int, float)) and isinstance(geom["y"], (int, float))
+    return {**attrs, "capa": layer,
+            "lon": geom["x"] if con_punto else None,
+            "lat": geom["y"] if con_punto else None}
