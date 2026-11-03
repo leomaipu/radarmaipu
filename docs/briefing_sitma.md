@@ -22,8 +22,9 @@ la decisión municipal ni la tramitación en Rentas.
 | Barrios | MAIPU/LimitesBarrios | Barrio del punto (pendiente de implementar) |
 | Geocodificación | BETA/LocatorBetaV3dot3/GeocodeServer | Ver sección siguiente |
 
-Campos que **no** pedimos al servidor: RUT, razón social, representante, dirección
-personal y código SII. Esto se aplica en la consulta misma, no solo en nuestra base.
+Campos que **no** pedimos al servidor: RUT, razón social, datos del representante
+(incluida su dirección personal) y código SII. La dirección del negocio (`DIRECCION`) sí se
+muestra, con aprobación jurídica del 2026-11-03. Esto se aplica en la consulta misma, no solo en nuestra base.
 
 ## Uso del geocodificador (BETA/LocatorBetaV3dot3)
 
@@ -55,9 +56,9 @@ Queremos usarlo en dos sentidos:
    aproximada para mostrarla.
 2. **Dirección a punto (forward)**: cuando el usuario busca una dirección, ubicarla en el mapa.
 
-Además, para las patentes cuyo estado de geocodificación es `U` (UNTARGET), evaluamos si
-conviene volver a geocodificar la dirección del negocio. Esto solo se hará con revisión
-jurídica previa, porque `DIRECCION` es un dato del titular.
+Para las patentes con `Status` U (Unmatch), volvemos a geocodificar la dirección del
+negocio (`DIRECCION`). Usamos el nuevo punto solo si el score es 85 o más; si no, se
+mantiene el punto original. La revisión jurídica de `DIRECCION` ya fue aprobada.
 
 Preguntas para el SITMA:
 - ¿Las patentes se geocodificaron con este mismo localizador? Eso permitiría comparar sus resultados.

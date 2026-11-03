@@ -6,7 +6,9 @@ quedan fuera por diseño: no están en la lista blanca, así que nunca entran a 
 from __future__ import annotations
 
 # Campos de patentes que pueden exponerse públicamente.
+# DIRECCION: dirección del negocio, aprobada por Jurídico el 2026-11-03.
 PATENTE_PUBLIC_FIELDS = (
+    "DIRECCION",
     "estado_pat",
     "tipo_paten",
     "subtipo_pa",
@@ -21,7 +23,7 @@ PATENTE_PUBLIC_FIELDS = (
 # Campos personales conocidos: deben ser excluidos siempre.
 PERSONAL_FIELDS = frozenset({
     "rut_negoci", "razon_soci", "rut_rep_le", "nombre_rep", "direc_rep_",
-    "direc_nego", "DIRECCION", "Match_addr", "ARC_Single", "rol_neg", "clave", "rol",
+    "direc_nego", "Match_addr", "ARC_Single", "rol_neg", "clave", "rol",
     "fecha_emis", "fecha_pago", "total_paga", "total_emis", "sucursal", "cod_sii",
 })
 

@@ -17,9 +17,9 @@ OID_BY_LAYER = {"Calles": "OBJECTID", "Alcoholes": "OBJECTID",
 
 # Campos que existen en cada capa de patentes, intersectados con la lista blanca.
 PATENTE_FIELDS_BY_LAYER = {
-    "Alcoholes": ("estado_pat", "tipo_paten", "actividad", "Año", "semestre"),
-    "Industriales": ("Status", "Score", "Match_type", "estado_pat", "tipo_paten", "subtipo_pa", "Año", "semestre"),
-    "Comerciales": ("Status", "Score", "Match_type", "estado_pat", "tipo_paten", "subtipo_pa", "actividad", "Año", "semestre"),
+    "Alcoholes": ("DIRECCION", "estado_pat", "tipo_paten", "actividad", "Año", "semestre"),
+    "Industriales": ("DIRECCION", "Status", "Score", "Match_type", "estado_pat", "tipo_paten", "subtipo_pa", "Año", "semestre"),
+    "Comerciales": ("DIRECCION", "Status", "Score", "Match_type", "estado_pat", "tipo_paten", "subtipo_pa", "actividad", "Año", "semestre"),
 }
 
 

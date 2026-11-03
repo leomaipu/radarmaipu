@@ -13,11 +13,18 @@ def test_personal_fields_never_pass():
     out = filter_attributes(RAW, PATENTE_PUBLIC_FIELDS)
     assert set(out) <= set(PATENTE_PUBLIC_FIELDS)
     assert not (set(out) & PERSONAL_FIELDS)
+    assert "rut_negoci" not in out and "razon_soci" not in out
 
 
 def test_public_fields_are_kept():
     out = filter_attributes(RAW, PATENTE_PUBLIC_FIELDS)
-    assert out == {"estado_pat": "VIGENTE", "tipo_paten": "COMERCIAL", "Año": "2026"}
+    assert out == {"DIRECCION": "Av. X 456", "estado_pat": "VIGENTE", "tipo_paten": "COMERCIAL", "Año": "2026"}
+
+
+def test_direccion_is_public_but_representative_data_is_not():
+    assert "DIRECCION" in PATENTE_PUBLIC_FIELDS
+    assert "direc_rep_" in PERSONAL_FIELDS and "rut_rep_le" in PERSONAL_FIELDS
+    assert "direc_nego" in PERSONAL_FIELDS  # pendiente de confirmación jurídica
 
 
 def test_whitelist_does_not_overlap_personal_fields():

@@ -28,7 +28,9 @@ bloquean).
 ## Protección de datos personales
 
 - Solo se cargan campos de una lista blanca (`app/privacy.py`). RUT, razón social,
-  representante, direcciones personales y códigos SII no entran a la base.
+  representante, su dirección personal y códigos SII no entran a la base. La dirección del
+  negocio (`DIRECCION`) sí, con aprobación jurídica del 2026-11-03.
+- `direc_nego` sigue fuera hasta confirmación escrita de Jurídico.
 - Cada capa pide al servidor solo sus campos permitidos (`app/loader.py`), así que los datos
   personales ni siquiera salen del servicio municipal.
 - Las pruebas verifican que ningún campo personal llegue a la API (`tests/test_privacy.py`,
@@ -75,7 +77,7 @@ Documento para el SITMA: `docs/briefing_sitma.md`.
 
 1. Porcentaje de patentes con `Score` alto, para decidir si los puntos sirven en el mapa.
 2. Revisar si una patente aparece en dos capas.
-3. Revisión jurídica de `DIRECCION` y `direc_nego` (dirección del negocio) y de las condiciones
+3. Confirmar por escrito con Jurídico si `direc_nego` también queda aprobado (dirección del negocio) y de las condiciones
    de uso de los datos de catastro.
 4. Confirmar con el SITMA si el geocodificador BETA tendrá endpoint de producción (ver `docs/briefing_sitma.md`).
 5. Ejecutar la carga desde maiproject.cl: el entorno de trabajo no tiene acceso verificado a

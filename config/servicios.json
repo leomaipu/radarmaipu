@@ -4,5 +4,12 @@
     "base": "https://gis.maipu.cl/server/rest/services/BETA/LocatorBetaV3dot3/GeocodeServer",
     "version": "BETA",
     "nota": "Versión BETA confirmada por el SITMA hasta marzo. Sin límite de consultas por minuto informado. Cambiar a producción cuando exista."
+  },
+  "regeocodificacion": {
+    "_nota": "Patentes con Status U: se geocodifica DIRECCION y se usa el punto solo si el score alcanza el umbral.",
+    "status": [
+      "U"
+    ],
+    "umbral_score": 85
   }
 }
