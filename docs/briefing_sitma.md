@@ -27,6 +27,17 @@ personal y código SII. Esto se aplica en la consulta misma, no solo en nuestra 
 
 ## Uso del geocodificador (BETA/LocatorBetaV3dot3)
 
+**Verificado (2026-11-03):** el servicio responde en JSON, versión 11.3. Sus campos de
+dirección son `Address` ("Dirección o lugar"), `Address2`, `Address3` y `Neighborhood`
+("Barrio"), todos texto. La operación `findAddressCandidates` acepta, entre otros,
+`SingleLine`, `Max Locations`, `Category`, `Location Type`, `Source Country`, `Magic Key`
+y `Out Fields`.
+
+**Sin verificar:** no pudimos leer completas las propiedades `capabilities`,
+`maxLocations`, `maxBatchSize` ni `spatialReference`, ni confirmar si existe la
+operación `reverseGeocode`. Eso requiere que el SITMA nos lo confirme.
+
+
 Queremos usarlo en dos sentidos:
 
 1. **Punto a dirección (reverse)**: cuando el usuario toca el mapa, obtener la dirección
@@ -42,6 +53,7 @@ Preguntas para el SITMA:
 - ¿Podemos tener un endpoint estable de producción?
 - ¿Cuál es el límite de consultas por minuto?
 - ¿Confirman el significado de `Status`: M = Match, T = Target, U = UNTARGET?
+- ¿Existe la operación `reverseGeocode` en este servicio, o hay que usar otro?
 - ¿Qué campos devuelve el localizador (score, tipo de dirección, dirección normalizada)?
 
 ## Qué no enviamos
