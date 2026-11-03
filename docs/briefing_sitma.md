@@ -33,9 +33,13 @@ dirección son `Address` ("Dirección o lugar"), `Address2`, `Address3` y `Neigh
 `SingleLine`, `Max Locations`, `Category`, `Location Type`, `Source Country`, `Magic Key`
 y `Out Fields`.
 
-**Sin verificar:** no pudimos leer completas las propiedades `capabilities`,
-`maxLocations`, `maxBatchSize` ni `spatialReference`, ni confirmar si existe la
-operación `reverseGeocode`. Eso requiere que el SITMA nos lo confirme.
+**Verificado desde el PC del equipo (2026-11-03):** el JSON del servicio cumple versión
+11.3. `reverseGeocode` existe: sin parámetros responde error 400 con `Unable to complete
+operation.`, y la página de la operación muestra su formulario. Falta probarla con una
+ubicación real.
+
+**Sin verificar:** las propiedades `capabilities`, `maxLocations`, `maxBatchSize` y
+`spatialReference`. La respuesta del servicio no las mostró completas.
 
 
 Queremos usarlo en dos sentidos:
@@ -53,7 +57,7 @@ Preguntas para el SITMA:
 - ¿Podemos tener un endpoint estable de producción?
 - ¿Cuál es el límite de consultas por minuto?
 - ¿Confirman el significado de `Status`: M = Match, T = Target, U = UNTARGET?
-- ¿Existe la operación `reverseGeocode` en este servicio, o hay que usar otro?
+- ¿Responde `reverseGeocode` con una ubicación válida? Probamos con `location={"x":-70.7535,"y":-33.5102,"spatialReference":{"wkid":4326}}`.
 - ¿Qué campos devuelve el localizador (score, tipo de dirección, dirección normalizada)?
 
 ## Qué no enviamos
