@@ -59,14 +59,25 @@ Las URLs del GIS se pueden cambiar con `RM_GIS_BASE` o `RM_CALLES_URL`, sin toca
 - La distancia es aproximada (equirectangular local), suficiente a escala comunal.
 - No hay interfaz web PWA todavía; el MVP expone la API.
 
+## Dominios confirmados (2026-11-03)
+
+Los valores están en `config/dominios.json`. Cambiarlos no requiere tocar el código.
+
+- `CLASE` de calles: PBN = Paso bajo nivel, PSN = Paso sobre nivel, PTE = Puente, CARRE = Carretera.
+- `Status` de patentes: M = Match, T = Target, U = UNTARGET.
+- `estado_pat`: el dato publicado escribe `BLOQUEDADA`; el nombre oficial es `BLOQUEADA`.
+  El filtro usa el valor publicado y la API muestra el nombre oficial.
+- Patentes bloqueadas: decisión pendiente. La lista `estados_ocultos` está vacía.
+
+Documento para el SITMA: `docs/briefing_sitma.md`.
+
 ## Temas pendientes
 
-1. Medir conteos reales y valores de `estado_pat`, `tipo_paten`, `CLASE` y `Status`
-   (no pude leerlos: los endpoints `/query` devolvieron el formulario HTML).
-2. Porcentaje de patentes con `Score` alto, para decidir si los puntos sirven en el mapa.
-3. Revisar si una patente aparece en dos capas.
-4. Revisión jurídica de `DIRECCION` y `direc_nego` (dirección del negocio) y de las condiciones
+1. Porcentaje de patentes con `Score` alto, para decidir si los puntos sirven en el mapa.
+2. Revisar si una patente aparece en dos capas.
+3. Revisión jurídica de `DIRECCION` y `direc_nego` (dirección del negocio) y de las condiciones
    de uso de los datos de catastro.
+4. Confirmar con el SITMA si el geocodificador BETA tendrá endpoint de producción (ver `docs/briefing_sitma.md`).
 5. Ejecutar la carga desde maiproject.cl: el entorno de trabajo no tiene acceso verificado a
    gis.maipu.cl.
 6. Validar el flujo de patente comercial con el área de rentas y el checklist de documentos.

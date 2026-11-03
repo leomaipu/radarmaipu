@@ -1,0 +1,21 @@
+{
+  "_nota": "Dominios confirmados por la municipalidad el 2026-11-03. Editar aquí, no en el código.",
+  "calles_clase": {
+    "PBN": "Paso bajo nivel",
+    "PSN": "Paso sobre nivel",
+    "PTE": "Puente",
+    "CARRE": "Carretera"
+  },
+  "patente_status": {
+    "M": "Match",
+    "T": "Target",
+    "U": "UNTARGET"
+  },
+  "patente_estado": {
+    "_nota": "El dato publicado escribe BLOQUEDADA; el nombre oficial es BLOQUEADA.",
+    "BLOQUEDADA": "BLOQUEADA",
+    "VIGENTE": "VIGENTE"
+  },
+  "estados_ocultos": [],
+  "_pendiente_estados_ocultos": "Decisión pendiente: mostrar u ocultar patentes BLOQUEADA. Mientras no se decida, la lista está vacía."
+}

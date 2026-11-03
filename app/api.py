@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI, HTTPException, Query
 
+from .dominios import estado_oculto
 from .geo import haversine_m
 from .store import Store
 
@@ -30,6 +31,8 @@ def patentes(minlon: float, minlat: float, maxlon: float, maxlat: float):
 def punto(lon: float, lat: float, radio_m: float = Query(150, gt=0, le=1000)):
     cercanas = []
     for p in store.patentes:
+        if estado_oculto(p.get("estado_pat")):
+            continue
         d = haversine_m(lon, lat, p["lon"], p["lat"])
         if d <= radio_m:
             cercanas.append({**p, "distancia_m": round(d, 1)})

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from .dominios import estado_oculto
 from .geo import nearest_street
 
 
@@ -20,6 +21,8 @@ class Store:
     def patentes_in_bbox(self, minlon, minlat, maxlon, maxlat, limit: int = 500) -> list[dict]:
         out = []
         for p in self.patentes:
+            if estado_oculto(p.get("estado_pat")):
+                continue
             if minlon <= p["lon"] <= maxlon and minlat <= p["lat"] <= maxlat:
                 out.append(p)
                 if len(out) >= limit:
