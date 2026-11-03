@@ -13,7 +13,7 @@ import sys
 
 import httpx
 
-from app.loader import OID_BY_LAYER, PATENTE_FIELDS_BY_LAYER, config_from_env
+from app.loader import OID_BY_LAYER, config_from_env
 from app.privacy import CALLE_PUBLIC_FIELDS
 
 # Campos no personales cuyos valores interesan para decidir el alcance.
@@ -32,6 +32,26 @@ def _query(client: httpx.Client, url: str, **params) -> dict:
     return r.json()
 
 
+def _valores_paginados(client: httpx.Client, nombre: str, url: str, campo: str):
+    """Descarga solo el campo pedido (sin geometría) y devuelve sus valores distintos.
+
+    Se calcula localmente porque la consulta returnDistinctValues devolvió error 400
+    en las cuatro capas durante la primera medición.
+    """
+    valores: set[str] = set()
+    offset = 0
+    while True:
+        d = _query(client, url, outFields=campo, orderByFields=OID_BY_LAYER[nombre],
+                   resultOffset=offset, resultRecordCount=2000)
+        if "error" in d:
+            return None, d["error"]
+        feats = d.get("features", [])
+        valores.update(str(f["attributes"].get(campo)) for f in feats)
+        if not d.get("exceededTransferLimit") or not feats:
+            return valores, None
+        offset += len(feats)
+
+
 def medir_capa(client: httpx.Client, nombre: str, url: str) -> list[str]:
     lineas = [f"## {nombre}", f"URL: {url}"]
     try:
@@ -40,15 +60,14 @@ def medir_capa(client: httpx.Client, nombre: str, url: str) -> list[str]:
             return lineas + [f"  ERROR del servidor: {conteo['error']}"]
         lineas.append(f"  Registros: {conteo.get('count')}")
         for campo in DISTINCT_FIELDS.get(nombre, []):
-            d = _query(client, url, outFields=campo, returnDistinctValues="true",
-                       resultRecordCount=2000)
-            if "error" in d:
-                lineas.append(f"  {campo}: ERROR {d['error']}")
+            valores, error = _valores_paginados(client, nombre, url, campo)
+            if error is not None:
+                lineas.append(f"  {campo}: ERROR {error}")
                 continue
-            valores = sorted({str(f["attributes"].get(campo)) for f in d.get("features", [])})
-            lineas.append(f"  {campo} ({len(valores)} valores distintos): {valores[:40]}")
-            if d.get("exceededTransferLimit"):
-                lineas.append(f"  AVISO: {campo} tiene más valores de los que caben en una página")
+            ordenados = sorted(valores)
+            lineas.append(f"  {campo} ({len(ordenados)} valores distintos): {ordenados[:40]}")
+            if len(ordenados) > 40:
+                lineas.append(f"  (se muestran 40 de {len(ordenados)})")
     except httpx.HTTPError as e:
         lineas.append(f"  No se pudo conectar: {e}")
     return lineas

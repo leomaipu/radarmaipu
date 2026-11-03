@@ -14,6 +14,8 @@ def test_medir_capa_reports_count_and_values():
     def handler(request: httpx.Request) -> httpx.Response:
         if request.url.params.get("returnCountOnly") == "true":
             return httpx.Response(200, json={"count": 7})
+        assert request.url.params.get("returnGeometry") == "false"
+        assert "returnDistinctValues" not in request.url.params
         return httpx.Response(200, json={"features": [
             {"attributes": {"estado_pat": "VIGENTE"}},
             {"attributes": {"estado_pat": "CADUCADA"}},
