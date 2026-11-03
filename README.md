@@ -67,7 +67,7 @@ Los valores están en `config/dominios.json`. Cambiarlos no requiere tocar el c�
 - `Status` de patentes: M = Match (geocodificación con match), T = Target (objetivo), U = Unmatch (sin match).
 - `estado_pat`: el dato publicado escribe `BLOQUEDADA`; el nombre oficial es `BLOQUEADA`.
   El filtro usa el valor publicado y la API muestra el nombre oficial.
-- Patentes bloqueadas: decisión pendiente. La lista `estados_ocultos` está vacía.
+- Patentes bloqueadas: no se muestran (decisión municipal, 2026-11-03). Se controla con `estados_ocultos` en `config/dominios.json`.
 
 Documento para el SITMA: `docs/briefing_sitma.md`.
 

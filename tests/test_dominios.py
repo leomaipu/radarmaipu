@@ -28,10 +28,14 @@ def test_misspelled_blocked_value_maps_to_official_name_but_raw_kept():
     assert p["estado_normalizado"] == "BLOQUEADA"   # nombre oficial
 
 
-def test_hidden_states_empty_by_default_pending_decision():
-    # Decisión pendiente: la lista debe estar vacía hasta que la municipalidad decida.
-    assert json.loads(dominios.RUTA_DEFAULT.read_text(encoding="utf-8"))["estados_ocultos"] == []
-    assert dominios.estado_oculto("BLOQUEDADA") is False
+def test_blocked_patentes_are_hidden_per_municipal_decision():
+    assert dominios.estado_oculto("BLOQUEDADA") is True
+    assert dominios.estado_oculto("BLOQUEADA") is True
+
+
+def test_other_states_remain_visible():
+    assert dominios.estado_oculto("VIGENTE") is False
+    assert dominios.estado_oculto(None) is False
 
 
 def test_calle_gets_description():

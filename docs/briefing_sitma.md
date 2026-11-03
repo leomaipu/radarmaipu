@@ -75,7 +75,7 @@ Preguntas para el SITMA:
 - No hay límite de consultas por minuto.
 - `Status`: M = Match (la geocodificación hace match), T = Target (objetivo), U = Unmatch (sin match).
 
-## Pendiente de decisión municipal
+## Decisiones municipales
 
-- Si las patentes **bloqueadas** se muestran u ocultan en el mapa. Mientras no se decida,
-  se muestran con su estado.
+- Las patentes **bloqueadas** no se muestran en el mapa. Todas las demás (vigentes, Match,
+  Target y Unmatch) sí se muestran.

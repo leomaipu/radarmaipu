@@ -56,3 +56,15 @@ def test_normalize_calle_and_patente_strip_personal_data():
 
 def test_patente_without_geometry_skipped():
     assert normalize_patente({"attributes": {}, "geometry": {}}, "Comerciales") is None
+
+
+def test_blocked_patentes_never_returned_by_bbox_or_punto():
+    from app.api import store as st
+    st.patentes = [
+        {"estado_pat": "BLOQUEDADA", "capa": "Comerciales", "lon": -70.745, "lat": -33.5101},
+        {"estado_pat": "VIGENTE", "capa": "Comerciales", "lon": -70.7451, "lat": -33.5101},
+    ]
+    bbox = client.get("/api/patentes", params={"minlon": -70.8, "minlat": -33.6, "maxlon": -70.7, "maxlat": -33.5})
+    assert [p["estado_pat"] for p in bbox.json()["resultados"]] == ["VIGENTE"]
+    punto = client.get("/api/punto", params={"lon": -70.745, "lat": -33.5101, "radio_m": 100})
+    assert [p["estado_pat"] for p in punto.json()["patentes_cercanas"]] == ["VIGENTE"]

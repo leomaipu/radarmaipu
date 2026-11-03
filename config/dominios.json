@@ -16,7 +16,10 @@
     "BLOQUEDADA": "BLOQUEADA",
     "VIGENTE": "VIGENTE"
   },
-  "estados_ocultos": [],
-  "_pendiente_estados_ocultos": "Decisión pendiente: mostrar u ocultar patentes BLOQUEADA. Mientras no se decida, la lista está vacía.",
+  "estados_ocultos": [
+    "BLOQUEDADA",
+    "BLOQUEADA"
+  ],
+  "_pendiente_estados_ocultos": "Decidido por la municipalidad el 2026-11-03: las patentes bloqueadas no se muestran. El dato publicado escribe BLOQUEDADA; se listan ambas grafías por seguridad.",
   "_nota_status": "M = la geocodificación hace match; T = objetivo (target); U = sin match (unmatch). Confirmado por la municipalidad el 2026-11-03."
 }
