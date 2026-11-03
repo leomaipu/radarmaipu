@@ -1,21 +1,48 @@
 from __future__ import annotations
 
+import logging
+import threading
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException, Query
 
 import httpx
 
 from . import geocode
+from .carga import carga_inicial
 from .dominios import estado_oculto
 from .geo import haversine_m
-from .store import Store
+from .store import Store, tiene_punto
 
-app = FastAPI(title="Radar Maipú MVP", version="0.1.0")
+logging.basicConfig(level=logging.INFO)
+logging.getLogger("httpx").setLevel(logging.WARNING)  # no registrar cada URL consultada
+
 store = Store()
+estado_carga = {"fase": "sin_iniciar"}
+hilo_carga: threading.Thread | None = None
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    # En segundo plano: la carga puede tardar y el servidor debe responder mientras tanto.
+    global hilo_carga
+    hilo_carga = threading.Thread(target=carga_inicial, args=(store, estado_carga), daemon=True)
+    hilo_carga.start()
+    yield
+
+
+app = FastAPI(title="Radar Maipú MVP", version="0.1.0", lifespan=lifespan)
 
 
 @app.get("/api/health")
 def health():
-    return {"ok": True, "calles": len(store.calles), "patentes": len(store.patentes)}
+    return {
+        "ok": True,
+        "carga": estado_carga["fase"],
+        "calles": len(store.calles),
+        "patentes": len(store.patentes),
+        "patentes_sin_punto": sum(not tiene_punto(p) for p in store.patentes),
+    }
 
 
 @app.get("/api/calles")
@@ -34,7 +61,7 @@ def patentes(minlon: float, minlat: float, maxlon: float, maxlat: float):
 def punto(lon: float, lat: float, radio_m: float = Query(150, gt=0, le=1000)):
     cercanas = []
     for p in store.patentes:
-        if estado_oculto(p.get("estado_pat")):
+        if estado_oculto(p.get("estado_pat")) or not tiene_punto(p):
             continue
         d = haversine_m(lon, lat, p["lon"], p["lat"])
         if d <= radio_m:

@@ -18,8 +18,8 @@ El script hace tres cosas:
    personales y guarda el resultado en `informe_medicion.md`. Ese informe responde los
    temas pendientes 1 y 2 de la lista de abajo.
 
-Para cargar datos reales: `.venv/bin/python cargar.py` (Windows: `.\.venv\Scripts\python.exe cargar.py`).
 Para abrir la API: `.venv/bin/uvicorn app.api:app --port 8000` y visitar `http://127.0.0.1:8000/docs`.
+La API carga los datos reales al iniciar, en segundo plano (ver "Carga de datos").
 
 Si el script no puede conectarse al GIS desde tu red, el informe lo indicará. En ese caso
 revisa que tu computador tenga salida a `gis.maipu.cl` (algunas redes institucionales la
@@ -41,15 +41,33 @@ bloquean).
 ```bash
 python3 -m venv .venv && .venv/bin/pip install fastapi uvicorn httpx pytest
 .venv/bin/python -m pytest -q tests                # pruebas
-.venv/bin/python cargar.py                         # carga desde ArcGIS (requiere red a gis.maipu.cl)
-.venv/bin/uvicorn app.api:app --host 127.0.0.1 --port 8000
+.venv/bin/uvicorn app.api:app --host 127.0.0.1 --port 8000   # carga desde ArcGIS al iniciar (requiere red a gis.maipu.cl)
 ```
+
+## Carga de datos
+
+La API responde desde que inicia y carga los datos en segundo plano. `GET /api/health` informa
+el avance en `carga`:
+
+- `cargando`: descargando las capas (hasta 3 intentos); los conteos siguen en 0.
+- `regeocodificando`: datos ya disponibles; las patentes con Status U o sin punto lo reciben de a poco.
+  Puede tardar más de una hora.
+- `lista`: terminó.
+- `lista_sin_regeocodificar`: hay datos, pero la re-geocodificación se interrumpió (ver el log).
+- `error`: no se pudo descargar; reiniciar la API para reintentar (ver el log).
+
+Las patentes que el GIS publica sin coordenadas (`patentes_sin_punto` en `/api/health`) no
+aparecen en `/api/patentes` ni `/api/punto`. Todas se re-geocodifican a partir de `DIRECCION`
+y reciben punto si el score alcanza el umbral; las demás siguen sin punto.
+
+`cargar.py` sirve solo para probar la carga desde la consola: sus datos no llegan a la API.
+Usar un solo worker de uvicorn: cada worker tendría su propia copia y haría su propia carga.
 
 Las URLs del GIS se pueden cambiar con `RM_GIS_BASE` o `RM_CALLES_URL`, sin tocar el código.
 
 ## Endpoints
 
-- `GET /api/health`: conteos cargados.
+- `GET /api/health`: fase de la carga, conteos cargados y patentes sin punto.
 - `GET /api/calles?q=erraz`: busca calles por nombre (sin geometría).
 - `GET /api/patentes?minlon=&minlat=&maxlon=&maxlat=`: patentes dentro de un área.
 - `GET /api/punto?lon=&lat=&radio_m=150`: calle más cercana y patentes en el radio.

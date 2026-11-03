@@ -25,7 +25,15 @@ def test_low_score_keeps_original_point():
     assert res["bajo_umbral"] == 1 and p["lon"] == -70.0
 
 
-def test_only_status_u_is_processed():
+def test_alcohol_sin_status_ni_punto_se_regeocodifica():
+    p = {"capa": "Alcoholes", "DIRECCION": "5 DE ABRIL 260", "lon": None, "lat": None}
+    res = regeocodificar([p], _client({"candidates": [
+        {"address": "0260 5 DE ABRIL", "score": 95, "location": {"x": -70.7535, "y": -33.5102}}]}))
+    assert res["actualizadas"] == 1
+    assert p["lon"] == -70.7535 and p["lat"] == -33.5102
+
+
+def test_patente_con_punto_y_sin_status_u_no_se_procesa():
     p = {"Status": "M", "DIRECCION": "X", "lon": -70.0, "lat": -33.0}
     res = regeocodificar([p], _client({"candidates": []}))
     assert res["candidatas"] == 0 and p["lon"] == -70.0

@@ -10,7 +10,6 @@ Write-Host "== 1. Pruebas automatizadas =="
 Write-Host "== 2. Medicion de las capas municipales (solo conteos y valores no personales) =="
 .\.venv\Scripts\python.exe medir.py | Tee-Object -FilePath informe_medicion.md
 
-Write-Host "== 3. Carga y servidor =="
-Write-Host "Para cargar los datos: .\.venv\Scripts\python.exe cargar.py"
-Write-Host "Para abrir la API:     .\.venv\Scripts\uvicorn.exe app.api:app --port 8000"
+Write-Host "== 3. Servidor =="
+Write-Host "Para abrir la API (carga los datos al iniciar): .\.venv\Scripts\uvicorn.exe app.api:app --port 8000"
 Write-Host "Luego visita http://127.0.0.1:8000/docs"

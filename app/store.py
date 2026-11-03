@@ -7,6 +7,10 @@ from .dominios import estado_oculto
 from .geo import nearest_street
 
 
+def tiene_punto(patente: dict) -> bool:
+    return patente["lon"] is not None
+
+
 @dataclass
 class Store:
     calles: list[dict] = field(default_factory=list)
@@ -21,7 +25,7 @@ class Store:
     def patentes_in_bbox(self, minlon, minlat, maxlon, maxlat, limit: int = 500) -> list[dict]:
         out = []
         for p in self.patentes:
-            if estado_oculto(p.get("estado_pat")):
+            if estado_oculto(p.get("estado_pat")) or not tiene_punto(p):
                 continue
             if minlon <= p["lon"] <= maxlon and minlat <= p["lat"] <= maxlat:
                 out.append(p)

@@ -1,19 +1,17 @@
-"""Carga los datos desde ArcGIS al almacén en memoria. Uso: python cargar.py"""
+"""Prueba la carga desde ArcGIS e imprime los conteos. Uso: python cargar.py
+
+No deja datos disponibles para la API: el almacén vive en la memoria de este proceso.
+La API carga sus propios datos al iniciar (ver app/carga.py).
+"""
 import httpx
 
-from app.api import store
-from app.loader import config_from_env, load_all
+from app.carga import cargar_en_store
 from app.regeocode import regeocodificar
-
-
-def sink(kind: str, rec: dict) -> None:
-    (store.calles if kind == "calle" else store.patentes).append(rec)
-
+from app.store import Store
 
 if __name__ == "__main__":
-    calles_url, patente_layers = config_from_env()
+    store = Store()
     with httpx.Client() as client:
-        counts = load_all(client, calles_url, patente_layers, sink)
-        resumen = regeocodificar(store.patentes, client)
-    print("Carga completa:", counts)
-    print("Re-geocodificación (Status U):", resumen)
+        counts = cargar_en_store(store, client)
+        print("Carga completa:", counts, flush=True)
+        print("Re-geocodificación:", regeocodificar(store.patentes, client))
