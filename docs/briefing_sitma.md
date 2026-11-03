@@ -33,10 +33,17 @@ dirección son `Address` ("Dirección o lugar"), `Address2`, `Address3` y `Neigh
 `SingleLine`, `Max Locations`, `Category`, `Location Type`, `Source Country`, `Magic Key`
 y `Out Fields`.
 
-**Verificado desde el PC del equipo (2026-11-03):** el JSON del servicio cumple versión
-11.3. `reverseGeocode` existe: sin parámetros responde error 400 con `Unable to complete
-operation.`, y la página de la operación muestra su formulario. Falta probarla con una
-ubicación real.
+**Verificado desde el PC del equipo (2026-11-03):** `reverseGeocode` funciona. Con el punto
+`x=-70.7535, y=-33.5102` (WGS84) devolvió la dirección `0260 5 DE ABRIL`, con
+`Addr_type = PointAddress`, `Neighborhood = MAIPU CENTRO` y `City = MAIPÚ`.
+
+Observaciones para el diseño:
+- La respuesta vino en EPSG:32719 (UTM 19S), aunque la consulta usó WGS84. Hay que pedir
+  `outSR=4326` para obtener longitud y latitud.
+- El campo `Match_addr` tiene el mismo nombre que el de las patentes. Es probable que las
+  patentes se geocodificaran con este mismo localizador, pero no lo podemos confirmar sin el SITMA.
+- `Neighborhood` entrega el barrio directamente, lo que podría reemplazar la consulta a la
+  capa de barrios para el caso de un punto.
 
 **Sin verificar:** las propiedades `capabilities`, `maxLocations`, `maxBatchSize` y
 `spatialReference`. La respuesta del servicio no las mostró completas.
@@ -57,7 +64,7 @@ Preguntas para el SITMA:
 - ¿Podemos tener un endpoint estable de producción?
 - ¿Cuál es el límite de consultas por minuto?
 - ¿Confirman el significado de `Status`: M = Match, T = Target, U = UNTARGET?
-- ¿Responde `reverseGeocode` con una ubicación válida? Probamos con `location={"x":-70.7535,"y":-33.5102,"spatialReference":{"wkid":4326}}`.
+- ¿Las patentes se geocodificaron con este mismo localizador? Eso permitiría comparar sus resultados.
 - ¿Qué campos devuelve el localizador (score, tipo de dirección, dirección normalizada)?
 
 ## Qué no enviamos
