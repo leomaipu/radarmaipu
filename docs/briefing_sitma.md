@@ -60,10 +60,6 @@ conviene volver a geocodificar la dirección del negocio. Esto solo se hará con
 jurídica previa, porque `DIRECCION` es un dato del titular.
 
 Preguntas para el SITMA:
-- ¿Este servicio es de producción o de prueba? Lo llamamos BETA y no queremos depender de él si cambia sin aviso.
-- ¿Podemos tener un endpoint estable de producción?
-- ¿Cuál es el límite de consultas por minuto?
-- ¿Confirman el significado de `Status`: M = Match, T = Target, U = UNTARGET?
 - ¿Las patentes se geocodificaron con este mismo localizador? Eso permitiría comparar sus resultados.
 - ¿Qué campos devuelve el localizador (score, tipo de dirección, dirección normalizada)?
 
@@ -72,6 +68,12 @@ Preguntas para el SITMA:
 - No enviamos RUT, razón social ni datos de representantes a ningún servicio externo.
 - Las consultas al geocodificador van a la infraestructura municipal, no a terceros.
 - No almacenamos el punto que el usuario toca. Solo se usa para la consulta.
+
+## Respuestas del SITMA (2026-11-03)
+
+- El servicio BETA se mantiene hasta marzo. Seguimos con esta versión y migramos cuando exista producción.
+- No hay límite de consultas por minuto.
+- `Status`: M = Match (la geocodificación hace match), T = Target (objetivo), U = Unmatch (sin match).
 
 ## Pendiente de decisión municipal
 

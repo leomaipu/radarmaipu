@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from fastapi import FastAPI, HTTPException, Query
 
+import httpx
+
+from . import geocode
 from .dominios import estado_oculto
 from .geo import haversine_m
 from .store import Store
@@ -41,3 +44,23 @@ def punto(lon: float, lat: float, radio_m: float = Query(150, gt=0, le=1000)):
         "patentes_cercanas": sorted(cercanas, key=lambda x: x["distancia_m"]),
         "radio_m": radio_m,
     }
+
+
+@app.get("/api/direccion")
+def direccion(lon: float, lat: float):
+    try:
+        with httpx.Client() as client:
+            dir_ = geocode.reverse(client, lon, lat)
+    except (httpx.HTTPError, geocode.GeocodeError) as e:
+        raise HTTPException(502, f"Geocodificador no disponible: {e}")
+    return {"direccion": dir_}
+
+
+@app.get("/api/buscar-direccion")
+def buscar_direccion(q: str = Query(..., min_length=3, max_length=150)):
+    try:
+        with httpx.Client() as client:
+            candidatos = geocode.forward(client, q)
+    except (httpx.HTTPError, geocode.GeocodeError) as e:
+        raise HTTPException(502, f"Geocodificador no disponible: {e}")
+    return {"resultados": candidatos}

@@ -18,7 +18,7 @@ def test_unknown_code_is_kept_not_invented():
 def test_status_codes_match_confirmed_definitions():
     assert dominios.descripcion_status("M") == "Match"
     assert dominios.descripcion_status("T") == "Target"
-    assert dominios.descripcion_status("U") == "UNTARGET"
+    assert dominios.descripcion_status("U") == "Unmatch"
 
 
 def test_misspelled_blocked_value_maps_to_official_name_but_raw_kept():

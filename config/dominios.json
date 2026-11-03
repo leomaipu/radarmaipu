@@ -9,7 +9,7 @@
   "patente_status": {
     "M": "Match",
     "T": "Target",
-    "U": "UNTARGET"
+    "U": "Unmatch"
   },
   "patente_estado": {
     "_nota": "El dato publicado escribe BLOQUEDADA; el nombre oficial es BLOQUEADA.",
@@ -17,5 +17,6 @@
     "VIGENTE": "VIGENTE"
   },
   "estados_ocultos": [],
-  "_pendiente_estados_ocultos": "Decisión pendiente: mostrar u ocultar patentes BLOQUEADA. Mientras no se decida, la lista está vacía."
+  "_pendiente_estados_ocultos": "Decisión pendiente: mostrar u ocultar patentes BLOQUEADA. Mientras no se decida, la lista está vacía.",
+  "_nota_status": "M = la geocodificación hace match; T = objetivo (target); U = sin match (unmatch). Confirmado por la municipalidad el 2026-11-03."
 }

@@ -1,0 +1,8 @@
+{
+  "_nota": "Servicios externos del GIS. Cambiar aquí, no en el código. Se puede sobreescribir con la variable RM_GEOCODER_URL.",
+  "geocodificador": {
+    "base": "https://gis.maipu.cl/server/rest/services/BETA/LocatorBetaV3dot3/GeocodeServer",
+    "version": "BETA",
+    "nota": "Versión BETA confirmada por el SITMA hasta marzo. Sin límite de consultas por minuto informado. Cambiar a producción cuando exista."
+  }
+}

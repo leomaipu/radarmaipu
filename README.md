@@ -64,7 +64,7 @@ Las URLs del GIS se pueden cambiar con `RM_GIS_BASE` o `RM_CALLES_URL`, sin toca
 Los valores están en `config/dominios.json`. Cambiarlos no requiere tocar el código.
 
 - `CLASE` de calles: PBN = Paso bajo nivel, PSN = Paso sobre nivel, PTE = Puente, CARRE = Carretera.
-- `Status` de patentes: M = Match, T = Target, U = UNTARGET.
+- `Status` de patentes: M = Match (geocodificación con match), T = Target (objetivo), U = Unmatch (sin match).
 - `estado_pat`: el dato publicado escribe `BLOQUEDADA`; el nombre oficial es `BLOQUEADA`.
   El filtro usa el valor publicado y la API muestra el nombre oficial.
 - Patentes bloqueadas: decisión pendiente. La lista `estados_ocultos` está vacía.
