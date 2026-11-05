@@ -69,6 +69,7 @@ Las URLs del GIS se pueden cambiar con `RM_GIS_BASE` o `RM_CALLES_URL`, sin toca
 
 - `GET /api/health`: fase de la carga, conteos cargados y patentes sin punto.
 - `GET /api/calles?q=erraz`: busca calles por nombre (sin geometría).
+- `GET /api/barrios` o `GET /api/barrios?q=maipu`: lista los 21 barrios o los busca por nombre, sin distinguir tildes ni mayúsculas. Fuente: capa "LÍMITE BARRIOS ACTUAL" (`RM_BARRIOS_URL` la cambia).
 - `GET /api/patentes?minlon=&minlat=&maxlon=&maxlat=`: patentes dentro de un área.
 - `GET /api/punto?lon=&lat=&radio_m=150`: calle más cercana y patentes en el radio.
 

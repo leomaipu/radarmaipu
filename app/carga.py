@@ -7,7 +7,7 @@ from typing import Callable
 
 import httpx
 
-from .loader import config_from_env, load_all
+from .loader import barrios_url_from_env, config_from_env, load_all
 from .regeocode import regeocodificar
 from .store import Store
 
@@ -16,15 +16,16 @@ log = logging.getLogger(__name__)
 
 def cargar_en_store(store: Store, client: httpx.Client) -> dict:
     """Descarga las capas y las publica juntas: si algo falla, el almacén queda como estaba."""
-    calles: list[dict] = []
-    patentes: list[dict] = []
+    publicados: dict[str, list[dict]] = {"calle": [], "patente": [], "barrio": []}
 
     def sink(kind: str, rec: dict) -> None:
-        (calles if kind == "calle" else patentes).append(rec)
+        publicados[kind].append(rec)
 
     calles_url, patente_layers = config_from_env()
-    counts = load_all(client, calles_url, patente_layers, sink)
-    store.calles, store.patentes = calles, patentes
+    counts = load_all(client, calles_url, patente_layers, sink, barrios_url=barrios_url_from_env())
+    store.calles = publicados["calle"]
+    store.patentes = publicados["patente"]
+    store.barrios = publicados["barrio"]
     return counts
 
 

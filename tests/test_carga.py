@@ -23,10 +23,14 @@ def _fabrica(fallos_gis=0, candidatos=None):
         if pendientes[0] > 0:
             pendientes[0] -= 1
             return httpx.Response(500)
+        if "BARRIOS_PROPESTO" in request.url.path:
+            return httpx.Response(200, json={"features": [BARRIO]})
         return httpx.Response(200, json={"features": [CALLE if "DOM_CATASTRO" in request.url.path else PATENTE]})
 
     return lambda: httpx.Client(transport=httpx.MockTransport(handler))
 
+
+BARRIO = {"attributes": {"OBJECTID": 1, "BARRIO": "MAIPU CENTRO", "ID_BARRIO": 7.0, "TOTAL_HAB_2017": 123}}
 
 CANDIDATO = [{"address": "0260 5 DE ABRIL", "score": 95, "location": {"x": -70.75, "y": -33.51}}]
 
@@ -38,6 +42,7 @@ def test_carga_publica_datos_y_regeocodifica():
     assert len(store.calles) == 1 and len(store.patentes) == 3  # tres capas de patentes
     assert store.patentes[0]["coords_origen"] == "re-geocodificado"
     assert "rut_negoci" not in store.calles[0]
+    assert store.barrios == [{"BARRIO": "MAIPU CENTRO", "ID_BARRIO": 7}]  # sin campos demográficos
 
 
 def test_carga_reintenta_tras_fallo_del_gis():

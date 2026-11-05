@@ -6,8 +6,8 @@ from typing import Callable
 
 import httpx
 
-from .ingest import normalize_calle, normalize_patente
-from .privacy import CALLE_PUBLIC_FIELDS
+from .ingest import normalize_barrio, normalize_calle, normalize_patente
+from .privacy import BARRIO_PUBLIC_FIELDS, CALLE_PUBLIC_FIELDS
 
 PAGE = 2000  # maxRecordCount publicado por el servidor de Maipú
 
@@ -23,11 +23,12 @@ PATENTE_FIELDS_BY_LAYER = {
 }
 
 
-def fetch_layer(client: httpx.Client, layer_url: str, out_fields: str, oid: str) -> list[dict]:
+def fetch_layer(client: httpx.Client, layer_url: str, out_fields: str, oid: str,
+                geometry: bool = True) -> list[dict]:
     feats, offset = [], 0
     while True:
         params = {
-            "where": "1=1", "outFields": out_fields, "returnGeometry": "true",
+            "where": "1=1", "outFields": out_fields, "returnGeometry": "true" if geometry else "false",
             "outSR": 4326, "f": "json", "orderByFields": oid,
             "resultOffset": offset, "resultRecordCount": PAGE,
         }
@@ -44,8 +45,8 @@ def fetch_layer(client: httpx.Client, layer_url: str, out_fields: str, oid: str)
 
 
 def load_all(client: httpx.Client, calles_url: str, patente_layers: dict[str, str],
-             sink: Callable[[str, dict], None]) -> dict:
-    counts = {"calles": 0, "patentes": 0, "descartadas": 0}
+             sink: Callable[[str, dict], None], barrios_url: str | None = None) -> dict:
+    counts = {"calles": 0, "patentes": 0, "barrios": 0, "descartadas": 0}
     calle_fields = ",".join(CALLE_PUBLIC_FIELDS)
     for f in fetch_layer(client, calles_url, calle_fields, OID_BY_LAYER["Calles"]):
         rec = normalize_calle(f)
@@ -53,6 +54,14 @@ def load_all(client: httpx.Client, calles_url: str, patente_layers: dict[str, st
             counts["descartadas"] += 1
         else:
             sink("calle", rec); counts["calles"] += 1
+    if barrios_url:
+        barrio_fields = ",".join(BARRIO_PUBLIC_FIELDS)
+        for f in fetch_layer(client, barrios_url, barrio_fields, "OBJECTID", geometry=False):
+            rec = normalize_barrio(f)
+            if rec is None:
+                counts["descartadas"] += 1
+            else:
+                sink("barrio", rec); counts["barrios"] += 1
     for name, url in patente_layers.items():
         fields = ",".join(PATENTE_FIELDS_BY_LAYER[name])
         for f in fetch_layer(client, url, fields, OID_BY_LAYER[name]):
@@ -73,3 +82,9 @@ def config_from_env() -> tuple[str, dict[str, str]]:
         "Comerciales": f"{base}/DAF/PATENTES_2026_2/FeatureServer/2",
     }
     return calles, patentes
+
+
+def barrios_url_from_env() -> str:
+    """Capa vigente de límites de barrios (no la 'PROPUESTO', que es un borrador)."""
+    base = os.environ.get("RM_GIS_BASE", "https://gis.maipu.cl/server/rest/services")
+    return os.environ.get("RM_BARRIOS_URL", f"{base}/LÍMITE_BARRIOS_PROPESTO/MapServer/0")
