@@ -24,6 +24,42 @@ def test_search_calle_hides_geometry():
     assert res and "path" not in res[0] and res[0]["NOMBRE"] == "ERRAZURIZ"
 
 
+def _barrios_de_prueba():
+    from app.api import store as st
+    st.barrios = [
+        {"BARRIO": "MAIPU CENTRO", "ID_BARRIO": 7},
+        {"BARRIO": "LO ERRAZURIZ", "ID_BARRIO": 1},
+        {"BARRIO": "PORTAL DEL SOL", "ID_BARRIO": 5},
+        {"BARRIO": "CLOTARIO BLEST", "ID_BARRIO": 9},
+    ]
+
+
+def test_barrios_sin_q_devuelve_todos_ordenados():
+    _barrios_de_prueba()
+    res = client.get("/api/barrios").json()["resultados"]
+    assert [b["BARRIO"] for b in res] == ["CLOTARIO BLEST", "LO ERRAZURIZ", "MAIPU CENTRO", "PORTAL DEL SOL"]
+
+
+def test_buscar_barrio_sin_tildes_y_sin_mayusculas():
+    _barrios_de_prueba()
+    res = client.get("/api/barrios", params={"q": "maipú cen"}).json()["resultados"]
+    assert res == [{"BARRIO": "MAIPU CENTRO", "ID_BARRIO": 7}]
+    res = client.get("/api/barrios", params={"q": "clotar"}).json()["resultados"]
+    assert [b["ID_BARRIO"] for b in res] == [9]
+    assert client.get("/api/barrios", params={"q": "clotrio"}).json()["resultados"] == []  # subcadena, no fonética
+    res = client.get("/api/barrios", params={"q": "ERRAZ"}).json()["resultados"]
+    assert [b["ID_BARRIO"] for b in res] == [1]
+
+
+def test_barrio_q_demasiado_corto_rechazado():
+    assert client.get("/api/barrios", params={"q": "a"}).status_code == 422
+
+
+def test_health_reporta_barrios():
+    _barrios_de_prueba()
+    assert client.get("/api/health").json()["barrios"] == 4
+
+
 def test_bbox_invalid_rejected():
     r = client.get("/api/patentes", params={"minlon": 1, "minlat": 1, "maxlon": 0, "maxlat": 2})
     assert r.status_code == 400

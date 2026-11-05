@@ -29,6 +29,10 @@ PERSONAL_FIELDS = frozenset({
 
 CALLE_PUBLIC_FIELDS = ("CLASE", "NOMBRE", "SUF_DIREC")
 
+# Barrios: solo nombre e identificador. Los indicadores demográficos de la misma capa
+# no se exponen por ahora.
+BARRIO_PUBLIC_FIELDS = ("BARRIO", "ID_BARRIO")
+
 
 def filter_attributes(attributes: dict, allowed: tuple[str, ...]) -> dict:
     """Devuelve solo los atributos permitidos. Nunca devuelve campos personales."""

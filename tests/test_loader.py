@@ -20,6 +20,35 @@ def test_pagination_follows_exceeded_transfer_limit():
     assert seen_offsets == ["0", "1"]
 
 
+def test_geometry_can_be_skipped_for_attribute_only_layers():
+    seen = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request.url.params["returnGeometry"])
+        return httpx.Response(200, json={"features": []})
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    fetch_layer(client, "https://example.test/layer", "BARRIO", "OBJECTID", geometry=False)
+    assert seen == ["false"]
+
+
+def test_barrio_normalization_keeps_only_whitelisted_fields():
+    from app.ingest import normalize_barrio
+
+    rec = normalize_barrio({"attributes": {"BARRIO": " LO ERRAZURIZ ", "ID_BARRIO": 1.0,
+                                           "N_CASA": 99, "TOTAL_2017": 5}})
+    assert rec == {"BARRIO": "LO ERRAZURIZ", "ID_BARRIO": 1}
+    assert normalize_barrio({"attributes": {"ID_BARRIO": 2.0}}) is None  # sin nombre
+    assert normalize_barrio({"attributes": {"BARRIO": "X"}}) is None      # sin id
+
+
+def test_barrios_url_points_to_vigente_layer_not_proposal():
+    from app.loader import barrios_url_from_env
+
+    url = barrios_url_from_env()
+    assert url.endswith("/MapServer/0")  # capa 0 = LÍMITE BARRIOS ACTUAL
+
+
 def test_arcgis_error_raises():
     import pytest
 

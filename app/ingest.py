@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from .dominios import descripcion_clase, descripcion_status, estado_normalizado
 from .normalize import clean_text
-from .privacy import CALLE_PUBLIC_FIELDS, PATENTE_PUBLIC_FIELDS, filter_attributes
+from .privacy import BARRIO_PUBLIC_FIELDS, CALLE_PUBLIC_FIELDS, PATENTE_PUBLIC_FIELDS, filter_attributes
 
 
 def normalize_calle(feature: dict) -> dict | None:
@@ -16,6 +16,14 @@ def normalize_calle(feature: dict) -> dict | None:
     attrs = {k: clean_text(v) for k, v in attrs.items()}
     attrs["CLASE_DESC"] = descripcion_clase(attrs.get("CLASE"))
     return {**attrs, "path": coords}
+
+
+def normalize_barrio(feature: dict) -> dict | None:
+    attrs = filter_attributes(feature.get("attributes", {}), BARRIO_PUBLIC_FIELDS)
+    nombre = clean_text(attrs.get("BARRIO"))
+    if nombre is None or attrs.get("ID_BARRIO") is None:
+        return None
+    return {"BARRIO": nombre, "ID_BARRIO": int(attrs["ID_BARRIO"])}  # el GIS lo publica como double
 
 
 def normalize_patente(feature: dict, layer: str) -> dict | None:

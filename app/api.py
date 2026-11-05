@@ -40,6 +40,7 @@ def health():
         "ok": True,
         "carga": estado_carga["fase"],
         "calles": len(store.calles),
+        "barrios": len(store.barrios),
         "patentes": len(store.patentes),
         "patentes_sin_punto": sum(not tiene_punto(p) for p in store.patentes),
     }
@@ -48,6 +49,14 @@ def health():
 @app.get("/api/calles")
 def calles(q: str = Query(..., min_length=2, max_length=60)):
     return {"resultados": [{k: v for k, v in c.items() if k != "path"} for c in store.search_calles(q)]}
+
+
+@app.get("/api/barrios")
+def barrios(q: str | None = Query(None, min_length=2, max_length=60)):
+    """Sin `q` devuelve los 21 barrios ordenados. Con `q` busca por subcadena, sin tildes."""
+    if q is None:
+        return {"resultados": store.list_barrios()}
+    return {"resultados": store.search_barrios(q)}
 
 
 @app.get("/api/patentes")
