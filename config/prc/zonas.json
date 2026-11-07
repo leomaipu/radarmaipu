@@ -1,0 +1,49 @@
+{
+  "_nota": "ZONA del GIS -> código de ordenanza, y capas consultadas. Cambiar aquí, no en el código.",
+  "normalizacion": {
+    "ZC1": "ZC-1", "ZC2": "ZC-2", "ZC3": "ZC-3", "ZC4": "ZC-4",
+    "ZH1": "ZH-1", "ZH2": "ZH-2", "ZH3": "ZH-3", "ZH4": "ZH-4", "ZH5": "ZH-5",
+    "ZH6": "ZH-6", "ZH7": "ZH-7", "ZH8": "ZH-8", "ZH9": "ZH-9", "ZH10": "ZH-10",
+    "ZI1": "ZI-1", "ZI2": "ZI-2", "ZI3": "ZI-3",
+    "ZE1": "ZE-1", "ZE2": "ZE-2", "ZE3": "ZE-3", "ZE4": "ZE-4", "ZE5": "ZE-5", "ZE6": "ZE-6",
+    "ZE7": "ZE-7", "ZE8": "ZE-8", "ZE9": "ZE-9", "ZE10": "ZE-10", "ZE11": "ZE-11", "ZE12": "ZE-12",
+    "ICH": "ICH", "ZCH": "ZCH"
+  },
+  "zonas_excluidas_mvp": ["ZI-1", "ZI-2", "ZI-3"],
+  "motivo_exclusion": "Zonas industriales fuera del MVP (decisión de alcance). La ordenanza les asigna una sola tabla: comercio solo en escalas menor, mediano y mayor (art. 34, p. 33).",
+  "zonas_especiales": {
+    "_nota": "Capa 1 'Zonas de Uso Especial'. Se rigen por el art. 41 (p. 35-37), no por la matriz de comercio.",
+    "fuente": "Ordenanza PRC 2004, art. 41, p. 35-37",
+    "descripcion": {
+      "ZE-1": "Templo Votivo: culto, cultura escala mediano, social básico. Rige Ley 17.288.",
+      "ZE-2": "Equipamiento recreacional y deportivo (art. 5.2.4.1 PRMS).",
+      "ZE-3": "Parques intercomunales (art. 5.2.3.1 PRMS).",
+      "ZE-4": "Avenidas parque (art. 5.2.3.4 PRMS).",
+      "ZE-5": "Equipamiento comunitario con vivienda: equipamiento de cualquier clase y escala, salvo las exclusiones del art. 41.",
+      "ZE-6": "Equipamiento comunitario exclusivo: equipamiento de cualquier clase y escala, salvo las exclusiones del art. 41.",
+      "ZE-7": "Cementerio.",
+      "ZE-8": "Áreas verdes comunales y vecinales: solo kioscos y casetas hasta 1 % de la superficie.",
+      "ZE-9": "Plaza Mayor: áreas verdes, kioscos y casetas.",
+      "ZE-10": "Estanques de agua potable.",
+      "ZE-11": "Área verde PRMS.",
+      "ZE-12": "Equipamiento exclusivo El Almendral (Mod. N°1, 2007).",
+      "ICH": "Inmueble de conservación histórica: solo usos listados en art. 41 e informe del Asesor Urbanista.",
+      "ZCH": "Zona de conservación histórica: áreas verdes y monumentos."
+    }
+  },
+  "capas": {
+    "_nota": "Servicio MAIPU/PRCMaipu. outFields es lista blanca por capa: pedir un campo que la capa no tiene hace fallar la consulta (400).",
+    "base": "https://gis.maipu.cl/server/rest/services/MAIPU/PRCMaipu/MapServer",
+    "zonas": [
+      { "id": 1, "nombre": "Zonas de Uso Especial", "outFields": "ZONA,DESCRIPCION" },
+      { "id": 2, "nombre": "Zonas Centrales", "outFields": "ZONA,DESCRIPCION" },
+      { "id": 3, "nombre": "Zonas de Uso Preferente Vivienda y Equipamiento", "outFields": "ZONA,DESCRIPCION" },
+      { "id": 4, "nombre": "Zonas Industriales", "outFields": "ZONA,DESCRIPCION" }
+    ],
+    "vialidad": { "id": 0, "outFields": "JERARQUIA,VIA,CODIGO,ANCHO_EXIS,ANCHO_PROP,OBSERVACIO,MODIFICACI,OBSERVACION_2" },
+    "riesgo": { "id": 6, "outFields": "TIPO_DE_AR,DESCRIPCIO" },
+    "bleve": { "id": 5, "outFields": "BUFF_DIST" },
+    "timeout_s": 15
+  },
+  "zonas_cercanas_m": 30
+}
