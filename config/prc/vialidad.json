@@ -1,0 +1,15 @@
+{
+  "_nota": "Capa 0 'Vialidad Estructurante' (polilíneas). La proximidad al eje solo indica un frente PROBABLE: nunca habilita por sí sola una escala o un giro. Para eso el usuario debe declarar el frente (parámetro frente_via) y el informe advierte que se verifica en el CIP.",
+  "fuente": "Ordenanza PRC 2004, arts. 48 y 51 del texto original (cuadros de vialidad estructurante; renumerados por las Mod. N°2 y N°4), p. 43-65",
+  "jerarquias_estructurantes": ["Expresa", "Troncal", "Colectora", "Servicio", "local"],
+  "nota_jerarquias": "Los cuadros de vialidad estructurante del texto 2004 incluyen vías de servicio y locales, pero el art. 48 separa 'Vialidad Estructurante Metropolitana' de 'Red Vial Local'. Interpretación por confirmar con la DOM: si es más estrecha, sacar 'Servicio' y 'local' de esta lista.",
+  "jerarquias_colectora_o_mayor": ["Expresa", "Troncal", "Colectora"],
+  "campos_estado": ["OBSERVACIO", "MODIFICACI", "OBSERVACION_2"],
+  "excluir_si_contiene": ["APERTURA", "AEERTURA", "ELIMINADO"],
+  "nota_exclusion": "Tramos proyectados (apertura) o eliminados no son un frente real. Se comparan sin distinguir mayúsculas; 'Aeertura' es un error de tipeo presente en el GIS.",
+  "excluir_jerarquias": ["Fuera Límite Urbano"],
+  "radio_busqueda_m": 40,
+  "margen_frente_m": 20,
+  "nota_frente": "Frente probable si la distancia al eje es menor o igual a la mitad del ancho existente más margen_frente_m.",
+  "nota_ancho": "Para 'vías de 20 o más metros' se usa solo el ancho existente (ANCHO_EXIS, el menor si es un rango). El ancho propuesto no cuenta: la vía puede no estar ensanchada."
+}

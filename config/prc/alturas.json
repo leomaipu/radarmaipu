@@ -1,0 +1,19 @@
+{
+  "_nota": "Altura de edificación máxima base (PRC 2004, art. 34, cuadros 'Condiciones de edificación y subdivisión'). Solo se informa como referencia; el MVP no calcula cabida. Las claves de condición coinciden con las que reemplaza la Mod. N°4 (modificaciones.json).",
+  "zonas": {
+    "ZC-1":  { "pagina": 18, "alturas": { "todas": "24 m" } },
+    "ZC-2":  { "pagina": 19, "alturas": { "solo_continua": "18 m", "continua_y_aislada": "30 m" } },
+    "ZC-3":  { "pagina": 20, "alturas": { "vivienda_unifamiliar": "9 m", "equipamiento_basico": "10,5 m", "vivienda_multifamiliar_equip_otras": "Libre según rasantes" } },
+    "ZC-4":  { "pagina": 21, "alturas": { "vivienda_unifamiliar": "9 m", "equip_todas_y_multifamiliar": "Libre según rasante" } },
+    "ZH-1":  { "pagina": 22, "alturas": { "vivienda": "10,5 m", "equipamiento": "10,5 m" } },
+    "ZH-2":  { "pagina": 23, "alturas": { "vivienda": "9 m", "equipamiento_basico": "10,5 m", "equipamiento_otras": "12 m" } },
+    "ZH-3":  { "pagina": 25, "alturas": { "vivienda": "9 m", "equipamiento_basico": "10,5 m", "equipamiento_otras": "12 m" } },
+    "ZH-4":  { "pagina": 26, "alturas": { "vivienda": "9 m", "equipamiento_basico": "9 m", "equipamiento_otras": "12 m" } },
+    "ZH-5":  { "pagina": 27, "alturas": { "vivienda": "15 m", "equipamiento_basico": "10,5 m", "equipamiento_otras": "12 m" } },
+    "ZH-6":  { "pagina": 28, "alturas": { "vivienda": "9 m", "equipamiento_basico": "9 m", "equipamiento_otras": "12 m" } },
+    "ZH-7":  { "pagina": 29, "alturas": { "vivienda": "9 m", "vivienda_multifamiliar": "12 m", "equipamiento_basico": "9 m", "equipamiento_otras": "12 m" } },
+    "ZH-8":  { "pagina": 30, "alturas": { "vivienda_unifamiliar": "9 m", "equip_todas_y_multifamiliar": "Libre según rasantes" } },
+    "ZH-9":  { "pagina": 31, "alturas": { "vivienda": "9 m", "equipamiento_basico": "9 m", "equipamiento_otras": "14 m" } },
+    "ZH-10": { "pagina": 32, "alturas": { "vivienda_unifamiliar": "9 m", "equipamiento_basico": "9 m", "equipamiento_otras": "12 m", "vivienda_equip_condicionado": "Libre según rasante" } }
+  }
+}

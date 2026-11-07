@@ -1,0 +1,264 @@
+{
+  "_nota": "Matriz por zona del art. 34 de la Ordenanza PRC 2004 (Decreto alcaldicio 6383/2004). Páginas = página del PDF '1_Decreto_y_Ordenanza_PRC_Maipu.pdf'. Escalas: SI | NO | CONDICION. Condiciones: vialidad_estructurante, colectora_o_mayor, via_20m. La Mod. N°2 (D.A. 6971/2012) no reemplaza filas 2.2 Comercio, 2.10 Servicios ni 1.2 Hospedaje de ZC/ZH según su texto aprobatorio (BCN idNorma 1045540). Los textos de 'condiciones_texto' no se evalúan automáticamente: se muestran como advertencia.",
+  "escalas_sin_declarar": ["basico", "menor", "mediano"],
+  "nota_escalas": "Sin escala declarada, el giro se evalúa en básico, menor y mediano: PERMITIDO solo si las tres lo son. Las escalas se definen en el art. 2.1.36 OGUC (no cargado): toda respuesta advierte 'escala por definir'.",
+  "zonas": {
+    "ZC-1": {
+      "nombre": "Centro Cívico",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZC-1, p. 17",
+      "pagina": 17,
+      "vivienda": "NO",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "NO" },
+        "prohibido": ["botilleria", "pollos_asados", "fuente_soda", "bar", "pub", "repuestos_automovil", "supermercado",
+                      "compraventa_automoviles", "venta_maquinarias", "carbon_lena", "materiales_construccion",
+                      "estacion_servicio", "revision_tecnica", "gas_licuado", "discoteca", "cabaret_boite"]
+      },
+      "servicios_artesanales": {
+        "pagina": 17,
+        "escalas": { "basico": "CONDICION", "menor": "CONDICION", "mediano": "NO", "mayor": "NO" },
+        "condicion_escala": { "basico": "texto", "menor": "texto" },
+        "solo_giros": ["peluqueria", "artesanias"],
+        "condiciones_texto": { "_todos": "Solo al interior del mercado municipal: peluquería, artesanías y manualidades, talleres artesanales de escala básico y menor." }
+      },
+      "hospedaje": { "permitido": "NO" }
+    },
+    "ZC-2": {
+      "nombre": "Centro Comercial",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZC-2, p. 18",
+      "pagina": 18,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "NO" },
+        "prohibido": ["carbon_lena", "materiales_construccion", "venta_maquinarias", "gas_licuado", "estacion_servicio"],
+        "condiciones_texto": { "cabaret_boite": "Cabaret, boite y similares no pueden localizarse frente a Av. 5 de Abril." }
+      },
+      "servicios_artesanales": {
+        "pagina": 18,
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "SI" },
+        "prohibido": ["taller_tejidos_ceramica", "vidrieria", "vivero", "taller_mecanico", "taller_pintura_desabolladura", "vulcanizacion", "imprenta"]
+      },
+      "hospedaje": { "permitido": "SI" }
+    },
+    "ZC-3": {
+      "nombre": "Mixta Comercio y Servicios",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZC-3, p. 19",
+      "pagina": 19,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "NO" },
+        "prohibido": ["carbon_lena"],
+        "condiciones_texto": { "cabaret_boite": "Cabaret, boite y similares no se permiten frente a Av. 5 de Abril, zonas o inmuebles de conservación histórica ni monumentos nacionales." }
+      },
+      "servicios_artesanales": {
+        "pagina": 20,
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "SI" },
+        "prohibido": ["vivero", "taller_mecanico", "taller_pintura_desabolladura", "vulcanizacion"]
+      },
+      "hospedaje": { "permitido": "SI" }
+    },
+    "ZC-4": {
+      "nombre": "Mixta Equipamiento y Vivienda (Ex FISA)",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZC-4, p. 20",
+      "pagina": 20,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "SI" },
+        "prohibido": []
+      },
+      "servicios_artesanales": {
+        "pagina": 20,
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "SI" },
+        "prohibido": []
+      },
+      "hospedaje": { "permitido": "SI", "prohibido": ["motel"] }
+    },
+    "ZH-1": {
+      "nombre": "Habitacional 1 (Santa Ana de Chena)",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZH-1, p. 22 (tabla superpuesta en el PDF); texto legible en Diario Oficial 13-11-2004, p. 6",
+      "pagina": 22,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "NO", "menor": "CONDICION", "mediano": "SI", "mayor": "NO" },
+        "condicion_escala": { "menor": "colectora_o_mayor" },
+        "prohibido": ["mercado", "multitiendas", "compraventa_automoviles", "venta_maquinarias", "materiales_construccion",
+                      "estacion_servicio", "revision_tecnica", "gas_licuado", "centro_copiado", "cabaret_boite"],
+        "condiciones_texto": {
+          "_todos": "En vías de servicio solo se permite restaurante y pub de escala menor: otros giros, y cualquier giro en escala mediana, no pueden enfrentar solo una vía de servicio."
+        }
+      },
+      "servicios_artesanales": {
+        "pagina": 22,
+        "escalas": { "basico": "SI", "menor": "NO", "mediano": "NO", "mayor": "NO" },
+        "prohibido": ["taller_mecanico", "taller_pintura_desabolladura", "vulcanizacion", "imprenta"]
+      },
+      "hospedaje": { "permitido": "SI" }
+    },
+    "ZH-2": {
+      "nombre": "Habitacional 2 (Extensión El Abrazo - Sector Fundo El Bosque)",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZH-2, p. 23",
+      "pagina": 23,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "NO", "mayor": "NO" },
+        "prohibido": ["repuestos_automovil", "centro_comercial", "mercado", "supermercado", "multitiendas",
+                      "compraventa_automoviles", "venta_maquinarias", "carbon_lena", "materiales_construccion",
+                      "estacion_servicio", "revision_tecnica", "gas_licuado", "centro_copiado", "discoteca", "cabaret_boite"]
+      },
+      "servicios_artesanales": {
+        "pagina": 23,
+        "escalas": { "basico": "SI", "menor": "NO", "mediano": "NO", "mayor": "NO" },
+        "prohibido": ["taller_mecanico", "taller_pintura_desabolladura", "vulcanizacion", "imprenta"]
+      },
+      "hospedaje": { "permitido": "SI", "solo_giros": ["hostal"],
+                     "condiciones_texto": { "hostal": "Solo residencial u hostal y hospedería sin servicios comerciales adjuntos." } }
+    },
+    "ZH-3": {
+      "nombre": "Habitacional 3 (El Abrazo - Ciudad Satélite)",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZH-3, p. 24",
+      "pagina": 24,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "CONDICION", "mediano": "SI", "mayor": "NO" },
+        "condicion_escala": { "menor": "vialidad_estructurante" },
+        "prohibido": ["repuestos_automovil", "carbon_lena", "materiales_construccion", "compraventa_automoviles",
+                      "venta_maquinarias", "discoteca", "cabaret_boite"]
+      },
+      "servicios_artesanales": {
+        "pagina": 24,
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "NO", "mayor": "NO" },
+        "prohibido": ["taller_mecanico", "taller_pintura_desabolladura", "vulcanizacion", "imprenta"]
+      },
+      "hospedaje": { "permitido": "NO" }
+    },
+    "ZH-4": {
+      "nombre": "Habitacional 4 (Maipú Centro Oriente)",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZH-4, p. 25",
+      "pagina": 25,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "NO" },
+        "prohibido": ["discoteca", "cabaret_boite"]
+      },
+      "servicios_artesanales": {
+        "pagina": 25,
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "SI" },
+        "prohibido": [],
+        "condicion_talleres": "vialidad_estructurante"
+      },
+      "hospedaje": { "permitido": "SI", "solo_giros": ["hostal"],
+                     "condiciones_texto": { "hostal": "Solo residencial u hostal y hospedería sin servicios comerciales adjuntos." } }
+    },
+    "ZH-5": {
+      "nombre": "Habitacional 5 (Maipú Centro Antiguo)",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZH-5, p. 26",
+      "pagina": 26,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "NO" },
+        "prohibido": ["carbon_lena", "discoteca", "cabaret_boite"]
+      },
+      "servicios_artesanales": {
+        "pagina": 26,
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "SI" },
+        "prohibido": [],
+        "condicion_giro": { "taller_mecanico": "via_20m", "taller_pintura_desabolladura": "via_20m", "vulcanizacion": "via_20m", "imprenta": "via_20m" }
+      },
+      "hospedaje": { "permitido": "SI", "prohibido": ["motel"] }
+    },
+    "ZH-6": {
+      "nombre": "Habitacional 6 (Maipú Norte - Sector Villas Pehuén)",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZH-6, p. 27",
+      "pagina": 27,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "CONDICION", "mediano": "CONDICION", "mayor": "NO" },
+        "condicion_escala": { "menor": "vialidad_estructurante", "mediano": "vialidad_estructurante" },
+        "prohibido": ["carbon_lena", "materiales_construccion", "compraventa_automoviles", "venta_maquinarias", "discoteca", "cabaret_boite"],
+        "condiciones_texto": { "repuestos_automovil": "La zona prohíbe la venta de \"automóviles\"; confirmar con la DOM si alcanza a repuestos (otras zonas los prohíben por separado)." }
+      },
+      "servicios_artesanales": {
+        "pagina": 28,
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "SI" },
+        "prohibido": [],
+        "condicion_giro": { "taller_mecanico": "via_20m", "taller_pintura_desabolladura": "via_20m", "vulcanizacion": "via_20m", "imprenta": "via_20m" }
+      },
+      "hospedaje": { "permitido": "SI", "solo_giros": ["hostal"],
+                     "condiciones_texto": { "hostal": "Solo residencial u hostal y hospedería sin servicios comerciales adjuntos." } }
+    },
+    "ZH-7": {
+      "nombre": "Habitacional 7 (Maipú Poniente)",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZH-7, p. 28",
+      "pagina": 28,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "CONDICION", "mediano": "CONDICION", "mayor": "NO" },
+        "condicion_escala": { "menor": "vialidad_estructurante", "mediano": "vialidad_estructurante" },
+        "prohibido": ["carbon_lena", "materiales_construccion", "compraventa_automoviles", "venta_maquinarias", "discoteca", "cabaret_boite"],
+        "condiciones_texto": { "repuestos_automovil": "La zona prohíbe la venta de \"automóviles\"; confirmar con la DOM si alcanza a repuestos (otras zonas los prohíben por separado)." }
+      },
+      "servicios_artesanales": {
+        "pagina": 29,
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "SI" },
+        "prohibido": [],
+        "condicion_giro": { "taller_mecanico": "via_20m", "taller_pintura_desabolladura": "via_20m", "vulcanizacion": "via_20m", "imprenta": "via_20m" }
+      },
+      "hospedaje": { "permitido": "SI", "solo_giros": ["hostal"],
+                     "condiciones_texto": { "hostal": "Solo residencial u hostal y hospedería sin servicios comerciales adjuntos." } }
+    },
+    "ZH-8": {
+      "nombre": "Habitacional 8 (Corredores de Densidad Alta: Av. Américo Vespucio y Av. Pajaritos)",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZH-8, p. 30 (verificado con Diario Oficial 13-11-2004, p. 8)",
+      "pagina": 30,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "SI" },
+        "prohibido": ["carbon_lena"]
+      },
+      "servicios_artesanales": {
+        "pagina": 30,
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "SI" },
+        "prohibido": ["taller_pintura_desabolladura", "vulcanizacion"]
+      },
+      "hospedaje": { "permitido": "SI",
+                     "condiciones_texto": { "motel": "Los moteles se ubicarán solo frente a Av. Pajaritos." },
+                     "condicion_giro": { "motel": "texto" } }
+    },
+    "ZH-9": {
+      "nombre": "Habitacional 9 (El Porvenir)",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZH-9, p. 30",
+      "pagina": 30,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "NO" },
+        "prohibido": ["carbon_lena", "materiales_construccion", "compraventa_automoviles", "venta_maquinarias", "cabaret_boite"],
+        "condiciones_texto": { "repuestos_automovil": "La zona prohíbe la venta de \"automóviles\"; confirmar con la DOM si alcanza a repuestos (otras zonas los prohíben por separado)." }
+      },
+      "servicios_artesanales": {
+        "pagina": 31,
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "SI" },
+        "prohibido": [],
+        "condicion_giro": { "taller_mecanico": "via_20m", "taller_pintura_desabolladura": "via_20m", "vulcanizacion": "via_20m", "imprenta": "via_20m" }
+      },
+      "hospedaje": { "permitido": "SI" }
+    },
+    "ZH-10": {
+      "nombre": "Habitacional 10 (Borde El Porvenir de Densidad Condicionada)",
+      "fuente": "Ordenanza PRC 2004, art. 34, ZH-10, p. 31",
+      "pagina": 31,
+      "vivienda": "SI",
+      "comercio": {
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "NO" },
+        "prohibido": ["carbon_lena", "materiales_construccion", "compraventa_automoviles", "venta_maquinarias", "cabaret_boite"],
+        "condiciones_texto": { "repuestos_automovil": "La zona prohíbe la venta de \"automóviles\"; confirmar con la DOM si alcanza a repuestos (otras zonas los prohíben por separado)." }
+      },
+      "servicios_artesanales": {
+        "pagina": 32,
+        "escalas": { "basico": "SI", "menor": "SI", "mediano": "SI", "mayor": "SI" },
+        "prohibido": [],
+        "condicion_giro": { "taller_mecanico": "via_20m", "taller_pintura_desabolladura": "via_20m", "vulcanizacion": "via_20m", "imprenta": "via_20m" }
+      },
+      "hospedaje": { "permitido": "SI" }
+    }
+  }
+}

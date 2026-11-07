@@ -1,0 +1,340 @@
+{
+  "_nota": "Giros soportados. El código es el que se usa en usos_comercio.json. Clases según art. 25 de la Ordenanza PRC 2004 (p. 13-15). 'alcohol': true fuerza NO_CONCLUYENTE hasta cargar la ordenanza de alcoholes (pendiente 3).",
+  "giros": {
+    "bazar": {
+      "nombre": "Bazar",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "abarrotes": {
+      "nombre": "Almacén de abarrotes",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "confites_bebidas": {
+      "nombre": "Confites, cigarrillos, bebidas, diarios y revistas",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "panaderia_venta": {
+      "nombre": "Panadería (solo venta)",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "carniceria": {
+      "nombre": "Carnicería",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "fiambreria": {
+      "nombre": "Fiambrería",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "frutas_verduras": {
+      "nombre": "Frutas y verduras",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "ferreteria": {
+      "nombre": "Ferretería",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "floreria": {
+      "nombre": "Florería",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "pollos_asados": {
+      "nombre": "Venta de pollos asados",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "farmacia": {
+      "nombre": "Farmacia y perfumería",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "libreria": {
+      "nombre": "Librería",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "vestuario_calzado": {
+      "nombre": "Vestuario, calzado y accesorios",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "textiles": {
+      "nombre": "Textiles, telas y similares",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "articulos_deportivos": {
+      "nombre": "Artículos deportivos",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "electronica": {
+      "nombre": "Música, electrónicos y línea blanca",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "accesorios_hogar": {
+      "nombre": "Accesorios para el hogar",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "articulos_salud": {
+      "nombre": "Artículos de salud",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "telefonia": {
+      "nombre": "Telefonía",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "fotocopias": {
+      "nombre": "Fotocopias",
+      "clase": "2.2",
+      "alcohol": false,
+      "nota": "La ordenanza lista 'fotocopias' y 'centros de copiado' por separado; algunas zonas prohíben solo los centros de copiado."
+    },
+    "servicios_internet": {
+      "nombre": "Servicios de internet",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "mascotas": {
+      "nombre": "Alimentos y artículos para mascotas",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "distribucion_alimentos": {
+      "nombre": "Distribución de confites y otros alimentos",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "restaurante": {
+      "nombre": "Restaurante y similares (sin venta de alcohol)",
+      "clase": "2.2",
+      "alcohol": false,
+      "nota": "Si vende alcohol, usar el giro restaurante_con_alcohol."
+    },
+    "fuente_soda": {
+      "nombre": "Fuente de soda (sin venta de alcohol)",
+      "clase": "2.2",
+      "alcohol": false,
+      "nota": "Si vende alcohol, usar el giro restaurante_con_alcohol."
+    },
+    "repuestos_automovil": {
+      "nombre": "Artículos y repuestos de automóviles",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "centro_comercial": {
+      "nombre": "Centro comercial",
+      "clase": "2.2",
+      "alcohol": false,
+      "condicion_general": "Suele corresponder a escala mayor o mediana (art. 2.1.36 OGUC, no cargado): declarar la escala del proyecto."
+    },
+    "mercado": {
+      "nombre": "Mercado",
+      "clase": "2.2",
+      "alcohol": false,
+      "condicion_general": "Suele corresponder a escala mayor o mediana (art. 2.1.36 OGUC, no cargado): declarar la escala del proyecto."
+    },
+    "supermercado": {
+      "nombre": "Supermercado",
+      "clase": "2.2",
+      "alcohol": false,
+      "condicion_general": "Suele corresponder a escala mayor o mediana (art. 2.1.36 OGUC, no cargado): declarar la escala del proyecto."
+    },
+    "multitiendas": {
+      "nombre": "Multitiendas",
+      "clase": "2.2",
+      "alcohol": false,
+      "condicion_general": "Suele corresponder a escala mayor o mediana (art. 2.1.36 OGUC, no cargado): declarar la escala del proyecto."
+    },
+    "compraventa_automoviles": {
+      "nombre": "Compra y venta de automóviles",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "venta_maquinarias": {
+      "nombre": "Compra y venta de maquinarias",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "carbon_lena": {
+      "nombre": "Distribución y venta de carbón y leña",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "materiales_construccion": {
+      "nombre": "Depósito y venta de materiales de construcción",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "estacion_servicio": {
+      "nombre": "Centro o estación de servicio automotor",
+      "clase": "2.2",
+      "alcohol": false,
+      "condicion_general": "Art. 31: predio con frente mínimo de 40 m, no colindante con salud, educación, seguridad, culto ni cultura; además arts. 7.1.3 a 7.1.3.5 PRMS."
+    },
+    "revision_tecnica": {
+      "nombre": "Planta de revisión técnica",
+      "clase": "2.2",
+      "alcohol": false,
+      "condicion_general": "Art. 31: predio con frente mínimo de 40 m, no colindante con salud, educación, seguridad, culto ni cultura; además arts. 7.1.3 a 7.1.3.5 PRMS."
+    },
+    "gas_licuado": {
+      "nombre": "Venta y depósito de gas licuado",
+      "clase": "2.2",
+      "alcohol": false,
+      "condicion_general": "Art. 30: almacenamiento en recinto cerrado no adosado a medianeros, carga y descarga al interior, normas SEC y Título 4 Capítulo 3 OGUC."
+    },
+    "centro_copiado": {
+      "nombre": "Centro de copiado",
+      "clase": "2.2",
+      "alcohol": false
+    },
+    "botilleria": {
+      "nombre": "Botillería",
+      "clase": "2.2",
+      "alcohol": true
+    },
+    "bar": {
+      "nombre": "Bar",
+      "clase": "2.2",
+      "alcohol": true
+    },
+    "pub": {
+      "nombre": "Pub",
+      "clase": "2.2",
+      "alcohol": true
+    },
+    "restaurante_con_alcohol": {
+      "nombre": "Restaurante con venta de alcohol",
+      "clase": "2.2",
+      "alcohol": true
+    },
+    "discoteca": {
+      "nombre": "Discoteca",
+      "clase": "2.2",
+      "alcohol": true
+    },
+    "cabaret_boite": {
+      "nombre": "Cabaret, boite y similares",
+      "clase": "2.2",
+      "alcohol": true
+    },
+    "peluqueria": {
+      "nombre": "Peluquería",
+      "clase": "2.10",
+      "alcohol": false
+    },
+    "amasanderia": {
+      "nombre": "Amasandería, panadería o pastelería con elaboración",
+      "clase": "2.10",
+      "alcohol": false
+    },
+    "costura": {
+      "nombre": "Costura y modas",
+      "clase": "2.10",
+      "alcohol": false
+    },
+    "reparacion_calzado": {
+      "nombre": "Reparadora de calzado y artículos de cuero",
+      "clase": "2.10",
+      "alcohol": false
+    },
+    "reparacion_electronica": {
+      "nombre": "Reparación eléctrica y de electrónicos",
+      "clase": "2.10",
+      "alcohol": false
+    },
+    "lavanderia": {
+      "nombre": "Lavandería",
+      "clase": "2.10",
+      "alcohol": false
+    },
+    "artesanias": {
+      "nombre": "Elaboración de artesanías y manualidades",
+      "clase": "2.10",
+      "alcohol": false
+    },
+    "taller_bicicletas": {
+      "nombre": "Taller de bicicletas",
+      "clase": "2.10",
+      "alcohol": false,
+      "taller": true
+    },
+    "taller_tejidos_ceramica": {
+      "nombre": "Taller de tejidos, cerámica o acrílico",
+      "clase": "2.10",
+      "alcohol": false,
+      "taller": true
+    },
+    "vidrieria": {
+      "nombre": "Vidriería",
+      "clase": "2.10",
+      "alcohol": false
+    },
+    "vivero": {
+      "nombre": "Jardín de plantas (vivero)",
+      "clase": "2.10",
+      "alcohol": false
+    },
+    "taller_mecanico": {
+      "nombre": "Taller mecánico",
+      "clase": "2.10",
+      "alcohol": false,
+      "taller": true
+    },
+    "taller_pintura_desabolladura": {
+      "nombre": "Taller de pintura y desabolladura",
+      "clase": "2.10",
+      "alcohol": false,
+      "taller": true
+    },
+    "vulcanizacion": {
+      "nombre": "Taller de vulcanización",
+      "clase": "2.10",
+      "alcohol": false,
+      "taller": true
+    },
+    "imprenta": {
+      "nombre": "Imprenta y encuadernación",
+      "clase": "2.10",
+      "alcohol": false
+    },
+    "hostal": {
+      "nombre": "Residencial, hostal u hospedería",
+      "clase": "1.2",
+      "alcohol": false
+    },
+    "hotel": {
+      "nombre": "Hotel",
+      "clase": "1.2",
+      "alcohol": false
+    },
+    "apart_hotel": {
+      "nombre": "Apart hotel",
+      "clase": "1.2",
+      "alcohol": false
+    },
+    "motel": {
+      "nombre": "Motel",
+      "clase": "1.2",
+      "alcohol": false
+    }
+  },
+  "clases": {
+    "2.2": "2.2 Comercio",
+    "2.10": "2.10 Servicios (artesanales)",
+    "1.2": "1.2 Hospedaje"
+  }
+}

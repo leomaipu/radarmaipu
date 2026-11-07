@@ -72,6 +72,19 @@ Las URLs del GIS se pueden cambiar con `RM_GIS_BASE` o `RM_CALLES_URL`, sin toca
 - `GET /api/barrios` o `GET /api/barrios?q=maipu`: lista los 21 barrios o los busca por nombre, sin distinguir tildes ni mayúsculas. Fuente: capa "LÍMITE BARRIOS ACTUAL" (`RM_BARRIOS_URL` la cambia).
 - `GET /api/patentes?minlon=&minlat=&maxlon=&maxlat=`: patentes dentro de un área.
 - `GET /api/punto?lon=&lat=&radio_m=150`: calle más cercana y patentes en el radio.
+- `GET /api/giros`: giros soportados con su clase de ordenanza.
+- `GET /api/informe?lat=&lon=&giro=bazar[&escala=basico|menor|mediano|mayor][&formato=texto]`: informe
+  orientativo de factibilidad (zona del PRC, compatibilidad del giro, advertencias de vía y riesgo, alturas).
+  No reemplaza el Certificado de Informaciones Previas.
+
+## Informe orientativo (PRC)
+
+- Las reglas están en `config/prc/` (matriz por zona, giros, vigencia de modificaciones, alturas, vialidad,
+  riesgos y checklist de Rentas). Cada zona cita artículo y página de la Ordenanza PRC 2004.
+- Las capas del servicio `MAIPU/PRCMaipu` se consultan en vivo por cada informe (`RM_PRC_URL` cambia la URL).
+  Si una capa no responde, su sección queda `NO_DISPONIBLE` y el informe se entrega igual.
+- El frente a vía estructurante se estima por proximidad al eje de la capa 0: es aproximado y el informe lo advierte.
+- Pruebas en vivo contra el GIS: `.venv/bin/python -m pytest -m gis tests` (no corren por defecto).
 
 ## Limitaciones conocidas del MVP
 

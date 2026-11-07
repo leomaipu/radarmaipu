@@ -1,0 +1,16 @@
+{
+  "_nota": "Textos de advertencia por tipo de área de riesgo (capa 6). Resumen del Capítulo V 'Áreas de riesgo, restricción y protección' (art. 47 en el texto 2004; la Mod. N°2 y la Mod. N°4 renumeraron los artículos). No cambian el estado del informe.",
+  "fuente": "Ordenanza PRC 2004, Capítulo V (art. 47 original), p. 40-43",
+  "tipos": {
+    "AR-1A": "Área recurrentemente inundable: no se permiten edificaciones con permanencia de personas ni permisos de edificación hasta la recepción de las obras del Zanjón de la Aguada.",
+    "AR-1B": "Área amagada por inundación: no se otorgan permisos de edificación hasta la recepción de las obras del Zanjón de la Aguada; primer piso a 30 cm sobre la solera.",
+    "AR-1C": "Lugar crítico de concentración de aguas: primer piso a 30 cm sobre la solera y obras de mitigación; la restricción se levanta con los colectores del Plan Maestro de Aguas Lluvia.",
+    "AR-2": "Riesgo sísmico: la DOM exige estudio de mecánica de suelos para permisos de edificación.",
+    "AR-3": "Riesgo de derrumbe (ex pozo Santa Adela): sin construcciones permanentes en el buffer de 20 m.",
+    "AR-4": "Terminales y plantas de combustibles: rige el art. 8.2.2.2 del PRMS y las áreas de restricción de la SEC.",
+    "AR-6B": "Subestación o línea de transmisión eléctrica: fajas de protección según tensión (art. 8.4.3 PRMS)."
+  },
+  "bleve": {
+    "texto": "El punto cae en la capa 'Zona BLEVE (AR-4)' (buffer de {buff} m). Fuente de la distancia sin validar (pendiente 7): solo informativo."
+  }
+}
