@@ -33,11 +33,9 @@ class Store:
             return []
         return [b for b in self.list_barrios() if needle in _sin_tildes(b["BARRIO"])][:limit]
 
-    def search_calles(self, q: str, limit: int = 20) -> list[dict]:
-        needle = q.strip().upper()
-        if not needle:
-            return []
-        return [c for c in self.calles if needle in (c.get("NOMBRE") or "").upper()][:limit]
+    def search_calles(self, q: str, limit: int = 20) -> dict:
+        from .busqueda import buscar_calles
+        return buscar_calles(self.calles, q, limit)
 
     def patentes_in_bbox(self, minlon, minlat, maxlon, maxlat, limit: int = 500) -> list[dict]:
         out = []

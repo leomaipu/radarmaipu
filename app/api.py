@@ -48,7 +48,7 @@ def health():
 
 @app.get("/api/calles")
 def calles(q: str = Query(..., min_length=2, max_length=60)):
-    return {"resultados": [{k: v for k, v in c.items() if k != "path"} for c in store.search_calles(q)]}
+    return store.search_calles(q)
 
 
 @app.get("/api/barrios")
