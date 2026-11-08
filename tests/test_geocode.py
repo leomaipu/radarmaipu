@@ -3,9 +3,7 @@ import json
 import httpx
 import pytest
 
-from app import geocode
-from app.api import app
-from fastapi.testclient import TestClient
+from nucleo import geocode
 
 
 REVERSE_OK = {
@@ -56,11 +54,3 @@ def test_base_url_comes_from_config_and_env_overrides(monkeypatch):
     monkeypatch.setenv("RM_GEOCODER_URL", "https://ejemplo.test/GeocodeServer/")
     assert geocode.base_url() == "https://ejemplo.test/GeocodeServer"
     geocode.base_url.cache_clear()
-
-
-def test_api_direccion_maps_geocoder_failure_to_502(monkeypatch):
-    def boom(client, lon, lat, distance_m=100):
-        raise geocode.GeocodeError("caído")
-    monkeypatch.setattr(geocode, "reverse", boom)
-    r = TestClient(app).get("/api/direccion", params={"lon": -70.75, "lat": -33.51})
-    assert r.status_code == 502

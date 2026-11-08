@@ -6,7 +6,7 @@ import sys
 
 import httpx
 
-from app.loader import config_from_env
+from nucleo.loader import config_from_env
 
 
 def main(terminos: list[str]) -> None:

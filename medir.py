@@ -13,8 +13,8 @@ import sys
 
 import httpx
 
-from app.loader import OID_BY_LAYER, config_from_env
-from app.privacy import CALLE_PUBLIC_FIELDS
+from nucleo.loader import OID_BY_LAYER, config_from_env
+from nucleo.privacy import CALLE_PUBLIC_FIELDS
 
 # Campos no personales cuyos valores interesan para decidir el alcance.
 DISTINCT_FIELDS = {

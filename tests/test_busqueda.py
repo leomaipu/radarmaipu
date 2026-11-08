@@ -1,4 +1,4 @@
-from app.busqueda import buscar_calles, normalizar, separar_numero
+from nucleo.busqueda import buscar_calles, normalizar, separar_numero
 
 CALLES = [
     {"NOMBRE": "PAJARITOS", "CLASE": "CALLE", "SUF_DIREC": "", "path": [(0, 0), (1, 1)]},

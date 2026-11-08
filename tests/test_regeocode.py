@@ -1,7 +1,7 @@
 import httpx
 
-from app import geocode
-from app.regeocode import regeocodificar
+from nucleo import geocode
+from nucleo.regeocode import regeocodificar
 
 
 def _client(respuesta):
@@ -45,6 +45,6 @@ def test_patente_without_direccion_is_skipped():
 
 
 def test_loader_requests_direccion_in_patente_layers():
-    from app.loader import PATENTE_FIELDS_BY_LAYER
+    from nucleo.loader import PATENTE_FIELDS_BY_LAYER
     for capa, campos in PATENTE_FIELDS_BY_LAYER.items():
         assert "DIRECCION" in campos, capa

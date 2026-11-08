@@ -1,0 +1,189 @@
+{% extends "web/base.html" %}{% load static %}
+{% block cuerpo %}
+<a class="saltar" href="#panel">Ir al simulador</a>
+<p class="sr" id="anuncio" role="status" aria-live="polite"></p>
+{% include "web/iconos.svg" %}
+
+<div class="app" id="app" data-paso="1">
+  <header class="barra" role="banner">
+    <a class="barra__marca" href="{% url 'web:inicio' %}" aria-label="Radar Maipú, inicio">
+      <img src="{% static 'web/img/logo-maipu.svg' %}" alt="Municipalidad de Maipú — Juntos avanzamos" width="118" height="40">
+    </a>
+    <span class="barra__producto" aria-hidden="true"><span class="puntos"><i></i><i></i><i></i></span>Radar</span>
+    <button class="boton-icono" type="button" data-abrir="acerca" aria-haspopup="dialog" aria-label="Cómo funciona">
+      <svg aria-hidden="true"><use href="#i-info"/></svg>
+    </button>
+  </header>
+
+  <div id="mapa" class="mapa" role="application" aria-label="Mapa de Maipú. Toca un punto para elegir dónde estará tu negocio."></div>
+
+  <div class="controles-mapa" aria-label="Controles del mapa">
+    <button class="control" type="button" id="btn-ubicacion" aria-label="Usar mi ubicación">
+      <svg aria-hidden="true"><use href="#i-gps"/></svg>
+    </button>
+    <button class="control" type="button" id="btn-capas" aria-pressed="false" aria-controls="leyenda" aria-label="Mostrar zonas del Plan Regulador">
+      <svg aria-hidden="true"><use href="#i-capas"/></svg>
+    </button>
+  </div>
+
+  <aside class="leyenda" id="leyenda" hidden aria-label="Zonas del Plan Regulador">
+    <div class="leyenda__cabeza">
+      <strong>Zonas del Plan Regulador</strong>
+      <button class="boton-icono boton-icono--chico" type="button" data-cerrar-leyenda aria-label="Ocultar zonas">
+        <svg aria-hidden="true"><use href="#i-cerrar"/></svg>
+      </button>
+    </div>
+    <label class="leyenda__opacidad">Transparencia <input type="range" id="opacidad-prc" min="20" max="90" value="55"></label>
+    <div class="leyenda__lista" id="leyenda-lista"><p class="sutil">Cargando simbología oficial…</p></div>
+    <p class="leyenda__fuente">Fuente: GIS Municipalidad de Maipú (PRC vigente)</p>
+  </aside>
+
+  <section class="hoja" id="panel" aria-label="Simulador de negocio" data-altura="media">
+    <button class="hoja__asa" type="button" id="hoja-asa" aria-label="Expandir o contraer el panel" aria-controls="panel">
+      <span></span>
+    </button>
+
+    <nav class="pasos" aria-label="Pasos del simulador">
+      <ol>
+        <li><button type="button" class="paso-dot" data-ir="1" aria-current="step"><i></i><span>Dónde</span></button></li>
+        <li><button type="button" class="paso-dot" data-ir="2" disabled><i></i><span>Negocio</span></button></li>
+        <li><button type="button" class="paso-dot" data-ir="3" disabled><i></i><span>Resultado</span></button></li>
+      </ol>
+    </nav>
+
+    <div class="hoja__cuerpo" id="hoja-cuerpo">
+      <!-- PASO 1 -->
+      <div class="paso" id="paso-1" data-paso="1">
+        <p class="ojo">Simulador para emprender · Paso 1 de 3</p>
+        <h1 class="titulo">¿Dónde quieres <em>emprender</em>?</h1>
+        <p class="bajada">Busca la dirección o toca el mapa. Te diremos si tu negocio es compatible con el Plan Regulador.</p>
+
+        <form class="buscador" role="search">
+          <label class="sr" for="q">Dirección en Maipú</label>
+          <svg class="buscador__icono" aria-hidden="true"><use href="#i-buscar"/></svg>
+          <input id="q" name="q" type="search" autocomplete="street-address" enterkeyhint="search"
+                 placeholder="Ej: Av. Pajaritos 1912" minlength="3" maxlength="150"
+                 hx-get="{% url 'web:panel_buscar' %}" hx-trigger="input changed delay:400ms, search"
+                 hx-target="#resultados-busqueda" hx-indicator="#buscando" aria-controls="resultados-busqueda">
+          <span class="cargador cargador--chico htmx-indicator" id="buscando" aria-hidden="true"><i></i><i></i><i></i></span>
+        </form>
+        <div id="resultados-busqueda" class="resultados-busqueda" aria-live="polite"></div>
+
+        <button class="boton boton--suave" type="button" id="btn-ubicacion-2">
+          <svg aria-hidden="true"><use href="#i-gps"/></svg> Usar mi ubicación actual
+        </button>
+
+        <div class="elegido" id="elegido" hidden>
+          <span class="elegido__pin" aria-hidden="true"><svg><use href="#i-pin"/></svg></span>
+          <div>
+            <p class="elegido__titulo" id="elegido-dir">Punto elegido</p>
+            <p class="elegido__sub" id="elegido-sub"></p>
+          </div>
+        </div>
+        <div class="acciones">
+          <button class="boton boton--primario" type="button" id="btn-a-paso-2" disabled>
+            Continuar <svg aria-hidden="true"><use href="#i-flecha"/></svg>
+          </button>
+        </div>
+        <ol class="como como--panel" aria-label="Así funciona">
+          <li><i class="punto punto--mag"></i><div><strong>Elige el lugar</strong><p class="sutil">Dirección o un toque en el mapa.</p></div></li>
+          <li><i class="punto punto--tur"></i><div><strong>Cuéntanos tu negocio</strong><p class="sutil">63 giros de comercio, servicios y hospedaje.</p></div></li>
+          <li><i class="punto punto--ama"></i><div><strong>Recibe tu orientación</strong><p class="sutil">Plan Regulador, condiciones, riesgos y comercio cercano.</p></div></li>
+        </ol>
+      </div>
+
+      <!-- PASO 2 -->
+      <div class="paso" id="paso-2" data-paso="2" hidden>
+        <p class="ojo">Paso 2 de 3</p>
+        <h2 class="titulo">¿Qué negocio quieres <em>abrir</em>?</h2>
+        <p class="bajada" id="paso2-lugar"></p>
+
+        <div class="chips" role="group" aria-label="Giros frecuentes">
+          {% for g in populares %}<button type="button" class="chip" data-giro="{{ g.codigo }}">{{ g.nombre }}</button>{% endfor %}
+        </div>
+
+        <div class="buscador buscador--claro">
+          <label class="sr" for="filtro-giro">Buscar giro</label>
+          <svg class="buscador__icono" aria-hidden="true"><use href="#i-buscar"/></svg>
+          <input id="filtro-giro" type="search" placeholder="Buscar: almacén, peluquería, hostal…" autocomplete="off">
+        </div>
+
+        <fieldset class="giros" id="lista-giros">
+          <legend class="sr">Elige el giro de tu negocio</legend>
+          {% for grupo in grupos %}
+          <div class="giros__grupo" data-grupo>
+            <p class="giros__titulo">{{ grupo.nombre }} <span>{{ grupo.titulo }}</span></p>
+            {% for g in grupo.giros %}
+            <label class="giro" data-buscar="{{ g.buscar }}">
+              <input type="radio" name="giro" value="{{ g.codigo }}">
+              <span class="giro__nombre">{{ g.nombre }}</span>
+              {% if g.alcohol %}<span class="etiqueta etiqueta--viol" title="Requiere además patente de alcoholes">Alcohol</span>{% endif %}
+            </label>
+            {% endfor %}
+          </div>
+          {% endfor %}
+          <p class="sutil" id="sin-giros" hidden>No encontramos ese giro. Prueba con otra palabra.</p>
+        </fieldset>
+
+        <fieldset class="escala">
+          <legend>¿De qué escala será? <button type="button" class="ayuda" data-abrir="ayuda-escala" aria-label="¿Qué es la escala?">?</button></legend>
+          <div class="segmentos">
+            {% for valor, nombre in escalas %}
+            <label class="segmento"><input type="radio" name="escala" value="{{ valor }}" {% if not valor %}checked{% endif %}><span>{{ nombre }}</span></label>
+            {% endfor %}
+          </div>
+        </fieldset>
+
+        <div class="acciones acciones--fijas">
+          <button class="boton boton--texto" type="button" data-ir="1">Cambiar lugar</button>
+          <button class="boton boton--primario" type="button" id="btn-simular" disabled>
+            Simular <svg aria-hidden="true"><use href="#i-flecha"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- PASO 3 -->
+      <div class="paso" id="paso-3" data-paso="3" hidden>
+        <div id="resultado" aria-busy="false"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<template id="tpl-cargando">
+  <div class="esperando" role="status">
+    <span class="cargador" aria-hidden="true"><i></i><i></i><i></i></span>
+    <p><strong>Revisando el Plan Regulador…</strong><br><span class="sutil">Consultamos zonas, vías y áreas de riesgo en el GIS municipal.</span></p>
+  </div>
+</template>
+
+<dialog class="dialogo" id="acerca" aria-labelledby="acerca-titulo">
+  <form method="dialog" class="dialogo__cerrar"><button class="boton-icono" aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button></form>
+  <p class="ojo">Radar Maipú</p>
+  <h2 class="titulo" id="acerca-titulo">Simula antes de <em>emprender</em></h2>
+  <ol class="como">
+    <li><i class="punto punto--mag"></i><div><strong>Elige el lugar.</strong> Busca la dirección o toca el mapa.</div></li>
+    <li><i class="punto punto--tur"></i><div><strong>Cuéntanos tu negocio.</strong> Elige el giro y, si la sabes, la escala.</div></li>
+    <li><i class="punto punto--ama"></i><div><strong>Revisa el resultado.</strong> Compatibilidad con el Plan Regulador, condiciones, comercio cercano y próximos pasos.</div></li>
+  </ol>
+  <p class="aviso"><svg aria-hidden="true"><use href="#i-alerta"/></svg> Es un informe orientativo. No reemplaza el Certificado de Informaciones Previas ni la resolución de la DOM o de Rentas.</p>
+  <p class="sutil">Datos: Plan Regulador Comunal 2004 y Modificación N°4 (2024), GIS y catastro de patentes de la Municipalidad de Maipú.</p>
+  <button class="boton boton--suave" type="button" id="btn-instalar" hidden>
+    <svg aria-hidden="true"><use href="#i-instalar"/></svg> Instalar en mi teléfono
+  </button>
+</dialog>
+
+<dialog class="dialogo" id="ayuda-escala" aria-labelledby="escala-titulo">
+  <form method="dialog" class="dialogo__cerrar"><button class="boton-icono" aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button></form>
+  <h2 class="titulo titulo--chico" id="escala-titulo">¿Qué es la escala?</h2>
+  <p>El Plan Regulador permite algunos giros solo hasta cierto tamaño (escala básica, menor, mediana o mayor). La escala depende de la cantidad de personas que puede recibir el local y de sus estacionamientos (art. 2.1.36 de la Ordenanza General de Urbanismo y Construcciones).</p>
+  <p>Un almacén o una peluquería de barrio suelen ser de escala básica. Si no lo sabes, deja <strong>«No lo sé»</strong>: revisaremos las escalas básica, menor y mediana.</p>
+</dialog>
+
+{{ config_js|json_script:"config-radar" }}
+<script src="{% static 'web/vendor/leaflet/leaflet.js' %}" defer></script>
+<script src="{% static 'web/vendor/esri-leaflet.js' %}" defer></script>
+<script src="{% static 'web/vendor/markercluster/leaflet.markercluster.js' %}" defer></script>
+<script src="{% static 'web/vendor/htmx.min.js' %}" defer></script>
+<script src="{% static 'web/js/app.js' %}" defer></script>
+{% endblock %}

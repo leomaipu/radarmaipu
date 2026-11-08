@@ -1,0 +1,11 @@
+{% extends "web/base.html" %}{% load static %}
+{% block titulo %}Sin conexión · Radar Maipú{% endblock %}
+{% block cuerpo %}
+<main class="pagina-simple">
+  <img src="{% static 'web/img/logo-maipu.svg' %}" alt="Municipalidad de Maipú — Juntos avanzamos" width="177" height="60">
+  <span class="cargador" aria-hidden="true"><i></i><i></i><i></i></span>
+  <h1 class="titulo">Estás sin <em>conexión</em></h1>
+  <p class="bajada">El simulador necesita internet para consultar el Plan Regulador. Revisa tu conexión e inténtalo de nuevo.</p>
+  <a class="boton boton--primario" href="/">Reintentar</a>
+</main>
+{% endblock %}

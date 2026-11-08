@@ -1,5 +1,5 @@
-from app.ingest import normalize_calle, normalize_patente
-from app.normalize import clean_text
+from nucleo.ingest import normalize_calle, normalize_patente
+from nucleo.normalize import clean_text
 
 
 def test_clean_text_removes_null_markers_and_spaces():

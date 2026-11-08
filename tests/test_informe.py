@@ -3,10 +3,11 @@ import json
 
 import httpx
 import pytest
-from fastapi.testclient import TestClient
+from django.test import Client
 
-from app import api, informe, prc_config, prc_gis, usos
-from app.privacy import PERSONAL_FIELDS
+from api import views as api
+from nucleo import informe, prc_config, prc_gis, usos
+from nucleo.privacy import PERSONAL_FIELDS
 
 CFG = prc_config.leer()
 LAT, LON = -33.48, -70.76
@@ -259,10 +260,19 @@ def test_texto_muestra_aviso_y_tres_bloques():
 
 
 # API
+class _Cliente:
+    """Envuelve el cliente de Django con la firma de requests/httpx que usan estas pruebas."""
+    def __init__(self):
+        self._c = Client()
+
+    def get(self, ruta, params=None):
+        return self._c.get(ruta, data=params or {})
+
+
 @pytest.fixture
-def cliente(monkeypatch):
+def cliente(monkeypatch, db):
     monkeypatch.setattr(api, "cliente_gis", lambda: gis_falso(vias=[via_a(25)], riesgos=[("AR-2", "SISMICO")]))
-    return TestClient(api.app)
+    return _Cliente()
 
 
 def test_api_informe_json_y_texto(cliente):
@@ -273,7 +283,7 @@ def test_api_informe_json_y_texto(cliente):
     assert cliente.get("/api/informe", params={"lat": LAT, "lon": LON, "giro": "bazar",
                                                "frente_via": "a b;"}).status_code == 422
     r = cliente.get("/api/informe", params={"lat": LAT, "lon": LON, "giro": "bazar", "formato": "texto"})
-    assert r.status_code == 200 and r.text.startswith("AVISO:")
+    assert r.status_code == 200 and r.content.decode().startswith("AVISO:")
 
 
 def test_api_rechaza_giro_libre_y_escala_invalida(cliente):

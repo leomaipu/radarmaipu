@@ -4,135 +4,306 @@
     "bazar": {
       "nombre": "Bazar",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "BAZAR",
+        "PAQUETERIA",
+        "REGALOS"
+      ],
+      "sinonimos": [
+        "regalos",
+        "paquetería",
+        "cotillón"
+      ]
     },
     "abarrotes": {
       "nombre": "Almacén de abarrotes",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "ALMACEN",
+        "ABARROTES",
+        "MINIMERCADO",
+        "MINIMARKET"
+      ],
+      "sinonimos": [
+        "almacén",
+        "minimarket",
+        "negocio de barrio"
+      ]
     },
     "confites_bebidas": {
       "nombre": "Confites, cigarrillos, bebidas, diarios y revistas",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "CONFITES",
+        "CONFITERIA",
+        "BEBIDAS",
+        "CIGARRILLOS",
+        "KIOSCO",
+        "DIARIOS"
+      ],
+      "sinonimos": [
+        "kiosco",
+        "quiosco",
+        "dulces"
+      ]
     },
     "panaderia_venta": {
       "nombre": "Panadería (solo venta)",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "PANADERIA",
+        "PAN "
+      ]
     },
     "carniceria": {
       "nombre": "Carnicería",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "CARNICERIA",
+        "CARNES",
+        "AVES FAENADAS"
+      ]
     },
     "fiambreria": {
       "nombre": "Fiambrería",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "FIAMBRERIA",
+        "CECINAS"
+      ]
     },
     "frutas_verduras": {
       "nombre": "Frutas y verduras",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "FRUTAS",
+        "VERDURAS",
+        "VERDULERIA",
+        "FRUTERIA"
+      ]
     },
     "ferreteria": {
       "nombre": "Ferretería",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "FERRETERIA"
+      ],
+      "sinonimos": [
+        "materiales"
+      ]
     },
     "floreria": {
       "nombre": "Florería",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "FLORERIA",
+        "FLORES"
+      ],
+      "sinonimos": [
+        "flores"
+      ]
     },
     "pollos_asados": {
       "nombre": "Venta de pollos asados",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "POLLOS ASADOS",
+        "POLLO"
+      ]
     },
     "farmacia": {
       "nombre": "Farmacia y perfumería",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "FARMACIA"
+      ]
     },
     "libreria": {
       "nombre": "Librería",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "LIBRERIA",
+        "PAPELERIA"
+      ],
+      "sinonimos": [
+        "papelería",
+        "útiles escolares"
+      ]
     },
     "vestuario_calzado": {
       "nombre": "Vestuario, calzado y accesorios",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "VESTUARIO",
+        "ROPA",
+        "CALZADO",
+        "ZAPATERIA",
+        "BOUTIQUE"
+      ],
+      "sinonimos": [
+        "ropa",
+        "zapatería",
+        "boutique"
+      ]
     },
     "textiles": {
       "nombre": "Textiles, telas y similares",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "TEXTIL",
+        "TELAS",
+        "PAQUETERIA"
+      ]
     },
     "articulos_deportivos": {
       "nombre": "Artículos deportivos",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "DEPORTIV"
+      ]
     },
     "electronica": {
       "nombre": "Música, electrónicos y línea blanca",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "ELECTRONIC",
+        "LINEA BLANCA",
+        "COMPUTACION"
+      ],
+      "sinonimos": [
+        "computación",
+        "celulares"
+      ]
     },
     "accesorios_hogar": {
       "nombre": "Accesorios para el hogar",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "HOGAR",
+        "MENAJE",
+        "DECORACION"
+      ]
     },
     "articulos_salud": {
       "nombre": "Artículos de salud",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "ORTOPEDIA",
+        "SALUD"
+      ]
     },
     "telefonia": {
       "nombre": "Telefonía",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "TELEFONIA",
+        "CELULAR"
+      ]
     },
     "fotocopias": {
       "nombre": "Fotocopias",
       "clase": "2.2",
       "alcohol": false,
-      "nota": "La ordenanza lista 'fotocopias' y 'centros de copiado' por separado; algunas zonas prohíben solo los centros de copiado."
+      "nota": "La ordenanza lista 'fotocopias' y 'centros de copiado' por separado; algunas zonas prohíben solo los centros de copiado.",
+      "palabras_actividad": [
+        "FOTOCOPIA"
+      ]
     },
     "servicios_internet": {
       "nombre": "Servicios de internet",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "INTERNET",
+        "CIBER"
+      ]
     },
     "mascotas": {
       "nombre": "Alimentos y artículos para mascotas",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "MASCOTAS",
+        "PERROS",
+        "GATOS"
+      ],
+      "sinonimos": [
+        "veterinaria",
+        "pet shop"
+      ]
     },
     "distribucion_alimentos": {
       "nombre": "Distribución de confites y otros alimentos",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "DISTRIBUCION",
+        "DISTRIBUIDORA"
+      ]
     },
     "restaurante": {
       "nombre": "Restaurante y similares (sin venta de alcohol)",
       "clase": "2.2",
       "alcohol": false,
-      "nota": "Si vende alcohol, usar el giro restaurante_con_alcohol."
+      "nota": "Si vende alcohol, usar el giro restaurante_con_alcohol.",
+      "palabras_actividad": [
+        "RESTAURANT",
+        "PLATOS PREPARADOS",
+        "COMIDA"
+      ],
+      "sinonimos": [
+        "café",
+        "cafetería",
+        "comida",
+        "pizzería",
+        "sushi",
+        "cocinería",
+        "picada"
+      ]
     },
     "fuente_soda": {
       "nombre": "Fuente de soda (sin venta de alcohol)",
       "clase": "2.2",
       "alcohol": false,
-      "nota": "Si vende alcohol, usar el giro restaurante_con_alcohol."
+      "nota": "Si vende alcohol, usar el giro restaurante_con_alcohol.",
+      "palabras_actividad": [
+        "FUENTE DE SODA",
+        "EMPAREDADOS",
+        "SANDWICH"
+      ],
+      "sinonimos": [
+        "café",
+        "completos",
+        "sándwich",
+        "comida rápida"
+      ]
     },
     "repuestos_automovil": {
       "nombre": "Artículos y repuestos de automóviles",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "REPUESTOS"
+      ]
     },
     "centro_comercial": {
       "nombre": "Centro comercial",
@@ -144,13 +315,19 @@
       "nombre": "Mercado",
       "clase": "2.2",
       "alcohol": false,
-      "condicion_general": "Suele corresponder a escala mayor o mediana (art. 2.1.36 OGUC, no cargado): declarar la escala del proyecto."
+      "condicion_general": "Suele corresponder a escala mayor o mediana (art. 2.1.36 OGUC, no cargado): declarar la escala del proyecto.",
+      "palabras_actividad": [
+        "MERCADO"
+      ]
     },
     "supermercado": {
       "nombre": "Supermercado",
       "clase": "2.2",
       "alcohol": false,
-      "condicion_general": "Suele corresponder a escala mayor o mediana (art. 2.1.36 OGUC, no cargado): declarar la escala del proyecto."
+      "condicion_general": "Suele corresponder a escala mayor o mediana (art. 2.1.36 OGUC, no cargado): declarar la escala del proyecto.",
+      "palabras_actividad": [
+        "SUPERMERCADO"
+      ]
     },
     "multitiendas": {
       "nombre": "Multitiendas",
@@ -161,7 +338,11 @@
     "compraventa_automoviles": {
       "nombre": "Compra y venta de automóviles",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "COMPRAVENTA DE AUTOMOVILES",
+        "AUTOMOVILES"
+      ]
     },
     "venta_maquinarias": {
       "nombre": "Compra y venta de maquinarias",
@@ -171,12 +352,20 @@
     "carbon_lena": {
       "nombre": "Distribución y venta de carbón y leña",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "CARBON",
+        "LENA"
+      ]
     },
     "materiales_construccion": {
       "nombre": "Depósito y venta de materiales de construcción",
       "clase": "2.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "MATERIALES DE CONSTRUCCION",
+        "CONSTRUCCION"
+      ]
     },
     "estacion_servicio": {
       "nombre": "Centro o estación de servicio automotor",
@@ -194,7 +383,11 @@
       "nombre": "Venta y depósito de gas licuado",
       "clase": "2.2",
       "alcohol": false,
-      "condicion_general": "Art. 30: almacenamiento en recinto cerrado no adosado a medianeros, carga y descarga al interior, normas SEC y Título 4 Capítulo 3 OGUC."
+      "condicion_general": "Art. 30: almacenamiento en recinto cerrado no adosado a medianeros, carga y descarga al interior, normas SEC y Título 4 Capítulo 3 OGUC.",
+      "palabras_actividad": [
+        "GAS LICUADO",
+        "GAS"
+      ]
     },
     "centro_copiado": {
       "nombre": "Centro de copiado",
@@ -204,73 +397,150 @@
     "botilleria": {
       "nombre": "Botillería",
       "clase": "2.2",
-      "alcohol": true
+      "alcohol": true,
+      "palabras_actividad": [
+        "LICORES",
+        "BOTILLERIA",
+        "BEBIDAS ALCOHOLICAS",
+        "BEB.ALCOHOL"
+      ],
+      "sinonimos": [
+        "licorería",
+        "depósito de licores"
+      ]
     },
     "bar": {
       "nombre": "Bar",
       "clase": "2.2",
-      "alcohol": true
+      "alcohol": true,
+      "palabras_actividad": [
+        "BAR ",
+        "CANTINA"
+      ]
     },
     "pub": {
       "nombre": "Pub",
       "clase": "2.2",
-      "alcohol": true
+      "alcohol": true,
+      "palabras_actividad": [
+        "PUB"
+      ]
     },
     "restaurante_con_alcohol": {
       "nombre": "Restaurante con venta de alcohol",
       "clase": "2.2",
-      "alcohol": true
+      "alcohol": true,
+      "palabras_actividad": [
+        "RESTAURANT"
+      ]
     },
     "discoteca": {
       "nombre": "Discoteca",
       "clase": "2.2",
-      "alcohol": true
+      "alcohol": true,
+      "palabras_actividad": [
+        "DISCOTECA"
+      ]
     },
     "cabaret_boite": {
       "nombre": "Cabaret, boite y similares",
       "clase": "2.2",
-      "alcohol": true
+      "alcohol": true,
+      "palabras_actividad": [
+        "CABARET",
+        "BOITE"
+      ]
     },
     "peluqueria": {
       "nombre": "Peluquería",
       "clase": "2.10",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "PELUQUERIA",
+        "BARBERIA",
+        "ESTETICA",
+        "SALON DE BELLEZA"
+      ],
+      "sinonimos": [
+        "barbería",
+        "estética",
+        "salón de belleza",
+        "manicure"
+      ]
     },
     "amasanderia": {
       "nombre": "Amasandería, panadería o pastelería con elaboración",
       "clase": "2.10",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "AMASANDERIA",
+        "PASTELERIA",
+        "PANADERIA"
+      ],
+      "sinonimos": [
+        "pan amasado",
+        "pastelería",
+        "repostería"
+      ]
     },
     "costura": {
       "nombre": "Costura y modas",
       "clase": "2.10",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "COSTURA",
+        "MODAS",
+        "CONFECCION"
+      ],
+      "sinonimos": [
+        "modista",
+        "arreglos de ropa"
+      ]
     },
     "reparacion_calzado": {
       "nombre": "Reparadora de calzado y artículos de cuero",
       "clase": "2.10",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "CALZADO",
+        "ZAPATERO"
+      ]
     },
     "reparacion_electronica": {
       "nombre": "Reparación eléctrica y de electrónicos",
       "clase": "2.10",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "REPARACION"
+      ]
     },
     "lavanderia": {
       "nombre": "Lavandería",
       "clase": "2.10",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "LAVANDERIA"
+      ],
+      "sinonimos": [
+        "tintorería"
+      ]
     },
     "artesanias": {
       "nombre": "Elaboración de artesanías y manualidades",
       "clase": "2.10",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "ARTESANIA"
+      ]
     },
     "taller_bicicletas": {
       "nombre": "Taller de bicicletas",
       "clase": "2.10",
       "alcohol": false,
-      "taller": true
+      "taller": true,
+      "palabras_actividad": [
+        "BICICLETA"
+      ]
     },
     "taller_tejidos_ceramica": {
       "nombre": "Taller de tejidos, cerámica o acrílico",
@@ -281,60 +551,114 @@
     "vidrieria": {
       "nombre": "Vidriería",
       "clase": "2.10",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "VIDRIERIA",
+        "VIDRIOS"
+      ]
     },
     "vivero": {
       "nombre": "Jardín de plantas (vivero)",
       "clase": "2.10",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "VIVERO",
+        "PLANTAS"
+      ]
     },
     "taller_mecanico": {
       "nombre": "Taller mecánico",
       "clase": "2.10",
       "alcohol": false,
-      "taller": true
+      "taller": true,
+      "palabras_actividad": [
+        "TALLER MECANICO",
+        "MECANICA",
+        "MECANICO"
+      ],
+      "sinonimos": [
+        "mecánica",
+        "automotriz"
+      ]
     },
     "taller_pintura_desabolladura": {
       "nombre": "Taller de pintura y desabolladura",
       "clase": "2.10",
       "alcohol": false,
-      "taller": true
+      "taller": true,
+      "palabras_actividad": [
+        "DESABOLLADURA",
+        "PINTURA"
+      ]
     },
     "vulcanizacion": {
       "nombre": "Taller de vulcanización",
       "clase": "2.10",
       "alcohol": false,
-      "taller": true
+      "taller": true,
+      "palabras_actividad": [
+        "VULCANIZACION",
+        "NEUMATICOS"
+      ],
+      "sinonimos": [
+        "neumáticos",
+        "gomería"
+      ]
     },
     "imprenta": {
       "nombre": "Imprenta y encuadernación",
       "clase": "2.10",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "IMPRENTA",
+        "ENCUADERNACION"
+      ]
     },
     "hostal": {
       "nombre": "Residencial, hostal u hospedería",
       "clase": "1.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "HOSTAL",
+        "RESIDENCIAL",
+        "HOSPEDAJE"
+      ],
+      "sinonimos": [
+        "residencial",
+        "pieza",
+        "alojamiento"
+      ]
     },
     "hotel": {
       "nombre": "Hotel",
       "clase": "1.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "HOTEL"
+      ]
     },
     "apart_hotel": {
       "nombre": "Apart hotel",
       "clase": "1.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "APART"
+      ]
     },
     "motel": {
       "nombre": "Motel",
       "clase": "1.2",
-      "alcohol": false
+      "alcohol": false,
+      "palabras_actividad": [
+        "MOTEL"
+      ]
     }
   },
   "clases": {
     "2.2": "2.2 Comercio",
     "2.10": "2.10 Servicios (artesanales)",
     "1.2": "1.2 Hospedaje"
-  }
+  },
+  "_nota_palabras": "palabras_actividad: prefijos (sin tildes) que se buscan en la actividad de las patentes para estimar el comercio similar cercano. Aproximado: la actividad es texto libre.",
+  "_nota_sinonimos": "sinonimos: palabras con que el vecino puede buscar el giro en la interfaz. No afectan la evaluación normativa."
 }
