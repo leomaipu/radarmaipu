@@ -1,119 +1,102 @@
-# Radar Maipú: MVP
+# Radar Maipú
 
-Portal web progresivo para consultar, sobre un punto del mapa de Maipú, la calle más cercana
-y las patentes comerciales próximas. Esta versión es un MVP de backend con datos del catastro
-municipal y de patentes 2026.
+Simulador web progresivo (PWA) para vecinos y vecinas que quieren emprender. Muestra si un giro es compatible con el Plan Regulador Comunal de Maipú en un punto del mapa, con sus condiciones, las áreas de riesgo, el comercio cercano y los próximos pasos. Es un **informe orientativo**: no reemplaza el Certificado de Informaciones Previas ni la resolución de la DOM o de Rentas.
 
-## Prueba en tu computador
+## Stack
 
-Requisito: Python 3.11 o superior y conexión a internet.
+| Capa | Tecnología |
+| --- | --- |
+| Backend | Django 5.2 LTS + GeoDjango, API con Django Ninja (`/api/`, documentación en `/api/docs`) |
+| Base de datos | PostgreSQL 16 + PostGIS 3.4 |
+| Interfaz | Plantillas Django + Leaflet 1.9 + HTMX 2, sin paso de compilación. PWA con manifest y service worker |
+| Motor normativo | `nucleo/` (Python puro, sin dependencias de Django) y reglas en `config/prc/` |
+| Ejecución | Contenedores (podman o docker). La imagen incluye GDAL, GEOS y PROJ |
 
-- **Linux / macOS**: en la carpeta del proyecto, ejecuta `bash scripts/prueba_local.sh`.
-- **Windows**: en PowerShell, ejecuta `powershell -ExecutionPolicy Bypass -File scripts\prueba_local.ps1`.
+## Estructura
 
-El script hace tres cosas:
-1. Instala dependencias fijadas (`requirements.txt`) en un entorno `.venv` local.
-2. Corre las pruebas automatizadas.
-3. Ejecuta `medir.py`, que consulta a gis.maipu.cl solo conteos y valores de campos no
-   personales y guarda el resultado en `informe_medicion.md`. Ese informe responde los
-   temas pendientes 1 y 2 de la lista de abajo.
+```
+radar/       configuración del proyecto Django (settings por variables de entorno)
+nucleo/      motor: evaluación zona × giro, informe, cliente GIS, geocodificador, lista blanca de privacidad
+api/         API pública (Django Ninja) y comercio cercano
+territorio/  modelos PostGIS (calles, barrios, patentes), comando cargar_gis y bitácora de cargas
+tramites/    checklist de documentos de Rentas, editable en /admin
+web/         sitio del vecino: plantillas, CSS, JS, PWA y manual de marca aplicado
+config/      reglas del PRC, giros, dominios y servicios externos (se editan sin tocar código)
+tests/       pruebas (pytest + pytest-django)
+```
 
-Para abrir la API: `.venv/bin/uvicorn app.api:app --port 8000` y visitar `http://127.0.0.1:8000/docs`.
-La API carga los datos reales al iniciar, en segundo plano (ver "Carga de datos").
+## Puesta en marcha (desarrollo)
 
-Si el script no puede conectarse al GIS desde tu red, el informe lo indicará. En ese caso
-revisa que tu computador tenga salida a `gis.maipu.cl` (algunas redes institucionales la
-bloquean).
+Requisito: podman (con `systemctl --user start podman.socket`) o docker, ambos con compose.
+
+```bash
+podman compose up -d                                   # PostGIS + Django en http://127.0.0.1:8000
+podman compose exec web python manage.py cargar_gis    # copia calles, barrios y patentes del GIS a PostGIS
+podman compose exec web python manage.py createsuperuser   # para entrar a /admin
+```
+
+- Al levantar los contenedores, si la base está vacía se carga sola (`cargar_gis --si-vacia`, con 3 reintentos).
+- `cargar_gis --regeocodificar` asigna punto a las patentes sin match. Tarda más de una hora; se puede interrumpir y retomar, y los puntos se conservan en las cargas siguientes.
+- Cada carga queda registrada en `/admin` (Cargas del GIS) y en `GET /api/health`.
+- El informe consulta el Plan Regulador **en vivo** en el GIS municipal: no depende de la carga.
+
+## Pruebas
+
+```bash
+podman compose exec web python -m pytest -q tests          # 201 pruebas
+podman compose exec web python -m pytest -q -m gis tests   # en vivo contra gis.maipu.cl
+```
+
+Pruebas de navegador (flujos completos en Chrome, con la app corriendo):
+
+```bash
+python -m venv .venv-e2e && .venv-e2e/bin/pip install playwright pytest
+.venv-e2e/bin/python -m pytest tests_e2e -p no:django -o addopts=""
+```
+
+## Producción
+
+La imagen (`Containerfile`) corre gunicorn y sirve los estáticos con whitenoise (nombres con hash, caché inmutable). Variables de entorno:
+
+| Variable | Uso |
+| --- | --- |
+| `DJANGO_SECRET_KEY` | Obligatoria |
+| `DJANGO_ALLOWED_HOSTS`, `DJANGO_CSRF_TRUSTED_ORIGINS` | Dominio público |
+| `DJANGO_SSL_REDIRECT=1`, `DJANGO_HSTS_SECONDS` | Cuando el sitio se sirva solo por HTTPS |
+| `POSTGRES_HOST`, `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` | Base de datos PostGIS |
+| `RM_PRC_URL`, `RM_GEOCODER_URL`, `RM_GIS_BASE`, `RM_BARRIOS_URL` | Servicios del GIS (opcional) |
+| `RM_TILES_URL`, `RM_TILES_REFERENCIA_URL`, `RM_TILES_ATTRIBUTION`, `RM_BASE_MUNICIPAL_URL` | Mapa base (opcional; la CSP se ajusta sola) |
+| `RM_API_DOCS_PUBLICA=1` | Publicar `/api/docs` en producción (por defecto solo en desarrollo) |
+
+La PWA exige HTTPS en producción (el service worker solo se registra en `localhost` o con HTTPS).
+
+## Mapa
+
+- **Base:** lienzo gris claro de Esri (sin clave; exige atribución). Desde el zoom 16 se suman soleras, predios y áreas verdes de `MAIPU/BaseMaipu` del GIS municipal.
+- **Plan Regulador:** imagen oficial de `MAIPU/PRCMaipu` (capas 1 a 4) con su leyenda, servida por `/panel/leyenda/` con caché de un día.
+- **Comercio cercano:** patentes vigentes a menos de 300 m, agrupadas. En magenta, las de rubro similar (aproximado: la actividad es texto libre).
 
 ## Protección de datos personales
 
-- Solo se cargan campos de una lista blanca (`app/privacy.py`). RUT, razón social,
-  representante, su dirección personal y códigos SII no entran a la base. La dirección del
-  negocio (`DIRECCION`) sí, con aprobación jurídica del 2026-11-03.
+- Solo se cargan campos de una lista blanca (`nucleo/privacy.py`). RUT, razón social, representante, su dirección personal y códigos SII no entran a la base. La dirección del negocio (`DIRECCION`) sí, con aprobación jurídica del 2026-11-03.
 - `direc_nego` sigue fuera hasta confirmación escrita de Jurídico.
-- Cada capa pide al servidor solo sus campos permitidos (`app/loader.py`), así que los datos
-  personales ni siquiera salen del servicio municipal.
-- Las pruebas verifican que ningún campo personal llegue a la API (`tests/test_privacy.py`,
-  `tests/test_loader.py`).
-
-## Puesta en marcha
-
-```bash
-python3 -m venv .venv && .venv/bin/pip install fastapi uvicorn httpx pytest
-.venv/bin/python -m pytest -q tests                # pruebas
-.venv/bin/uvicorn app.api:app --host 127.0.0.1 --port 8000   # carga desde ArcGIS al iniciar (requiere red a gis.maipu.cl)
-```
-
-## Carga de datos
-
-La API responde desde que inicia y carga los datos en segundo plano. `GET /api/health` informa
-el avance en `carga`:
-
-- `cargando`: descargando las capas (hasta 3 intentos); los conteos siguen en 0.
-- `regeocodificando`: datos ya disponibles; las patentes con Status U o sin punto lo reciben de a poco.
-  Puede tardar más de una hora.
-- `lista`: terminó.
-- `lista_sin_regeocodificar`: hay datos, pero la re-geocodificación se interrumpió (ver el log).
-- `error`: no se pudo descargar; reiniciar la API para reintentar (ver el log).
-
-Las patentes que el GIS publica sin coordenadas (`patentes_sin_punto` en `/api/health`) no
-aparecen en `/api/patentes` ni `/api/punto`. Todas se re-geocodifican a partir de `DIRECCION`
-y reciben punto si el score alcanza el umbral; las demás siguen sin punto.
-
-`cargar.py` sirve solo para probar la carga desde la consola: sus datos no llegan a la API.
-Usar un solo worker de uvicorn: cada worker tendría su propia copia y haría su propia carga.
-
-Las URLs del GIS se pueden cambiar con `RM_GIS_BASE` o `RM_CALLES_URL`, sin tocar el código.
-
-## Endpoints
-
-- `GET /api/health`: fase de la carga, conteos cargados y patentes sin punto.
-- `GET /api/calles?q=erraz`: busca calles por nombre (sin geometría).
-- `GET /api/barrios` o `GET /api/barrios?q=maipu`: lista los 21 barrios o los busca por nombre, sin distinguir tildes ni mayúsculas. Fuente: capa "LÍMITE BARRIOS ACTUAL" (`RM_BARRIOS_URL` la cambia).
-- `GET /api/patentes?minlon=&minlat=&maxlon=&maxlat=`: patentes dentro de un área.
-- `GET /api/punto?lon=&lat=&radio_m=150`: calle más cercana y patentes en el radio.
-- `GET /api/giros`: giros soportados con su clase de ordenanza.
-- `GET /api/informe?lat=&lon=&giro=bazar[&escala=basico|menor|mediano|mayor][&formato=texto]`: informe
-  orientativo de factibilidad (zona del PRC, compatibilidad del giro, advertencias de vía y riesgo, alturas).
-  No reemplaza el Certificado de Informaciones Previas.
-
-## Informe orientativo (PRC)
-
-- Las reglas están en `config/prc/` (matriz por zona, giros, vigencia de modificaciones, alturas, vialidad,
-  riesgos y checklist de Rentas). Cada zona cita artículo y página de la Ordenanza PRC 2004.
-- Las capas del servicio `MAIPU/PRCMaipu` se consultan en vivo por cada informe (`RM_PRC_URL` cambia la URL).
-  Si una capa no responde, su sección queda `NO_DISPONIBLE` y el informe se entrega igual.
-- El frente a vía estructurante se estima por proximidad al eje de la capa 0: es aproximado y el informe lo advierte.
-- Pruebas en vivo contra el GIS: `.venv/bin/python -m pytest -m gis tests` (no corren por defecto).
-
-## Limitaciones conocidas del MVP
-
-- El almacén está en memoria: se pierde al reiniciar y no escala. Producción debe usar PostGIS.
-- La búsqueda de calles es por subcadena simple, sin normalización de tildes ni abreviaturas.
-- La distancia es aproximada (equirectangular local), suficiente a escala comunal.
-- No hay interfaz web PWA todavía; el MVP expone la API.
+- Cada capa pide al servidor solo sus campos permitidos (`nucleo/loader.py`), así que los datos personales ni siquiera salen del servicio municipal.
+- Las pruebas verifican que ningún campo personal llegue a la base ni a la API (`tests/test_privacy.py`, `tests/test_loader.py`, `tests/test_django.py`, `tests/test_informe.py`).
 
 ## Dominios confirmados (2026-11-03)
 
 Los valores están en `config/dominios.json`. Cambiarlos no requiere tocar el código.
 
 - `CLASE` de calles: PBN = Paso bajo nivel, PSN = Paso sobre nivel, PTE = Puente, CARRE = Carretera.
-- `Status` de patentes: M = Match (geocodificación con match), T = Target (objetivo), U = Unmatch (sin match).
-- `estado_pat`: el dato publicado escribe `BLOQUEDADA`; el nombre oficial es `BLOQUEADA`.
-  El filtro usa el valor publicado y la API muestra el nombre oficial.
-- Patentes bloqueadas: no se muestran (decisión municipal, 2026-11-03). Se controla con `estados_ocultos` en `config/dominios.json`.
+- `Status` de patentes: M = Match, T = Target, U = Unmatch.
+- `estado_pat`: el dato publicado escribe `BLOQUEDADA`; el nombre oficial es `BLOQUEADA`. Las patentes bloqueadas no se muestran (`estados_ocultos`).
 
-Documento para el SITMA: `docs/briefing_sitma.md`.
+Documento para el SITMA: `docs/briefing_sitma.md`. Alcance y reglas del informe: `mvp_informe_orientativo.md`.
 
 ## Temas pendientes
 
-1. Porcentaje de patentes con `Score` alto, para decidir si los puntos sirven en el mapa.
-2. Revisar si una patente aparece en dos capas.
-3. Confirmar por escrito con Jurídico si `direc_nego` también queda aprobado (dirección del negocio) y de las condiciones
-   de uso de los datos de catastro.
-4. Confirmar con el SITMA si el geocodificador BETA tendrá endpoint de producción (ver `docs/briefing_sitma.md`).
-5. Ejecutar la carga desde maiproject.cl: el entorno de trabajo no tiene acceso verificado a
-   gis.maipu.cl.
-6. Validar el flujo de patente comercial con el área de rentas y el checklist de documentos.
-7. Repositorio: no se pudo crear `radarmaipu` desde esta sesión (ver mensaje anterior).
-8. Interfaz PWA mobile first y manual de marca (Rubik y paleta), aún sin implementar.
+1. Lista oficial de documentos de Rentas: se carga en `/admin` → Checklist de Rentas, sin tocar código.
+2. Confirmar por escrito con Jurídico `direc_nego` y las condiciones de uso de los datos de catastro.
+3. Endpoint de producción del geocodificador (hoy BETA; ver `docs/briefing_sitma.md`).
+4. Mapa base definitivo: confirmar las condiciones de uso de Esri o publicar `BaseMaipu` como teselas cacheadas en Web Mercator.
+5. Pendientes normativos: ver la sección 9 de `mvp_informe_orientativo.md`.

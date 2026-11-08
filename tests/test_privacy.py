@@ -1,4 +1,4 @@
-from app.privacy import PATENTE_PUBLIC_FIELDS, PERSONAL_FIELDS, filter_attributes
+from nucleo.privacy import PATENTE_PUBLIC_FIELDS, PERSONAL_FIELDS, filter_attributes
 
 
 RAW = {

@@ -3,7 +3,7 @@ import itertools
 
 import pytest
 
-from app import prc_config, usos
+from nucleo import prc_config, usos
 
 CFG = prc_config.leer()
 # Frentes confirmados (declarados por el usuario). Los probables no cumplen condiciones.

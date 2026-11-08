@@ -1,7 +1,7 @@
 import httpx
 
 from medir import DISTINCT_FIELDS, medir_capa
-from app.privacy import PERSONAL_FIELDS, PATENTE_PUBLIC_FIELDS, CALLE_PUBLIC_FIELDS
+from nucleo.privacy import PERSONAL_FIELDS, PATENTE_PUBLIC_FIELDS, CALLE_PUBLIC_FIELDS
 
 
 def test_diagnostic_never_requests_personal_fields():

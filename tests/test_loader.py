@@ -1,6 +1,6 @@
 import httpx
 
-from app.loader import fetch_layer
+from nucleo.loader import fetch_layer
 
 
 def test_pagination_follows_exceeded_transfer_limit():
@@ -33,7 +33,7 @@ def test_geometry_can_be_skipped_for_attribute_only_layers():
 
 
 def test_barrio_normalization_keeps_only_whitelisted_fields():
-    from app.ingest import normalize_barrio
+    from nucleo.ingest import normalize_barrio
 
     rec = normalize_barrio({"attributes": {"BARRIO": " LO ERRAZURIZ ", "ID_BARRIO": 1.0,
                                            "N_CASA": 99, "TOTAL_2017": 5}})
@@ -43,7 +43,7 @@ def test_barrio_normalization_keeps_only_whitelisted_fields():
 
 
 def test_barrios_url_points_to_vigente_layer_not_proposal():
-    from app.loader import barrios_url_from_env
+    from nucleo.loader import barrios_url_from_env
 
     url = barrios_url_from_env()
     assert url.endswith("/MapServer/0")  # capa 0 = LÍMITE BARRIOS ACTUAL
@@ -61,8 +61,8 @@ def test_arcgis_error_raises():
 
 
 def test_requests_only_whitelisted_fields_per_layer():
-    from app.loader import PATENTE_FIELDS_BY_LAYER, OID_BY_LAYER
-    from app.privacy import PERSONAL_FIELDS, PATENTE_PUBLIC_FIELDS
+    from nucleo.loader import PATENTE_FIELDS_BY_LAYER, OID_BY_LAYER
+    from nucleo.privacy import PERSONAL_FIELDS, PATENTE_PUBLIC_FIELDS
 
     for layer, fields in PATENTE_FIELDS_BY_LAYER.items():
         assert not (set(fields) & PERSONAL_FIELDS), layer

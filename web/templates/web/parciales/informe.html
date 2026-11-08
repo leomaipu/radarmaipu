@@ -1,0 +1,120 @@
+<article class="informe informe--{{ vm.estado.clase }}" data-estado="{{ vm.codigo_estado }}" tabindex="-1" id="informe">
+  <header class="veredicto">
+    <p class="ojo ojo--veredicto">Resultado · Paso 3 de 3</p>
+    <div class="veredicto__fila">
+      <span class="veredicto__sello" aria-hidden="true">
+        {% if vm.estado.clase == "ok" %}<svg><use href="#i-check"/></svg>{% elif vm.estado.clase == "cond" %}<svg><use href="#i-cond"/></svg>{% elif vm.estado.clase == "no" %}<svg><use href="#i-cerrar"/></svg>{% else %}<svg><use href="#i-info"/></svg>{% endif %}
+      </span>
+      <h2 class="veredicto__titulo">{{ vm.estado.titulo }}</h2>
+    </div>
+    <p class="veredicto__giro">{{ inf.giro.nombre }}{% if vm.escala_nombre %} · escala {{ vm.escala_nombre }}{% endif %}</p>
+    <p class="veredicto__bajada">{{ vm.estado.bajada }}</p>
+    <ul class="veredicto__chips" role="list">
+      {% if vm.zona_codigo %}<li class="chip chip--claro"><strong>{{ vm.zona_codigo }}</strong>{% if vm.zona_nombre %} {{ vm.zona_nombre }}{% endif %}</li>{% endif %}
+      {% if inf.resultado.articulo %}<li class="chip chip--claro">{{ inf.resultado.articulo }}</li>{% endif %}
+    </ul>
+    <span class="veredicto__puntos" aria-hidden="true"><i></i><i></i><i></i></span>
+  </header>
+
+  <p class="aviso aviso--informe" role="note">
+    <svg aria-hidden="true"><use href="#i-alerta"/></svg>
+    <span><strong>Informe orientativo.</strong> No reemplaza el Certificado de Informaciones Previas ni la resolución de la DOM o de Rentas.</span>
+  </p>
+
+  <section class="bloque" aria-labelledby="t-motivo">
+    <h3 class="bloque__titulo" id="t-motivo">Por qué</h3>
+    <p>{{ inf.resultado.motivo }}</p>
+    {% if vm.detalle_escalas %}
+    <ul class="escalas" role="list" aria-label="Resultado por escala">
+      {% for e in vm.detalle_escalas %}
+      <li class="escalas__item escalas__item--{{ e.estado|lower }}">
+        <span class="escalas__nombre">{{ e.escala }}</span>
+        <span class="escalas__estado">{% if e.estado == "SI" %}Permitida{% elif e.estado == "NO" %}No permitida{% else %}Con condición{% endif %}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+
+  {% for v in vm.frentes_sugeridos %}
+  <section class="pregunta" aria-labelledby="t-frente-{{ forloop.counter }}">
+    <span class="pregunta__icono" aria-hidden="true"><svg><use href="#i-via"/></svg></span>
+    <div>
+      <h3 class="pregunta__titulo" id="t-frente-{{ forloop.counter }}">¿Tu local da a {{ v.via }}?</h3>
+      <p class="sutil">Pasa a {{ v.distancia_eje_m|floatformat:0 }} m del punto y es {{ v.cumple }}{% if v.ancho_m %} (ancho existente: {{ v.ancho_m|floatformat:0 }} m){% endif %}. Si el acceso de tu local da a esta vía, la condición se cumple.</p>
+      <button type="button" class="boton boton--primario boton--chico" data-frente="{{ v.codigo }}">Sí, mi local da a esta vía</button>
+    </div>
+  </section>
+  {% endfor %}
+  {% if vm.frente_confirmado %}
+  <p class="nota-confirmada"><svg aria-hidden="true"><use href="#i-check"/></svg> Indicaste que tu local da a <strong>{{ vm.frente_confirmado.via }}</strong>. La DOM lo verificará en el Certificado de Informaciones Previas. <button type="button" class="enlace" data-frente="">Deshacer</button></p>
+  {% endif %}
+
+  {% if vm.advertencias %}
+  <details class="acordeon" {% if vm.estado.clase != "ok" %}open{% endif %}>
+    <summary><span class="acordeon__icono"><svg aria-hidden="true"><use href="#i-alerta"/></svg></span>Condiciones y advertencias <span class="contador">{{ vm.advertencias|length }}</span></summary>
+    <ul class="advertencias" role="list">
+      {% for a in vm.advertencias %}
+      <li class="advertencia advertencia--{{ a.icono }}">
+        <span class="advertencia__icono" aria-hidden="true"><svg><use href="#i-{{ a.icono }}"/></svg></span>
+        <div><span class="advertencia__etiqueta">{{ a.etiqueta }}</span><p>{{ a.texto }}</p></div>
+      </li>
+      {% endfor %}
+    </ul>
+  </details>
+  {% endif %}
+
+  {% with c=inf.comercio_cercano %}
+  {% if c and c.total is not None %}
+  <details class="acordeon" open>
+    <summary><span class="acordeon__icono"><svg aria-hidden="true"><use href="#i-tienda"/></svg></span>Comercio cercano <span class="contador">{{ c.total }}</span></summary>
+    <div class="cifras">
+      <div class="cifra"><span class="cifra__valor" data-contar="{{ c.total }}">{{ c.total }}</span><span class="cifra__texto">patentes vigentes a menos de {{ c.radio_m|floatformat:0 }} m</span></div>
+      {% if c.similares is not None %}<div class="cifra cifra--mag"><span class="cifra__valor" data-contar="{{ c.similares }}">{{ c.similares }}</span><span class="cifra__texto">de rubro similar</span></div>{% endif %}
+    </div>
+    {% if c.ejemplos_similares %}
+    <ul class="similares" role="list">
+      {% for e in c.ejemplos_similares|slice:":5" %}
+      <li><button type="button" class="similar" data-lat="{{ e.lat|stringformat:'.6f' }}" data-lon="{{ e.lon|stringformat:'.6f' }}"><span class="similar__act">{{ e.actividad|default:"Sin actividad registrada"|lower|capfirst }}</span><span class="similar__dir">{{ e.direccion|default:"" }} · {{ e.distancia_m|floatformat:0 }} m</span></button></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% if c.puntos_total > c.puntos|length %}<p class="sutil">El mapa muestra las {{ c.puntos|length }} patentes más cercanas de {{ c.puntos_total }}.</p>{% endif %}
+    <p class="sutil">{{ c.nota }}</p>
+  </details>
+  {% elif c %}
+  <p class="sutil">El comercio cercano no está disponible por ahora.</p>
+  {% endif %}
+  {% endwith %}
+
+  <details class="acordeon">
+    <summary><span class="acordeon__icono"><svg aria-hidden="true"><use href="#i-norma"/></svg></span>Normas de la zona</summary>
+    {% if vm.alturas %}
+    <table class="tabla">
+      <caption>Altura máxima de edificación{% if vm.mod4 == "aplicada" %} (incluye Modificación N°4){% endif %}</caption>
+      <tbody>{% for a in vm.alturas %}<tr><th scope="row">{{ a.condicion }}</th><td>{{ a.valor }}</td></tr>{% endfor %}</tbody>
+    </table>
+    {% else %}<p class="sutil">Sin normas de edificación para este punto.</p>{% endif %}
+    <ul class="fuentes" role="list">
+      {% for f in inf.fuentes %}<li>{{ f.titulo }}{% if f.pagina %}, p. {{ f.pagina }}{% endif %}{% if f.decreto %} · D.A. {{ f.decreto }}{% endif %}{% if f.publicacion_do %} · D.O. {{ f.publicacion_do }}{% endif %}</li>{% endfor %}
+    </ul>
+  </details>
+
+  <details class="acordeon">
+    <summary><span class="acordeon__icono"><svg aria-hidden="true"><use href="#i-lista"/></svg></span>Documentos para Rentas</summary>
+    {% if inf.checklist_rentas.items %}
+    <ol class="checklist">{% for d in inf.checklist_rentas.items %}<li><strong>{{ d.documento }}</strong>{% if d.detalle %}<br><span class="sutil">{{ d.detalle }}</span>{% endif %}</li>{% endfor %}</ol>
+    {% else %}
+    <p>Rentas aún no publica la lista oficial de documentos. Pronto la verás aquí.</p>
+    {% endif %}
+  </details>
+
+  <div class="acciones acciones--informe">
+    <button type="button" class="boton boton--suave boton--chico" data-compartir><svg aria-hidden="true"><use href="#i-compartir"/></svg> Compartir</button>
+    <button type="button" class="boton boton--suave boton--chico" data-imprimir><svg aria-hidden="true"><use href="#i-imprimir"/></svg> Imprimir</button>
+    <button type="button" class="boton boton--texto boton--chico" data-ir="2">Cambiar negocio</button>
+    <button type="button" class="boton boton--texto boton--chico" data-ir="1">Otro lugar</button>
+  </div>
+  <p class="fecha sutil">Generado el {{ inf.fecha_generacion|slice:":10" }} · versión {{ inf.version_informe }}</p>
+  {{ puntos|json_script:"puntos-comercio" }}
+</article>

@@ -1,7 +1,7 @@
 import json
 
-from app import dominios
-from app.ingest import normalize_calle, normalize_patente
+from nucleo import dominios
+from nucleo.ingest import normalize_calle, normalize_patente
 
 
 def test_clase_codes_are_expanded_as_confirmed():

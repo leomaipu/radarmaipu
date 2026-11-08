@@ -1,0 +1,9 @@
+{% if error %}<p class="sutil">{{ error }}</p>
+{% elif resultados %}
+<ul class="lista-direcciones" role="list">
+  {% for r in resultados %}
+  <li><button type="button" class="direccion" data-lat="{{ r.lat|stringformat:'.6f' }}" data-lon="{{ r.lon|stringformat:'.6f' }}" data-dir="{{ r.direccion }}">
+    <svg aria-hidden="true"><use href="#i-pin"/></svg><span>{{ r.direccion }}</span></button></li>
+  {% endfor %}
+</ul>
+{% elif q|length >= 3 %}<p class="sutil">Sin resultados para «{{ q }}». Prueba con calle y número, o toca el mapa.</p>{% endif %}
