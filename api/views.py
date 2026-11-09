@@ -40,6 +40,15 @@ def _estado_prc() -> dict:
             "mod4_vigente": cfg["modificaciones"]["MOD_4"]["vigente"], "capas": prc_gis.estado_capas()}
 
 
+@api.get("/salud", include_in_schema=False)
+def salud(request):
+    """Liviana, para el chequeo de HAProxy: la app responde y la base acepta consultas."""
+    from django.db import connection
+    with connection.cursor() as c:
+        c.execute("SELECT 1")
+    return {"ok": True}
+
+
 @api.get("/health")
 def health(request):
     ultima = CargaGIS.objects.first()

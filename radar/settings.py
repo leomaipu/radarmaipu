@@ -96,6 +96,10 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = _env_bool("DJANGO_SSL_REDIRECT")
     SECURE_HSTS_SECONDS = int(os.environ.get("DJANGO_HSTS_SECONDS", "0"))
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+# Detrás del proxy del servidor (HAProxy), HSTS y la redirección a HTTPS los pone el proxy: un solo
+# responsable, sin cabeceras duplicadas. Por eso se silencian esos dos avisos de check --deploy.
+if _env_bool("DJANGO_DETRAS_DE_PROXY"):
+    SILENCED_SYSTEM_CHECKS = ["security.W004", "security.W008"]
 
 LOGGING = {
     "version": 1,

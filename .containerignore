@@ -1,6 +1,9 @@
 .git
 .venv
+.venv-e2e
 __pycache__
 .pytest_cache
 staticfiles
+tests_e2e
 *.pyc
+*.tar.gz

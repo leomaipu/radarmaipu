@@ -161,7 +161,7 @@ def web(monkeypatch):
 
 def test_inicio_tiene_marca_pwa_y_tres_pasos(web):
     html = web.get("/").content.decode()
-    for esperado in ("logo-maipu.svg", 'rel="manifest"', "¿Dónde quieres", "¿Qué negocio quieres", 'id="config-radar"',
+    for esperado in ("logo-maipu", 'rel="manifest"', "¿Dónde quieres", "¿Qué negocio quieres", 'id="config-radar"',
                      "No reemplaza el Certificado de Informaciones Previas", 'lang="es-CL"'):
         assert esperado in html, esperado
     assert html.count('name="giro"') == 63

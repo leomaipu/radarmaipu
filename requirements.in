@@ -1,9 +1,11 @@
-# Dependencias directas. requirements.txt se genera con: pip-compile o pip freeze dentro del contenedor.
-Django~=5.2
-django-ninja~=1.4
-psycopg[binary]~=3.2
-httpx~=0.28
-whitenoise~=6.9
-gunicorn~=23.0
-pytest~=8.3
-pytest-django~=4.11
+# Dependencias directas. requirements.txt (con hashes) se genera con:
+#   podman run --rm -v "$PWD":/w:z -w /w docker.io/library/python:3.12-slim-trixie \
+#     sh -c "pip install -q pip-tools && pip-compile --generate-hashes --strip-extras -q -o requirements.txt requirements.in"
+Django==5.2.19
+django-ninja==1.7.3
+psycopg[binary]==3.3.8
+httpx==0.28.1
+whitenoise==6.12.0
+gunicorn==23.0.0
+pytest==8.4.2
+pytest-django==4.14.0
