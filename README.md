@@ -68,6 +68,8 @@ La imagen (`Containerfile`) corre gunicorn y sirve los estáticos con whitenoise
 | `RM_TILES_URL`, `RM_TILES_REFERENCIA_URL`, `RM_TILES_ATTRIBUTION`, `RM_BASE_MUNICIPAL_URL` | Mapa base (opcional; la CSP se ajusta sola) |
 | `RM_API_DOCS_PUBLICA=1` | Publicar `/api/docs` en producción (por defecto solo en desarrollo) |
 
+Despliegue en el servidor municipal (radar.maiproject.cl): ver `docs/deploy.md` y `deploy/servidor/14-app-radar.sh`.
+
 La PWA exige HTTPS en producción (el service worker solo se registra en `localhost` o con HTTPS).
 
 ## Mapa
