@@ -1,18 +1,15 @@
-<article class="informe informe--{{ vm.estado.clase }}" data-estado="{{ vm.codigo_estado }}" tabindex="-1" id="informe">
-  <header class="veredicto">
-    <p class="ojo ojo--veredicto">Resultado · Paso 3 de 3</p>
-    <div class="veredicto__fila">
-      <span class="veredicto__sello" aria-hidden="true">
-        {% if vm.estado.clase == "ok" %}<svg><use href="#i-check"/></svg>{% elif vm.estado.clase == "cond" %}<svg><use href="#i-cond"/></svg>{% elif vm.estado.clase == "no" %}<svg><use href="#i-cerrar"/></svg>{% else %}<svg><use href="#i-info"/></svg>{% endif %}
-      </span>
-      <h2 class="veredicto__titulo">{{ vm.estado.titulo }}</h2>
-    </div>
-    <p class="veredicto__giro">{{ inf.giro.nombre }}{% if vm.escala_nombre %} · escala {{ vm.escala_nombre }}{% endif %}</p>
-    <p class="veredicto__bajada">{{ vm.estado.bajada }}</p>
-    <ul class="veredicto__chips" role="list">
-      {% if vm.zona_codigo %}<li class="chip chip--claro"><strong>{{ vm.zona_codigo }}</strong>{% if vm.zona_nombre %} {{ vm.zona_nombre }}{% endif %}</li>{% endif %}
-      {% if inf.resultado.articulo %}<li class="chip chip--claro">{{ inf.resultado.articulo }}</li>{% endif %}
+{% with f=vm.ficha %}
+<article class="informe informe--{{ vm.estado.clase }}" data-estado="{{ vm.codigo_estado }}" tabindex="-1" id="informe" aria-labelledby="t-lugar">
+  <header class="ficha">
+    <p class="ojo ojo--ficha">Resultado · Paso 3 de 3</p>
+    <p class="ficha__direccion" data-ficha-direccion hidden><svg aria-hidden="true"><use href="#i-pin"/></svg><span></span></p>
+    <h2 class="ficha__titulo" id="t-lugar">{{ f.lugar.titulo }}</h2>
+    <p class="ficha__texto">{{ f.lugar.texto }}</p>
+    {% if f.chips %}
+    <ul class="ficha__datos" role="list" aria-label="Datos del lugar">
+      {% for c in f.chips %}<li class="dato dato--{{ c.tono }}">{% if c.tono == "alerta" %}<svg aria-hidden="true"><use href="#i-alerta"/></svg>{% elif c.tono == "ok" %}<svg aria-hidden="true"><use href="#i-check"/></svg>{% endif %}{{ c.texto }}</li>{% endfor %}
     </ul>
+    {% endif %}
     <span class="veredicto__puntos" aria-hidden="true"><i></i><i></i><i></i></span>
   </header>
 
@@ -21,19 +18,39 @@
     <span><strong>Informe orientativo.</strong> No reemplaza el Certificado de Informaciones Previas ni la resolución de la DOM o de Rentas.</span>
   </p>
 
-  <section class="bloque" aria-labelledby="t-motivo">
-    <h3 class="bloque__titulo" id="t-motivo">Por qué</h3>
-    <p>{{ inf.resultado.motivo }}</p>
-    {% if vm.detalle_escalas %}
-    <ul class="escalas" role="list" aria-label="Resultado por escala">
-      {% for e in vm.detalle_escalas %}
-      <li class="escalas__item escalas__item--{{ e.estado|lower }}">
-        <span class="escalas__nombre">{{ e.escala }}</span>
-        <span class="escalas__estado">{% if e.estado == "SI" %}Permitida{% elif e.estado == "NO" %}No permitida{% else %}Con condición{% endif %}</span>
+  <section class="usos" aria-labelledby="t-usos">
+    <h3 class="usos__titulo" id="t-usos">¿Qué se puede abrir aquí?</h3>
+    <ul class="usos__lista" role="list">
+      {% with p=f.principal %}
+      <li class="uso uso--{{ p.clase }} uso--principal veredicto">
+        <span class="uso__sello" aria-hidden="true">{% if p.clase == "ok" %}<svg><use href="#i-check"/></svg>{% elif p.clase == "cond" %}<svg><use href="#i-cond"/></svg>{% elif p.clase == "no" %}<svg><use href="#i-cerrar"/></svg>{% else %}<svg><use href="#i-info"/></svg>{% endif %}</span>
+        <div class="uso__texto">
+          <p class="uso__nombre"><span class="veredicto__giro">{{ p.nombre }}</span> <span class="uso__marca">Lo que buscas</span></p>
+          <p class="uso__estado veredicto__titulo">{{ p.titulo }}</p>
+          <p class="uso__linea">{{ p.linea }}</p>
+        </div>
+      </li>
+      {% endwith %}
+      {% for o in f.otros %}
+      <li class="uso uso--{{ o.clase }}">
+        <button type="button" class="uso__boton" data-cambiar-giro="{{ o.codigo }}">
+          <span class="uso__sello" aria-hidden="true">{% if o.clase == "ok" %}<svg><use href="#i-check"/></svg>{% elif o.clase == "cond" %}<svg><use href="#i-cond"/></svg>{% elif o.clase == "no" %}<svg><use href="#i-cerrar"/></svg>{% else %}<svg><use href="#i-info"/></svg>{% endif %}</span>
+          <span class="uso__texto">
+            <span class="uso__nombre">{{ o.nombre }}</span>
+            {% if o.sr %}<span class="sr">{{ o.sr }} </span>{% endif %}
+            <span class="uso__linea">{{ o.linea }}</span>
+          </span>
+          <svg class="uso__ir" aria-hidden="true"><use href="#i-flecha"/></svg>
+        </button>
       </li>
       {% endfor %}
     </ul>
+    {% if f.leyenda|length > 1 %}
+    <ul class="estados" role="list" aria-label="Qué significa cada color">
+      {% for e in f.leyenda %}<li class="estados__item estados__item--{{ e.clase }}"><span class="estados__punto" aria-hidden="true">{% if e.clase == "ok" %}<svg><use href="#i-check"/></svg>{% elif e.clase == "cond" %}<svg><use href="#i-cond"/></svg>{% elif e.clase == "no" %}<svg><use href="#i-cerrar"/></svg>{% else %}<svg><use href="#i-info"/></svg>{% endif %}</span>{{ e.texto }}</li>{% endfor %}
+    </ul>
     {% endif %}
+    {% if f.otros %}<p class="sutil usos__nota">Toca otro negocio para ver su resultado completo en este mismo lugar.</p>{% endif %}
   </section>
 
   {% for v in vm.frentes_sugeridos %}
@@ -50,19 +67,39 @@
   <p class="nota-confirmada"><svg aria-hidden="true"><use href="#i-check"/></svg> Indicaste que tu local da a <strong>{{ vm.frente_confirmado.via }}</strong>. La DOM lo verificará en el Certificado de Informaciones Previas. <button type="button" class="enlace" data-frente="">Deshacer</button></p>
   {% endif %}
 
-  {% if vm.advertencias %}
-  <details class="acordeon" {% if vm.estado.clase != "ok" %}open{% endif %}>
-    <summary><span class="acordeon__icono"><svg aria-hidden="true"><use href="#i-alerta"/></svg></span>Condiciones y advertencias <span class="contador">{{ vm.advertencias|length }}</span></summary>
-    <ul class="advertencias" role="list">
-      {% for a in vm.advertencias %}
-      <li class="advertencia advertencia--{{ a.icono }}">
-        <span class="advertencia__icono" aria-hidden="true"><svg><use href="#i-{{ a.icono }}"/></svg></span>
-        <div><span class="advertencia__etiqueta">{{ a.etiqueta }}</span><p>{{ a.texto }}</p></div>
-      </li>
-      {% endfor %}
-    </ul>
+  <details class="acordeon" {% if vm.abrir_detalle %}open{% endif %}>
+    <summary><span class="acordeon__icono"><svg aria-hidden="true"><use href="#i-norma"/></svg></span>Detalle técnico{% if vm.zona_codigo %} · zona {{ vm.zona_codigo }}{% endif %}{% if vm.advertencias %} <span class="contador" aria-label="{{ vm.advertencias|length }} advertencias">{{ vm.advertencias|length }}</span>{% endif %}</summary>
+    <div class="tecnico">
+      <p class="tecnico__resultado"><span class="tecnico__etiqueta">Resultado según el Plan Regulador</span> <strong class="tecnico__estado">{{ vm.estado.titulo }}</strong></p>
+      <ul class="tecnico__chips" role="list">
+        {% if vm.zona_codigo %}<li class="chip chip--claro"><strong>{{ vm.zona_codigo }}</strong>{% if vm.zona_nombre %} {{ vm.zona_nombre }}{% endif %}</li>{% endif %}
+        {% if inf.resultado.articulo %}<li class="chip chip--claro">{{ inf.resultado.articulo }}</li>{% endif %}
+        {% if vm.escala_nombre %}<li class="chip chip--claro">Escala {{ vm.escala_nombre }}</li>{% endif %}
+      </ul>
+      <p>{{ inf.resultado.motivo }}</p>
+      {% if vm.detalle_escalas %}
+      <ul class="escalas" role="list" aria-label="Resultado por escala">
+        {% for e in vm.detalle_escalas %}
+        <li class="escalas__item escalas__item--{{ e.estado|lower }}">
+          <span class="escalas__nombre">{{ e.escala }}</span>
+          <span class="escalas__estado">{% if e.estado == "SI" %}Permitida{% elif e.estado == "NO" %}No permitida{% else %}Con condición{% endif %}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if vm.advertencias %}
+      <h4 class="tecnico__subtitulo">Condiciones y advertencias</h4>
+      <ul class="advertencias" role="list">
+        {% for a in vm.advertencias %}
+        <li class="advertencia advertencia--{{ a.icono }}">
+          <span class="advertencia__icono" aria-hidden="true"><svg><use href="#i-{{ a.icono }}"/></svg></span>
+          <div><span class="advertencia__etiqueta">{{ a.etiqueta }}</span><p>{{ a.texto }}</p></div>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
   </details>
-  {% endif %}
 
   {% with c=inf.comercio_cercano %}
   {% if c and c.total is not None %}
@@ -96,7 +133,7 @@
     </table>
     {% else %}<p class="sutil">Sin normas de edificación para este punto.</p>{% endif %}
     <ul class="fuentes" role="list">
-      {% for f in inf.fuentes %}<li>{{ f.titulo }}{% if f.pagina %}, p. {{ f.pagina }}{% endif %}{% if f.decreto %} · D.A. {{ f.decreto }}{% endif %}{% if f.publicacion_do %} · D.O. {{ f.publicacion_do }}{% endif %}</li>{% endfor %}
+      {% for fu in inf.fuentes %}<li>{{ fu.titulo }}{% if fu.pagina %}, p. {{ fu.pagina }}{% endif %}{% if fu.decreto %} · D.A. {{ fu.decreto }}{% endif %}{% if fu.publicacion_do %} · D.O. {{ fu.publicacion_do }}{% endif %}</li>{% endfor %}
     </ul>
   </details>
 
@@ -118,3 +155,4 @@
   <p class="fecha sutil">Generado el {{ inf.fecha_generacion|slice:":10" }} · versión {{ inf.version_informe }}</p>
   {{ puntos|json_script:"puntos-comercio" }}
 </article>
+{% endwith %}

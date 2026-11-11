@@ -16,8 +16,9 @@ from django.views.decorators.http import require_GET
 
 from api.views import construir_informe
 from nucleo import geocode, prc_config
+from nucleo import informe as informe_mod
 
-from .presentacion import presentar
+from .presentacion import lenguaje, presentar
 
 ESCALAS = [("", "No lo sé"), ("basico", "Básico"), ("menor", "Menor"), ("mediano", "Mediano"), ("mayor", "Mayor")]
 POPULARES = ["abarrotes", "bazar", "peluqueria", "restaurante", "farmacia", "taller_mecanico", "vestuario_calzado",
@@ -80,8 +81,9 @@ def panel_informe(request):
         return HttpResponseBadRequest("Vía inválida")
     inf = construir_informe(lat, lon, giro, escala, frente)
     puntos = inf.get("comercio_cercano", {}).get("puntos", [])
+    otros = informe_mod.evaluar_otros(inf, cfg, lenguaje()["giros_referencia"], escala)
     return render(request, "web/parciales/informe.html", {
-        "inf": inf, "vm": presentar(inf), "escala": escala or "",
+        "inf": inf, "vm": presentar(inf, otros=otros, cfg=cfg), "escala": escala or "",
         "puntos": puntos,
         "consulta": {"lat": lat, "lon": lon, "giro": giro, "escala": escala or ""},
     })
