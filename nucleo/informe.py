@@ -268,7 +268,7 @@ def evaluar_otros(informe: dict, cfg: dict, codigos: list[str], escala: str | No
         out.append({"codigo": codigo, "nombre": giros[codigo]["nombre"], "alcohol": giros[codigo]["alcohol"],
                     "estado": r["estado"], "motivo": r["motivo"], "articulo": r.get("articulo"),
                     "detalle_escalas": r.get("detalle_escalas"), "ambigua": ambigua,
-                    "condicion_texto": any(a["tipo"] == "condicion" for a in r.get("advertencias", []))})
+                    "textos": [a["texto"] for a in r.get("advertencias", []) if a["tipo"] == "condicion"]})
     return out
 
 

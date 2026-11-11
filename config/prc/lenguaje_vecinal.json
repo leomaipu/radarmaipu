@@ -1,38 +1,51 @@
 {
-  "_nota": "Textos en lenguaje vecinal para la ficha del lugar (opción C). Son la traducción de la norma, no la norma: cada texto debe decir lo mismo que la regla técnica que traduce. La regla sigue en usos_comercio.json, giros.json y riesgos.json. Cambiar aquí, no en el código.",
-  "giros_referencia": ["abarrotes", "bazar", "fuente_soda", "peluqueria", "botilleria", "taller_mecanico", "discoteca"],
+  "_nota": "Textos en lenguaje vecinal para la ficha del lugar (opción C). Son la traducción de la norma, no la norma: cada texto debe decir lo mismo que la regla técnica que traduce, nunca algo más permisivo. La regla sigue en usos_comercio.json, giros.json, vialidad.json y riesgos.json. Cambiar aquí, no en el código.",
+  "giros_referencia": [
+    "abarrotes",
+    "bazar",
+    "fuente_soda",
+    "peluqueria",
+    "botilleria",
+    "taller_mecanico",
+    "discoteca"
+  ],
   "_nota_giros_referencia": "Giros que se muestran en '¿Qué se puede abrir aquí?', además del elegido. Se muestran como máximo 'max_otros', en este orden.",
   "max_otros": 5,
   "estados": {
-    "PERMITIDO": {"titulo": "Se puede", "corto": "Se puede"},
-    "PERMITIDO_CON_CONDICION": {"titulo": "Se puede, con condiciones", "corto": "Con condición"},
-    "NO_PERMITIDO": {"titulo": "No se puede aquí", "corto": "No se puede"},
-    "NO_CONCLUYENTE": {"titulo": "Hay que revisarlo", "corto": "Por revisar"}
+    "PERMITIDO": {
+      "titulo": "Se puede",
+      "corto": "Se puede"
+    },
+    "PERMITIDO_CON_CONDICION": {
+      "titulo": "Se puede, con condiciones",
+      "corto": "Con condición"
+    },
+    "NO_PERMITIDO": {
+      "titulo": "No se puede aquí",
+      "corto": "No se puede"
+    },
+    "NO_CONCLUYENTE": {
+      "titulo": "Hay que revisarlo",
+      "corto": "Por revisar"
+    }
   },
-  "tamanos": {
-    "_nota": "Escalas del art. 2.1.36 OGUC en palabras del vecino. El umbral exacto de cada escala lo confirma la DOM.",
-    "basico": "de barrio",
-    "menor": "mediano",
-    "mediano": "grande",
-    "mayor": "muy grande"
-  },
-  "tamanos_plural": {
-    "_nota": "Se usan como 'locales <a>, <b> y <c>'.",
-    "basico": "de barrio",
-    "menor": "medianos",
-    "mediano": "grandes",
-    "mayor": "muy grandes"
+  "escalas": {
+    "_nota": "Nombres de la norma (art. 2.1.36 OGUC), los mismos del formulario y del certificado de la DOM. 'De barrio' es solo una glosa de la escala básica. Se usan como 'escala <a>, <b> y <c>'.",
+    "basico": "básica (de barrio)",
+    "menor": "menor",
+    "mediano": "mediana",
+    "mayor": "mayor"
   },
   "condiciones": {
-    "_nota": "Completan la frase 'solo si el local …'.",
-    "vialidad_estructurante": "da a una avenida principal",
-    "colectora_o_mayor": "da a una calle colectora o a una avenida",
+    "_nota": "Completan la frase 'solo si el local …'. Deben coincidir con las jerarquías de vialidad.json.",
+    "vialidad_estructurante": "da a una vía del Plan Regulador",
+    "colectora_o_mayor": "da a una vía colectora, troncal o expresa (no basta cualquier avenida)",
     "via_20m": "está en una calle de 20 metros o más de ancho",
     "texto": "cumple una condición especial"
   },
   "condiciones_chip": {
-    "vialidad_estructurante": "Avenida principal",
-    "colectora_o_mayor": "Calle colectora o avenida",
+    "vialidad_estructurante": "Vía del Plan Regulador",
+    "colectora_o_mayor": "Vía colectora o mayor",
     "via_20m": "Calle de 20 m o más"
   },
   "lineas": {
@@ -40,35 +53,54 @@
     "permitido_principal": "El Plan Regulador permite este negocio en este punto.",
     "permitido_texto": "Se puede, con una condición especial.",
     "prohibido": "No se permite en esta zona.",
-    "no_tamano": "No se permite un local de ese tamaño.",
+    "no_tamano": "No se permite en esa escala.",
     "alcohol": "Se revisa con la norma de alcoholes. No podemos adelantarlo.",
     "revisar": "No podemos orientarte con los datos disponibles.",
     "ambigua": "El mapa municipal tiene un dato por corregir en esta zona. Consúltalo en la municipalidad.",
-    "solo_si": "Solo si el local {cond}.",
-    "barrio_y_condicion": "Se puede si es un local {tam}. Más grande, solo si {cond}.",
-    "salvo": "Se puede, salvo {no}.",
-    "tamano_si": "Se puede en ese tamaño.",
-    "tamano_condicion": "En ese tamaño, solo si el local {cond}.",
-    "detalle_si": "Se permiten {lista}.",
-    "detalle_condicion": "{lista}: solo si el local {cond}.",
-    "detalle_no": "No se permiten {lista}.",
-    "y_texto": "Además tiene una condición especial."
+    "solo_si": "Solo si {cond}.",
+    "barrio_y_condicion": "Se puede en escala {tam}. En escala {otras}, solo si {cond}.",
+    "salvo": "Se puede, salvo en escala {no}.",
+    "tamano_condicion": "En esa escala, solo si {cond}.",
+    "detalle_si": "Se permite en escala {lista}.",
+    "detalle_condicion": "En escala {lista}: solo si {cond}.",
+    "detalle_no": "No en escala {lista}.",
+    "y_texto": "Además tiene una condición especial.",
+    "cita": "Condición: {texto}"
   },
   "zona": {
-    "tipo": {"ZC": "Sector céntrico", "ZH": "Barrio residencial"},
-    "vivienda": {"SI": "con viviendas", "NO": "sin viviendas"},
-    "vivienda_en": ["ZC"],
-    "comercio_si": "Comercio: se permiten {lista}.",
-    "comercio_condicion": "{lista}: solo si el local {cond}.",
-    "comercio_no": "No se permiten {lista}.",
+    "tipo": {
+      "ZC": "Sector céntrico",
+      "ZH": "Barrio residencial"
+    },
+    "vivienda": {
+      "SI": "con viviendas",
+      "NO": "sin viviendas"
+    },
+    "vivienda_en": [
+      "ZC"
+    ],
+    "comercio_texto": "Hay además una condición especial para el comercio (ver detalle técnico).",
     "dato_por_corregir": "Dato del mapa municipal por corregir",
     "titulo_sin_zona": "Punto sin zona",
     "titulo_varias": "Borde entre zonas",
     "titulo_sin_gis": "Zona no disponible",
+    "titulo_no_reconocida": "Zona no reconocida",
     "sin_matriz": "Zona sin tabla de usos cargada en Radar Maipú. Sus usos se revisan con la Dirección de Obras.",
     "sin_zona": "El punto no cae en una zona del Plan Regulador. Puede estar sobre la calle: marca el punto dentro del terreno.",
     "varias": "El punto cae en el borde de dos zonas. Márcalo dentro del terreno o consúltalo en la municipalidad.",
-    "sin_gis": "El mapa municipal no respondió. Intenta de nuevo en unos minutos."
+    "sin_gis": "El mapa municipal no respondió. Intenta de nuevo en unos minutos.",
+    "no_reconocida": "El mapa municipal trae un código de zona que Radar Maipú no reconoce. Consúltalo en la Dirección de Obras.",
+    "comercio": "Comercio: {partes}.",
+    "parte_si": "escala {lista}, sí",
+    "parte_condicion": "escala {lista}, solo si {cond}",
+    "parte_no": "escala {lista}, no"
+  },
+  "ficha": {
+    "frente_indicado": "Indicaste que tu local da a {via}",
+    "por_confirmar": "{condicion}: por confirmar",
+    "marca_principal": "Lo que buscas",
+    "nota_otros": "Toca otro negocio para ver su resultado completo en este mismo lugar.",
+    "escala_giro": " · escala {escala}"
   },
   "riesgos_chip": {
     "_nota": "Resumen corto de riesgos.json para la ficha. El texto completo sigue en 'Detalle técnico'.",

@@ -98,23 +98,20 @@ def _para_vecino(a: dict) -> dict:
 # ——— Lenguaje vecinal (ficha del lugar) ———
 
 def _lista(items: list[str], y: str = "y") -> str:
-    """['a'] -> 'a'; ['a', 'b'] -> 'a y b'; ['a', 'b', 'c'] -> 'a, b y c'. En negativo, y='ni'."""
+    """['a'] -> 'a'; ['a', 'b'] -> 'a y b'; ['a', 'b', 'c'] -> 'a, b y c'."""
     items = [i for i in items if i]
     if len(items) <= 1:
         return "".join(items)
     return ", ".join(items[:-1]) + f" {y} " + items[-1]
 
 
-def _mayuscula(s: str) -> str:
-    return s[:1].upper() + s[1:]
-
-
-def _locales(escalas: list[str], leng: dict, y: str = "y") -> str:
-    return "locales " + _lista([leng["tamanos_plural"][e] for e in escalas], y)
+def _escalas(escalas: list[str], leng: dict) -> str:
+    """['menor', 'mediano'] -> 'menor y mediana' (nombres de la norma, art. 2.1.36 OGUC)."""
+    return _lista([leng["escalas"][e] for e in escalas])
 
 
 def _agrupar(detalle: dict) -> tuple[list[str], dict[str, list[str]], list[str]]:
-    """Separa las escalas evaluadas en permitidas, con condición (agrupadas por condición) y no permitidas."""
+    """Separa las escalas en permitidas, con condición (agrupadas por condición) y no permitidas."""
     si, cond, no = [], {}, []
     for e in ORDEN_ESCALAS:
         d = detalle.get(e)
@@ -133,10 +130,18 @@ def _texto_condicion(cond: str, leng: dict) -> str:
     return leng["condiciones"].get(cond, leng["condiciones"]["texto"])
 
 
+def _cola_texto(textos: list[str], lin: dict) -> str:
+    """Condición escrita de la matriz: se cita si es una sola; si son varias, se avisa que existen."""
+    if len(textos) == 1:
+        return " " + lin["cita"].format(texto=textos[0])
+    return f" {lin['y_texto']}" if textos else ""
+
+
 def linea_giro(estado: str, detalle: dict | None, leng: dict, *, alcohol: bool = False, ambigua: bool = False,
-               condicion_texto: bool = False, escala: str | None = None) -> str:
-    """Una frase corta que dice si el giro se puede y con qué condición, sin términos técnicos."""
+               textos: list[str] | None = None, escala: str | None = None) -> str:
+    """Una frase corta que dice si el giro se puede y con qué condición, con los nombres de escala de la norma."""
     lin = leng["lineas"]
+    textos = textos or []
     if ambigua:
         return lin["ambigua"]
     if estado == "NO_CONCLUYENTE":
@@ -146,34 +151,32 @@ def linea_giro(estado: str, detalle: dict | None, leng: dict, *, alcohol: bool =
     if estado == "NO_PERMITIDO":
         return lin["no_tamano"] if (detalle and escala) else lin["prohibido"]
     # PERMITIDO_CON_CONDICION
+    cola = _cola_texto(textos, lin)
     if not detalle:
-        return lin["permitido_texto"]
-    si, cond, no = _agrupar(detalle)
-    # La condición escrita ya se nombra si alguna escala depende de ella: no repetirla.
-    extra = f" {lin['y_texto']}" if condicion_texto and "texto" not in cond else ""
+        return lin["permitido_texto"] + cola
     if escala and escala in detalle:
         d = detalle[escala]
         if d["estado"] == "SI":
-            return lin["permitido_texto"]
-        return lin["tamano_condicion"].format(cond=_texto_condicion(d.get("condicion") or "texto", leng)) + extra
+            return lin["permitido_texto"] + cola
+        return lin["tamano_condicion"].format(cond=_texto_condicion(d.get("condicion") or "texto", leng)) + cola
+    si, cond, no = _agrupar(detalle)
     if not cond:
-        return (lin["salvo"].format(no=_locales(no, leng)) + extra) if no else lin["permitido_texto"]
-    if len(cond) == 1:
+        return (lin["salvo"].format(no=_escalas(no, leng)) + cola) if no else lin["permitido_texto"] + cola
+    if len(cond) == 1 and not no:
         (c, escalas_c), = cond.items()
-        texto_c = _texto_condicion(c, leng)
-        if not si and not no:
-            return lin["solo_si"].format(cond=texto_c) + extra
-        if si == ["basico"] and not no:
-            return lin["barrio_y_condicion"].format(tam=leng["tamanos"]["basico"], cond=texto_c) + extra
+        if not si:
+            return lin["solo_si"].format(cond=_texto_condicion(c, leng)) + cola
+        if si == ["basico"]:
+            return lin["barrio_y_condicion"].format(tam=leng["escalas"]["basico"], otras=_escalas(escalas_c, leng),
+                                                    cond=_texto_condicion(c, leng)) + cola
     partes = []
     if si:
-        partes.append(lin["detalle_si"].format(lista=_locales(si, leng)))
+        partes.append(lin["detalle_si"].format(lista=_escalas(si, leng)))
     for c, escalas_c in cond.items():
-        partes.append(lin["detalle_condicion"].format(lista=_mayuscula(_locales(escalas_c, leng)),
-                                                      cond=_texto_condicion(c, leng)))
+        partes.append(lin["detalle_condicion"].format(lista=_escalas(escalas_c, leng), cond=_texto_condicion(c, leng)))
     if no:
-        partes.append(lin["detalle_no"].format(lista=_locales(no, leng, "ni")))
-    return " ".join(partes) + extra
+        partes.append(lin["detalle_no"].format(lista=_escalas(no, leng)))
+    return " ".join(partes) + cola
 
 
 def _nombre_lugar(nombre_matriz: str) -> str:
@@ -183,58 +186,66 @@ def _nombre_lugar(nombre_matriz: str) -> str:
 
 
 def describir_zona(inf: dict, cfg: dict, leng: dict) -> dict:
-    """Título y descripción de la zona del punto, en lenguaje vecinal, desde la matriz de usos."""
+    """Título y descripción de la zona del punto, en lenguaje vecinal, desde la matriz de comercio (clase 2.2).
+
+    Describe las cuatro escalas de la matriz, también la mayor: el motor no la evalúa si el vecino no declara
+    la escala, así que la cabecera es el lugar donde queda dicho que no se permite.
+    """
     lz = leng["zona"]
     z = inf.get("zona") or {}
     if z.get("estado") == "NO_DISPONIBLE":
-        return {"titulo": lz["titulo_sin_gis"], "texto": lz["sin_gis"], "codigo": None}
+        return {"titulo": lz["titulo_sin_gis"], "texto": lz["sin_gis"], "codigo": None, "matriz": False}
     if isinstance(z.get("gis"), list):
-        return {"titulo": lz["titulo_varias"], "texto": lz["varias"], "codigo": None}
+        return {"titulo": lz["titulo_varias"], "texto": lz["varias"], "codigo": None, "matriz": False}
     codigo = z.get("ordenanza")
     if not codigo:
-        return {"titulo": lz["titulo_sin_zona"], "texto": lz["sin_zona"], "codigo": None}
+        if z.get("gis"):
+            return {"titulo": lz["titulo_no_reconocida"], "texto": lz["no_reconocida"], "codigo": None,
+                    "matriz": False}
+        return {"titulo": lz["titulo_sin_zona"], "texto": lz["sin_zona"], "codigo": None, "matriz": False}
     zm = cfg["usos_comercio"]["zonas"].get(codigo)
     if zm is None:
         nombre = (z.get("descripcion") or "").split(":", 1)[-1].strip() or codigo
-        return {"titulo": nombre, "texto": lz["sin_matriz"], "codigo": codigo}
+        return {"titulo": nombre, "texto": lz["sin_matriz"], "codigo": codigo, "matriz": False}
     prefijo = codigo.split("-", 1)[0]
     tipo = lz["tipo"].get(prefijo, "")
     if prefijo in lz["vivienda_en"] and zm.get("vivienda") in lz["vivienda"]:
         tipo = f"{tipo} {lz['vivienda'][zm['vivienda']]}"
     frases = [f"{tipo}."] if tipo else []
-    escalas = (zm.get("comercio") or {}).get("escalas") or {}
-    cond_escala = (zm.get("comercio") or {}).get("condicion_escala") or {}
-    # Se describen las mismas escalas que el motor evalúa cuando el vecino no declara el tamaño.
-    evaluadas = cfg["usos_comercio"]["escalas_sin_declarar"]
+    comercio = zm.get("comercio") or {}
+    cond_escala = comercio.get("condicion_escala") or {}
     detalle = {e: {"estado": v, **({"condicion": cond_escala.get(e)} if v == "CONDICION" else {})}
-               for e, v in escalas.items() if e in evaluadas}
+               for e, v in (comercio.get("escalas") or {}).items()}
     si, cond, no = _agrupar(detalle)
-    if si:
-        frases.append(lz["comercio_si"].format(lista=_locales(si, leng)))
-    for c, escalas_c in cond.items():
-        frases.append(lz["comercio_condicion"].format(lista=_mayuscula(_locales(escalas_c, leng)),
-                                                      cond=_texto_condicion(c, leng)))
-    if no:
-        frases.append(lz["comercio_no"].format(lista=_locales(no, leng, "ni")))
-    return {"titulo": _nombre_lugar(zm["nombre"]), "texto": " ".join(frases), "codigo": codigo}
+    partes = ([lz["parte_si"].format(lista=_escalas(si, leng))] if si else []) + [
+        lz["parte_condicion"].format(lista=_escalas(escalas_c, leng), cond=_texto_condicion(c, leng))
+        for c, escalas_c in cond.items()] + ([lz["parte_no"].format(lista=_escalas(no, leng))] if no else [])
+    if partes:
+        frases.append(lz["comercio"].format(partes="; ".join(partes)))
+    if (comercio.get("condiciones_texto") or {}).get("_todos"):
+        frases.append(lz["comercio_texto"])
+    return {"titulo": _nombre_lugar(zm["nombre"]), "texto": " ".join(frases), "codigo": codigo, "matriz": True}
 
 
 def chips_lugar(inf: dict, leng: dict, frente_confirmado: dict | None) -> list[dict]:
-    """Datos del entorno en una línea: frente a vía (si importa) y riesgos. tono: ok | alerta | neutro."""
+    """Datos del entorno en una línea. tono: ok | alerta | neutro; tipo: via | dato | riesgo."""
+    lf = leng["ficha"]
     chips = []
     if frente_confirmado:
-        chips.append({"texto": f"Tu local da a {frente_confirmado['via']}", "tono": "ok"})
-    else:
-        pendientes = {d.get("condicion") for d in (inf["resultado"].get("detalle_escalas") or {}).values()
-                      if d.get("estado") == "CONDICION"} & set(leng["condiciones_chip"]) - {"_nota"}
-        for c in sorted(pendientes):
-            chips.append({"texto": f"{leng['condiciones_chip'][c]}: por confirmar", "tono": "neutro"})
+        # Declarado por el vecino: no es una verificación, así que no lleva ✓ ni tono "ok".
+        chips.append({"texto": lf["frente_indicado"].format(via=frente_confirmado["via"]), "tono": "neutro",
+                      "tipo": "via"})
+    pendientes = {d.get("condicion") for d in (inf["resultado"].get("detalle_escalas") or {}).values()
+                  if d.get("estado") == "CONDICION"} & (set(leng["condiciones_chip"]) - {"_nota"})
+    for c in sorted(pendientes):
+        chips.append({"texto": lf["por_confirmar"].format(condicion=leng["condiciones_chip"][c]), "tono": "neutro",
+                      "tipo": "via"})
     if any(a["tipo"] == "calidad_dato" for a in inf.get("advertencias", [])):
-        chips.append({"texto": leng["zona"]["dato_por_corregir"], "tono": "alerta"})
+        chips.append({"texto": leng["zona"]["dato_por_corregir"], "tono": "alerta", "tipo": "dato"})
     rc = leng["riesgos_chip"]
     r = inf.get("riesgos") or {}
     if r.get("estado") != "OK":
-        chips.append({"texto": rc["sin_dato"], "tono": "neutro"})
+        chips.append({"texto": rc["sin_dato"], "tono": "neutro", "tipo": "riesgo"})
     else:
         tipos = []
         for a in r.get("areas") or []:
@@ -243,7 +254,8 @@ def chips_lugar(inf: dict, leng: dict, frente_confirmado: dict | None) -> list[d
                 tipos.append(t)
         if r.get("bleve"):
             tipos.append(rc["bleve"])
-        chips += [{"texto": t, "tono": "alerta"} for t in tipos] or [{"texto": rc["ninguno"], "tono": "ok"}]
+        chips += ([{"texto": t, "tono": "alerta", "tipo": "riesgo"} for t in tipos]
+                  or [{"texto": rc["ninguno"], "tono": "ok", "tipo": "riesgo"}])
     return chips
 
 
@@ -261,26 +273,30 @@ def _fila(codigo: str, nombre: str, estado: str, linea: str, leng: dict, princip
 def ficha(inf: dict, cfg: dict, otros: list[dict] | None, frente_confirmado: dict | None,
           leng: dict | None = None) -> dict:
     leng = leng or lenguaje()
+    lugar = describir_zona(inf, cfg, leng)
     giro = inf.get("giro") or {}
     g = cfg["giros"]["giros"].get(giro.get("codigo") or "", {})
     escala = giro.get("escala")
     r = inf["resultado"]
     ambigua = r["estado"] == "NO_CONCLUYENTE" and "Zona ambigua" in (r.get("motivo") or "")
-    linea = linea_giro(r["estado"], r.get("detalle_escalas"), leng, alcohol=g.get("alcohol", False), ambigua=ambigua,
-                       condicion_texto=any(a["tipo"] == "condicion" for a in inf.get("advertencias", [])),
-                       escala=escala)
-    nombre = (giro.get("nombre") or g.get("nombre") or "") + (f" · local {leng['tamanos'][escala]}" if escala else "")
+    # "Se revisa con la norma de alcoholes" solo si la zona está resuelta; si no, la causa es otra.
+    linea = linea_giro(r["estado"], r.get("detalle_escalas"), leng, alcohol=g.get("alcohol", False) and lugar["matriz"],
+                       ambigua=ambigua, escala=escala,
+                       textos=[a["texto"] for a in inf.get("advertencias", []) if a["tipo"] == "condicion"])
+    con_escala = escala and g.get("clase") != "1.2"  # el hospedaje no se evalúa por escala
+    nombre = (giro.get("nombre") or g.get("nombre") or "") + (
+        leng["ficha"]["escala_giro"].format(escala=leng["escalas"][escala]) if con_escala else "")
     principal = _fila(giro.get("codigo") or "", nombre, r["estado"], linea, leng, principal=True)
     filas = [_fila(o["codigo"], o["nombre"], o["estado"],
                    linea_giro(o["estado"], o.get("detalle_escalas"), leng, alcohol=o["alcohol"],
-                              ambigua=o.get("ambigua", False), condicion_texto=o.get("condicion_texto", False),
-                              escala=escala), leng)
+                              ambigua=o.get("ambigua", False), textos=o.get("textos", []), escala=escala), leng)
              for o in (otros or [])[:leng["max_otros"]]]
     usados = {f["estado"] for f in [principal, *filas]}
     leyenda = [{"clase": ESTADOS[e]["clase"], "texto": leng["estados"][e]["corto"]}
                for e in ESTADOS if e in usados]
-    return {"lugar": describir_zona(inf, cfg, leng), "chips": chips_lugar(inf, leng, frente_confirmado),
-            "principal": principal, "otros": filas, "leyenda": leyenda}
+    return {"lugar": lugar, "chips": chips_lugar(inf, leng, frente_confirmado), "principal": principal,
+            "otros": filas, "leyenda": leyenda, "marca": leng["ficha"]["marca_principal"],
+            "nota_otros": leng["ficha"]["nota_otros"]}
 
 
 def presentar(inf: dict, vcfg: dict | None = None, otros: list[dict] | None = None, cfg: dict | None = None) -> dict:
@@ -302,7 +318,9 @@ def presentar(inf: dict, vcfg: dict | None = None, otros: list[dict] | None = No
     return {
         "ficha": ficha(inf, cfg, otros, confirmado),
         # El riesgo ya se ve en la cabecera: el detalle técnico se abre solo si el punto o el dato están en duda.
-        "abrir_detalle": any(a["tipo"] in ("ubicacion", "calidad_dato") for a in inf.get("advertencias", [])),
+        "abrir_detalle": any(a["tipo"] in ("ubicacion", "calidad_dato") for a in inf.get("advertencias", []))
+                         or bool(inf.get("zona", {}).get("gis") and not inf.get("zona", {}).get("ordenanza")
+                                 and not isinstance(inf["zona"]["gis"], list)),
         "estado": ESTADOS[estado],
         "codigo_estado": estado,
         "advertencias": advertencias,

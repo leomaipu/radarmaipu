@@ -460,7 +460,7 @@ h1, h2, h3 { margin: 0; line-height: 1.1; }
 @media (max-width: 639px) {
   .ojo--ficha { display: none; }
   .ficha { padding-top: 16px; }
-  .ficha__direccion { padding-right: 52px; }
+  .ficha__direccion, .ficha__titulo { padding-right: 52px; }
 }
 @media (max-width: 359px) {
   .ficha { padding: 14px 16px; }
@@ -522,8 +522,8 @@ h1, h2, h3 { margin: 0; line-height: 1.1; }
   .ficha__direccion { display: none; }
   .ficha__titulo { font-size: 1.1rem; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .dato { min-height: 26px; font-size: .72rem; padding: 2px 10px; }
-  .dato--neutro { display: none; }  /* la condición de vía ya la dice la fila del resultado */
-  .usos__titulo { display: none; }
+  .dato--via { display: none; }  /* la condición de vía ya la dice la fila del resultado */
+  .usos__titulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .uso--principal .uso__nombre { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .uso--principal { padding: 10px 14px; gap: 10px; }
   .uso--principal .uso__sello { width: 36px; height: 36px; }

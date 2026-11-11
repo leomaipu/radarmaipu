@@ -139,3 +139,25 @@ def test_atras_restaura_el_estado_de_la_url(pagina):
     pagina.wait_for_timeout(600)
     assert "giro=taller_mecanico" in pagina.url
     assert pagina.is_checked("input[name='giro'][value='taller_mecanico']")
+
+
+@pytest.mark.parametrize("ancho,alto", [(844, 390), (667, 375)])
+def test_horizontal_aviso_y_resultado_sin_desplazar(navegador, ancho, alto):
+    ctx = navegador.new_context(viewport={"width": ancho, "height": alto}, is_mobile=True, has_touch=True)
+    pg = ctx.new_page()
+    pg.goto(BASE + "?lat=-33.48&lon=-70.76&giro=bazar")
+    esperar_informe(pg)
+    for sel in (".aviso--informe", ".veredicto .veredicto__titulo"):
+        caja = pg.locator(sel).bounding_box()
+        assert caja and caja["y"] >= 0 and caja["y"] + caja["height"] <= alto, sel
+    ctx.close()
+
+
+def test_ficha_cambia_de_giro_en_el_mismo_punto(pagina):
+    pagina.goto(BASE + ZH5_TALLER)
+    esperar_informe(pagina)
+    destino = pagina.get_attribute("#informe [data-cambiar-giro] >> nth=0", "data-cambiar-giro")
+    pagina.click("#informe [data-cambiar-giro] >> nth=0")
+    pagina.wait_for_function("(g) => location.search.includes('giro=' + g)", arg=destino)
+    esperar_informe(pagina)
+    assert "lat=-33.5" in pagina.url and not pagina.errores

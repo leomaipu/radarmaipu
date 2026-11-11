@@ -240,6 +240,9 @@
     estado.dir = texto;
     $("#elegido-dir").textContent = texto;
     $("#paso2-lugar").textContent = texto && !texto.endsWith("…") ? `En ${texto}` : "";
+    // La dirección puede llegar después del informe (restaurar desde la URL): actualizar la ficha también.
+    const ficha = $("#informe [data-ficha-direccion]");
+    if (ficha && texto && !texto.endsWith("…")) { $("span", ficha).textContent = texto; ficha.hidden = false; }
   }
   async function direccionInversa(lat, lon) {
     try {
