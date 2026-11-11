@@ -239,6 +239,39 @@ def generar(lat: float, lon: float, giro: str, cfg: dict, gis: dict, escala: str
     return informe
 
 
+def evaluar_otros(informe: dict, cfg: dict, codigos: list[str], escala: str | None = None) -> list[dict]:
+    """Evalúa otros giros en el mismo punto, con la misma zona, vialidad (incluido el frente confirmado) y escala.
+
+    Sirve para la ficha del lugar ("¿qué se puede abrir aquí?"). No consulta el GIS: reutiliza lo que ya trae el
+    informe. Si la zona es ambigua en el GIS (descripción de otra zona) y el resultado cambia según cuál sea,
+    el giro queda NO_CONCLUYENTE, igual que en `generar`. Sin zona única con matriz, devuelve [].
+    """
+    zona = informe["zona"].get("ordenanza")
+    if zona is None or zona not in cfg["usos_comercio"]["zonas"]:
+        return []
+    alterna = _zona_segun_descripcion(informe["zona"].get("descripcion"))
+    alterna = alterna if alterna and alterna != zona else None
+    giros = cfg["giros"]["giros"]
+    vistos = {informe["giro"]["codigo"]}
+    out = []
+    for codigo in codigos:
+        if codigo in vistos or codigo not in giros:
+            continue
+        vistos.add(codigo)
+        r = usos.evaluar(zona, codigo, cfg, vialidad=informe["vialidad"], escala=escala)
+        ambigua = False
+        if alterna and usos.evaluar(alterna, codigo, cfg, vialidad=informe["vialidad"], escala=escala)["estado"] \
+                != r["estado"]:
+            r = {"estado": usos.NO_CONCLUYENTE, "motivo": f"Zona ambigua en el GIS ({zona} o {alterna}).",
+                 "articulo": None}
+            ambigua = True
+        out.append({"codigo": codigo, "nombre": giros[codigo]["nombre"], "alcohol": giros[codigo]["alcohol"],
+                    "estado": r["estado"], "motivo": r["motivo"], "articulo": r.get("articulo"),
+                    "detalle_escalas": r.get("detalle_escalas"), "ambigua": ambigua,
+                    "textos": [a["texto"] for a in r.get("advertencias", []) if a["tipo"] == "condicion"]})
+    return out
+
+
 ETIQUETA = {usos.PERMITIDO: "Permitido", usos.CON_CONDICION: "Permitido con condición",
             usos.NO_PERMITIDO: "No permitido", usos.NO_CONCLUYENTE: "No concluyente"}
 

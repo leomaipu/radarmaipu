@@ -240,6 +240,9 @@
     estado.dir = texto;
     $("#elegido-dir").textContent = texto;
     $("#paso2-lugar").textContent = texto && !texto.endsWith("…") ? `En ${texto}` : "";
+    // La dirección puede llegar después del informe (restaurar desde la URL): actualizar la ficha también.
+    const ficha = $("#informe [data-ficha-direccion]");
+    if (ficha && texto && !texto.endsWith("…")) { $("span", ficha).textContent = texto; ficha.hidden = false; }
   }
   async function direccionInversa(lat, lon) {
     try {
@@ -337,6 +340,8 @@
     animarCifras();
     const inf = $("#informe");
     if (inf) {
+      const dir = $("[data-ficha-direccion]", inf);
+      if (dir && estado.dir && !estado.dir.endsWith("…")) { $("span", dir).textContent = estado.dir; dir.hidden = false; }
       inf.focus({ preventScroll: true });
       anunciar(`Resultado: ${inf.querySelector(".veredicto__titulo").textContent}. ${inf.querySelector(".veredicto__giro").textContent}.`);
     }
@@ -372,6 +377,9 @@
   cuerpo.addEventListener("click", (e) => {
     const f = e.target.closest("[data-frente]");
     if (f) { estado.frente = f.dataset.frente; simular(); return; }
+    // Ficha del lugar: otro giro en el mismo punto (mismo frente y escala declarados).
+    const g = e.target.closest("[data-cambiar-giro]");
+    if (g && radios.some((r) => r.value === g.dataset.cambiarGiro)) { elegirGiro(g.dataset.cambiarGiro); simular(); return; }
     if (e.target.closest("[data-reintentar]")) { simular(); return; }
     if (e.target.closest("[data-compartir]")) { compartir(); return; }
     if (e.target.closest("[data-imprimir]")) { window.print(); return; }
