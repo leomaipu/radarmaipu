@@ -87,7 +87,7 @@ def _regimen(codigo: str, reg: dict, rubros: list[str], cfg_ck: dict, codigo_gir
         "requisitos": list(reg.get("requisitos", [])),
         "zonificacion": reg.get("zonificacion", ""),
         "avisos": [avisos[r] for r in rubros if r in avisos],
-        "aviso": reg.get("aviso", ""),
+        "aviso_legal": reg.get("aviso", ""),
         "fuente": _legible(reg.get("fuente", ""), nombres),
         "pasos": [{"texto": p["texto"], **({"enlace": enlaces[p["enlace"]]} if p.get("enlace") else {})}
                   for p in reg.get("pasos", [])],

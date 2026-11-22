@@ -54,7 +54,7 @@
       {% for p in r.pasos %}<li>{{ p.texto }}{% if p.enlace %} <a href="{{ p.enlace.url }}" target="_blank" rel="noopener">{{ p.enlace.texto }}<span class="sr"> (abre en otra pestaña)</span></a>{% endif %}</li>{% endfor %}
     </ol>
     {% endif %}
-    {% if r.aviso %}<p class="sutil">{{ r.aviso }}</p>{% endif %}
+    {% if r.aviso_legal %}<p class="sutil">{{ r.aviso_legal }}</p>{% endif %}
     <p class="sutil tramite__fuente">Fuente: {{ r.fuente }}. Lista de Rentas, versión {{ ck.version }}.</p>
   </section>
   {% endif %}{% endfor %}
