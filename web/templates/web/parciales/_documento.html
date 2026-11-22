@@ -1,0 +1,9 @@
+<li class="documento">
+  <span class="documento__marca" aria-hidden="true"></span>
+  <div class="documento__texto">
+    <strong>{{ d.documento }}</strong>
+    {% if d.detalle %}<span class="documento__detalle">{{ d.detalle }}</span>{% endif %}
+    {% if d.donde %}<span class="documento__donde"><svg aria-hidden="true"><use href="#i-pin"/></svg>{{ d.donde }}</span>{% endif %}
+    {% if d.fuente %}<span class="documento__fuente">{{ d.fuente }}</span>{% endif %}
+  </div>
+</li>

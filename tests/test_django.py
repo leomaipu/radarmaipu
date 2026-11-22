@@ -1,4 +1,5 @@
 """Capa Django: carga a PostGIS, API sobre la base, comercio cercano, checklist y sitio del vecino."""
+import copy
 import json
 
 import httpx
@@ -133,7 +134,7 @@ def test_api_direccion_502_si_el_geocodificador_falla(monkeypatch):
 
 
 # ——— Checklist de Rentas desde el panel ———
-def test_checklist_del_panel_llega_al_informe(monkeypatch):
+def test_documentos_del_panel_se_suman_a_la_lista_oficial(monkeypatch):
     monkeypatch.setattr(api_views, "cliente_gis", lambda: gis_falso())
     DocumentoChecklist.objects.create(nombre="Formulario de solicitud", orden=1)
     DocumentoChecklist.objects.create(nombre="Resolución sanitaria", clase="2.2", orden=2)
@@ -141,14 +142,16 @@ def test_checklist_del_panel_llega_al_informe(monkeypatch):
     DocumentoChecklist.objects.create(nombre="Solo peluquería", giro="peluqueria", orden=4)
     DocumentoChecklist.objects.create(nombre="Inactivo", activo=False)
     inf = api_views.construir_informe(LAT, LON, "bazar", None, None)
-    assert inf["checklist_rentas"]["estado"] == "lista_oficial"
-    assert [i["documento"] for i in inf["checklist_rentas"]["items"]] == ["Formulario de solicitud", "Resolución sanitaria"]
+    ck = inf["checklist_rentas"]
+    assert ck["estado"] == "lista_oficial" and ck["regimen_sugerido"] == "mef"
+    assert [i["documento"] for i in ck["adicionales"]] == ["Formulario de solicitud", "Resolución sanitaria"]
 
 
-def test_sin_checklist_queda_pendiente(monkeypatch):
+def test_sin_documentos_del_panel_queda_la_lista_oficial(monkeypatch):
     monkeypatch.setattr(api_views, "cliente_gis", lambda: gis_falso())
     inf = api_views.construir_informe(LAT, LON, "bazar", None, None)
-    assert inf["checklist_rentas"] == {"estado": "pendiente_lista_oficial", "items": []}
+    assert inf["checklist_rentas"]["adicionales"] == []
+    assert inf["checklist_rentas"]["regimenes"][0]["documentos"]
     assert inf["comercio_cercano"]["total"] == 0
 
 
@@ -336,3 +339,23 @@ def test_advertencias_de_via_para_el_vecino():
     assert "frente_via" not in " ".join(a["texto"] for a in cond["advertencias"])
     no = presentar({**base, "resultado": {"estado": "NO_PERMITIDO", "motivo": "", "detalle_escalas": {}}})
     assert [a["etiqueta"] for a in no["advertencias"]] == ["Área de riesgo"]
+
+
+def test_check_de_django_valida_la_checklist(monkeypatch):
+    from nucleo import prc_config
+    from tramites.apps import revisar_checklist
+    assert revisar_checklist() == []
+    cfg = copy.deepcopy(prc_config.cargar())
+    cfg["checklist_rentas"]["items"][0]["regimenes"] = ["no_existe"]
+    monkeypatch.setattr(prc_config, "cargar", lambda: cfg)
+    assert [e.id for e in revisar_checklist()] == ["tramites.E001"]
+
+
+def test_api_texto_con_regimen(monkeypatch):
+    monkeypatch.setattr(api_views, "cliente_gis", lambda: gis_falso())
+    c = Client()
+    base = {"lat": LAT, "lon": LON, "giro": "bazar", "formato": "texto"}
+    texto = c.get("/api/informe", {**base, "regimen": "comercial"}).content.decode()
+    assert "3. DOCUMENTOS PARA RENTAS\nPatente comercial o industrial" in texto
+    assert "Microempresa familiar:" in c.get("/api/informe", base).content.decode()
+    assert c.get("/api/informe", {**base, "regimen": "otro"}).status_code == 422

@@ -140,15 +140,14 @@ def giros(request):
 
 
 def construir_informe(lat: float, lon: float, giro: str, escala: str | None, frente_via: str | None) -> dict:
-    """Informe completo: motor de nucleo + checklist de la base + comercio cercano."""
+    """Informe completo: motor de nucleo + documentos adicionales de Rentas (panel) + comercio cercano."""
     cfg = prc_config.cargar()
     with cliente_gis() as client:
         gis = prc_gis.consultar_punto(client, lon, lat, cfg)
     inf = informe_mod.generar(lat, lon, giro, cfg, gis, escala=escala, frente_via=frente_via)
     g = cfg["giros"]["giros"][giro]
-    items = checklist_para(giro, g["clase"], g["alcohol"])
-    if items:
-        inf["checklist_rentas"] = {"estado": "lista_oficial", "items": items}
+    # Pendiente: el modelo del panel no distingue régimen, así que estos documentos se muestran en todos.
+    inf["checklist_rentas"]["adicionales"] = checklist_para(giro, g["clase"], g["alcohol"])
     try:
         inf["comercio_cercano"] = comercio.resumen(lon, lat, g, settings.RADAR["RADIO_COMERCIO_M"])
     except Exception:  # la base puede no estar cargada aún: el informe se entrega igual
@@ -165,12 +164,17 @@ def informe(
     escala: Literal["basico", "menor", "mediano", "mayor"] | None = None,
     formato: Literal["json", "texto"] = "json",
     frente_via: str | None = Query(None, min_length=1, max_length=20, pattern=r"^[A-Za-z0-9._-]+$"),
+    regimen: str | None = Query(None, min_length=2, max_length=20,
+                                description="Régimen de la patente para el formato texto (ver checklist_rentas.regimenes)."),
 ):
     """Informe orientativo de factibilidad para un punto y un giro. No reemplaza el CIP."""
     codigo = giro.strip().lower()
-    if codigo not in prc_config.cargar()["giros"]["giros"]:
+    cfg = prc_config.cargar()
+    if codigo not in cfg["giros"]["giros"]:
         raise HttpError(422, "Giro no soportado. Ver /api/giros para la lista de códigos.")
+    if regimen is not None and regimen not in cfg["checklist_rentas"]["regimenes"]:
+        raise HttpError(422, "Régimen no soportado.")
     inf = construir_informe(lat, lon, codigo, escala, frente_via)
     if formato == "texto":
-        return HttpResponse(informe_mod.texto(inf), content_type="text/plain; charset=utf-8")
+        return HttpResponse(informe_mod.texto(inf, regimen), content_type="text/plain; charset=utf-8")
     return inf

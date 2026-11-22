@@ -67,7 +67,8 @@ def test_informe_tiene_la_forma_del_documento():
                            "descripcion": "Zona Habitacional 6: Maipú Norte - Sector Villas Pehuén"}
     assert inf["giro"]["clase_ordenanza"] == "2.2 Comercio"
     assert inf["resultado"]["articulo"] == "Art. 34, ZH-6"
-    assert inf["checklist_rentas"] == {"estado": "pendiente_lista_oficial", "items": []}
+    assert inf["checklist_rentas"]["estado"] == "lista_oficial"
+    assert [r["codigo"] for r in inf["checklist_rentas"]["regimenes"]] == ["mef", "comercial"]
     assert inf["aviso"] == informe.AVISO
     assert any(f.get("pagina") == 27 for f in inf["fuentes"])
 
@@ -255,8 +256,8 @@ def test_consultas_usan_lista_blanca_de_campos_y_punto_wgs84():
 def test_texto_muestra_aviso_y_tres_bloques():
     t = informe.texto(generar())
     assert t.startswith("AVISO: " + informe.AVISO)
-    assert "1. ZONA" in t and "2. RESULTADO DEL GIRO" in t and "3. ADVERTENCIAS" in t
-    assert t.index("1. ZONA") < t.index("2. RESULTADO DEL GIRO") < t.index("3. ADVERTENCIAS")
+    assert "1. ZONA" in t and "2. RESULTADO DEL GIRO" in t and "4. ADVERTENCIAS" in t
+    assert t.index("1. ZONA") < t.index("2. RESULTADO DEL GIRO") < t.index("3. DOCUMENTOS PARA RENTAS") < t.index("4. ADVERTENCIAS")
 
 
 # API

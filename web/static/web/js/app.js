@@ -13,7 +13,7 @@
   const panelLateral = () => esEscritorio() || matchMedia("(orientation: landscape) and (max-height: 520px)").matches;
   const reducirMovimiento = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const estado = { lat: null, lon: null, dir: null, giro: null, escala: "", frente: "", paso: 1 };
+  const estado = { lat: null, lon: null, dir: null, giro: null, escala: "", frente: "", regimen: "", paso: 1 };
 
   /* ——— Mapa ——— */
   const LIMITES = L.latLngBounds([-33.60, -70.86], [-33.43, -70.69]);
@@ -336,6 +336,8 @@
     estado.claveInforme = [+pedida.get("lat"), +pedida.get("lon"), pedida.get("giro"), pedida.get("escala") || "",
       pedida.get("frente_via") || ""].join("|");
     refrescarPasos();
+    const opcion = estado.regimen && $(`[data-regimen-opcion][value="${CSS.escape(estado.regimen)}"]:not(:disabled)`, e.detail.target);
+    if (opcion) { opcion.checked = true; mostrarRegimen(opcion.closest("[data-tramite]"), opcion.value); }
     dibujarComercio();
     animarCifras();
     const inf = $("#informe");
@@ -374,6 +376,25 @@
   }
   const anuncio = $("#anuncio");
   function anunciar(texto) { anuncio.textContent = ""; setTimeout(() => (anuncio.textContent = texto), 60); }
+  // Documentos para Rentas: muestra el bloque del régimen elegido (microempresa familiar o patente comercial).
+  // Al imprimir se abren todos los acordeones y después se dejan como estaban.
+  let cerrados = [];
+  window.addEventListener("beforeprint", () => {
+    cerrados = $$("#informe details:not([open])");
+    cerrados.forEach((d) => (d.open = true));
+  });
+  window.addEventListener("afterprint", () => { cerrados.forEach((d) => (d.open = false)); cerrados = []; });
+  function mostrarRegimen(raiz, codigo) {
+    $$("[data-regimen-panel]", raiz).forEach((p) => (p.hidden = p.dataset.regimenPanel !== codigo));
+  }
+  cuerpo.addEventListener("change", (e) => {
+    const r = e.target.closest("[data-regimen-opcion]");
+    if (!r) return;
+    estado.regimen = r.value;
+    mostrarRegimen(r.closest("[data-tramite]"), r.value);
+    const panel = $(`[data-regimen-panel="${CSS.escape(r.value)}"]`, r.closest("[data-tramite]"));
+    if (panel) anunciar(`Documentos para ${panel.querySelector(".tramite__titulo").textContent}.`);
+  });
   cuerpo.addEventListener("click", (e) => {
     const f = e.target.closest("[data-frente]");
     if (f) { estado.frente = f.dataset.frente; simular(); return; }
