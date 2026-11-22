@@ -1,0 +1,64 @@
+{% with ck=inf.checklist_rentas %}
+{% if ck.regimenes %}
+<div class="tramite" data-tramite>
+  <fieldset class="tramite__opciones">
+    <legend class="tramite__pregunta">¿Dónde funcionará tu negocio?</legend>
+    {% for r in ck.regimenes %}
+    <label class="opcion-regimen{% if not r.disponible %} opcion-regimen--no{% endif %}">
+      <input type="radio" name="regimen" value="{{ r.codigo }}" data-regimen-opcion{% if r.codigo == ck.regimen_sugerido %} checked{% endif %}{% if not r.disponible %} disabled aria-describedby="regimen-no-{{ r.codigo }}"{% endif %}>
+      <span class="opcion-regimen__corto">{{ r.corto }}</span>
+      <span class="opcion-regimen__nombre">{{ r.nombre }}</span>
+    </label>
+    {% endfor %}
+  </fieldset>
+  {% for r in ck.regimenes %}{% if not r.disponible %}<p class="tramite__no" id="regimen-no-{{ r.codigo }}"><svg aria-hidden="true"><use href="#i-info"/></svg><span><strong>{{ r.nombre }}:</strong> {{ r.motivo_no_disponible }}</span></p>{% endif %}{% endfor %}
+
+  {% for r in ck.regimenes %}{% if r.disponible %}
+  <section class="tramite__panel" data-regimen-panel="{{ r.codigo }}" aria-label="Documentos para {{ r.nombre }}"{% if r.codigo != ck.regimen_sugerido %} hidden{% endif %}>
+    <h4 class="tramite__titulo">{{ r.nombre }}</h4>
+    <p class="tramite__bajada">{{ r.bajada }}</p>
+    {% if r.requisitos %}
+    <div class="tramite__requisitos">
+      <p><strong>{{ r.requisitos_titulo }}</strong></p>
+      <ul role="list">{% for q in r.requisitos %}<li><svg aria-hidden="true"><use href="#i-check"/></svg><span>{{ q }}</span></li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+    {% if r.zonificacion %}<p class="tramite__nota"><svg aria-hidden="true"><use href="#i-info"/></svg><span>{{ r.zonificacion }}</span></p>{% endif %}
+    {% if ck.rubros %}<p class="sutil">Según tu negocio, la lista incluye lo que se exige para: {% for ru in ck.rubros %}{{ ru.nombre|lower }}{% if not forloop.last %}; {% endif %}{% endfor %}.</p>{% endif %}
+
+    <h5 class="tramite__subtitulo">Documentos que debes llevar</h5>
+    <ol class="checklist" role="list">
+      {% for d in r.documentos %}{% include "web/parciales/_documento.html" %}{% endfor %}
+      {% for d in ck.adicionales %}{% include "web/parciales/_documento.html" %}{% endfor %}
+    </ol>
+
+    {% if r.si_te_aplica %}
+    <h5 class="tramite__subtitulo">Solo si te aplica</h5>
+    {% for grupo in r.si_te_aplica %}
+    <div class="caso">
+      <p class="caso__titulo">{{ grupo.caso }}</p>
+      <ul class="checklist checklist--caso" role="list">{% for d in grupo.items %}{% include "web/parciales/_documento.html" %}{% endfor %}</ul>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if r.condiciones %}
+    <h5 class="tramite__subtitulo">Condiciones que debe cumplir el lugar</h5>
+    <ul class="checklist checklist--condicion" role="list">{% for d in r.condiciones %}{% include "web/parciales/_documento.html" %}{% endfor %}</ul>
+    {% endif %}
+
+    {% if r.pasos %}
+    <h5 class="tramite__subtitulo">Cómo hacer el trámite</h5>
+    <ol class="pasos-tramite">
+      {% for p in r.pasos %}<li>{{ p.texto }}{% if p.enlace %} <a href="{{ p.enlace.url }}" target="_blank" rel="noopener">{{ p.enlace.texto }}<span class="sr"> (abre en otra pestaña)</span></a>{% endif %}</li>{% endfor %}
+    </ol>
+    {% endif %}
+    {% if r.aviso %}<p class="sutil">{{ r.aviso }}</p>{% endif %}
+    <p class="sutil tramite__fuente">Fuente: {{ r.fuente }}. Lista de Rentas, versión {{ ck.version }}.</p>
+  </section>
+  {% endif %}{% endfor %}
+</div>
+{% else %}
+<p>Rentas aún no publica la lista oficial de documentos. Pronto la verás aquí.</p>
+{% endif %}
+{% endwith %}

@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from datetime import datetime
 
-from . import usos
+from . import checklist, usos
 from .prc_config import normalizar_zona
 from .prc_gis import NO_DISPONIBLE, OK
 
@@ -231,7 +231,7 @@ def generar(lat: float, lon: float, giro: str, cfg: dict, gis: dict, escala: str
         "secciones": {"zona": zona_gis["estado"], "vialidad": gis["vialidad"]["estado"],
                       "riesgos": gis["riesgos"]["estado"]},
         "fuentes": _fuentes(zona, cfg, resultado),
-        "checklist_rentas": {"estado": cfg["checklist_rentas"]["estado"], "items": cfg["checklist_rentas"]["items"]},
+        "checklist_rentas": checklist.armar(giro, g, cfg["checklist_rentas"]),
         "aviso": AVISO,
     }
     if detalle is not None:
@@ -296,6 +296,22 @@ def texto(informe: dict) -> str:
         lineas.append(f"Referencia: {r['articulo']}.")
     lineas += ["", "3. ADVERTENCIAS"]
     lineas += [f"- {a['texto']}" for a in informe["advertencias"]] or ["- Sin advertencias."]
+    lineas += ["", "4. DOCUMENTOS PARA RENTAS", *_texto_checklist(informe["checklist_rentas"])]
     fuentes = [f["titulo"] + (f", p. {f['pagina']}" if f.get("pagina") else "") for f in informe["fuentes"]]
     lineas += ["", "Fuentes: " + "; ".join(fuentes) + ".", "", f"AVISO: {informe['aviso']}"]
     return "\n".join(lineas)
+
+
+def _texto_checklist(ck: dict) -> list[str]:
+    """Documentos del régimen sugerido, en texto plano. Los demás regímenes quedan en el JSON."""
+    reg = next((r for r in ck.get("regimenes", []) if r["codigo"] == ck.get("regimen_sugerido")), None)
+    if reg is None:
+        return ["- Rentas aún no publica la lista oficial de documentos."]
+    lineas = [f"{reg['nombre']} ({reg['bajada']})"]
+    lineas += [f"- {d['documento']}" + (f": {d['detalle']}" if d.get("detalle") else "") for d in reg["documentos"]]
+    for grupo in reg["si_te_aplica"]:
+        lineas += [f"- {grupo['caso']}: " + "; ".join(d["documento"] for d in grupo["items"]) + "."]
+    lineas += [f"- {d['documento']}" for d in ck.get("adicionales", [])]
+    if reg["condiciones"]:
+        lineas += ["Condiciones del lugar: " + "; ".join(c["documento"] for c in reg["condiciones"]) + "."]
+    return lineas

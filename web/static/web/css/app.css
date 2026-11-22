@@ -416,6 +416,49 @@ h1, h2, h3 { margin: 0; line-height: 1.1; }
 .checklist li { margin-bottom: 8px; }
 .fecha { margin-top: 12px; }
 
+/* Documentos para Rentas */
+.tramite { display: grid; gap: 12px; }
+.tramite__opciones { border: 0; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; min-width: 0; }
+.tramite__pregunta { grid-column: 1 / -1; font-weight: 700; font-size: 1rem; margin-bottom: 8px; padding: 0; }
+.opcion-regimen { position: relative; display: grid; gap: 2px; padding: 12px 14px; min-height: 64px; border: 2px solid var(--borde-campo); border-radius: var(--r-m); cursor: pointer; background: #fff; transition: border-color var(--t-rapida), background var(--t-rapida); }
+.opcion-regimen input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.opcion-regimen__corto { font-weight: 700; }
+.opcion-regimen__nombre { font-size: .8rem; color: var(--tinta-2); }
+.opcion-regimen:has(input:checked) { border-color: var(--azul); background: var(--violeta-suave); box-shadow: inset 0 0 0 1px var(--azul); }
+.opcion-regimen:has(input:focus-visible) { box-shadow: var(--foco); }
+.opcion-regimen--no { cursor: not-allowed; border-style: dashed; color: var(--tinta-3); background: var(--fondo-2); }
+.opcion-regimen--no input { cursor: not-allowed; }
+.tramite__no, .tramite__nota { display: flex; gap: 10px; align-items: flex-start; margin: 0; padding: 12px 14px; border-radius: var(--r-m); font-size: .88rem; line-height: 1.45; }
+.tramite__no { background: var(--fondo-2); }
+.tramite__nota { background: var(--turquesa-suave); }
+.tramite__no svg, .tramite__nota svg { width: 20px; height: 20px; flex: none; margin-top: 1px; }
+.tramite__panel { display: grid; gap: 10px; min-width: 0; }
+.tramite__panel[hidden] { display: none; }
+.tramite__titulo { font-size: 1.1rem; font-weight: 800; margin: 4px 0 0; }
+.tramite__bajada { margin: 0; color: var(--tinta-2); }
+.tramite__requisitos { padding: 12px 14px; border-radius: var(--r-m); background: var(--amarillo-suave); font-size: .9rem; }
+.tramite__requisitos p { margin: 0 0 6px; }
+.tramite__requisitos ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.tramite__requisitos li { display: flex; gap: 8px; align-items: flex-start; }
+.tramite__requisitos svg { width: 18px; height: 18px; flex: none; margin-top: 2px; }
+.tramite__subtitulo { font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); margin: 10px 0 0; }
+.tramite .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.documento { display: flex; gap: 12px; align-items: flex-start; padding: 10px 4px; border-bottom: 1px solid var(--linea); margin: 0; }
+.documento:last-child { border-bottom: 0; }
+.documento__marca { width: 20px; height: 20px; flex: none; margin-top: 2px; border: 2px solid var(--borde-campo); border-radius: 5px; }
+.checklist--condicion .documento__marca { border-radius: 50%; border-color: var(--turquesa); background: var(--turquesa-suave); }
+.documento__texto { display: grid; gap: 2px; min-width: 0; font-size: .92rem; line-height: 1.4; }
+.documento__detalle { color: var(--tinta-2); font-size: .86rem; }
+.documento__donde { display: flex; gap: 4px; align-items: center; font-size: .8rem; color: var(--tinta-2); }
+.documento__donde svg { width: 14px; height: 14px; flex: none; }
+.documento__fuente { font-size: .72rem; color: var(--tinta-3); }
+.caso { padding: 4px 12px; border-left: 3px solid var(--violeta); border-radius: 0 var(--r-s) var(--r-s) 0; background: var(--fondo-2); }
+.caso__titulo { margin: 6px 0 0; font-weight: 700; font-size: .88rem; }
+.caso .documento { border-bottom-color: rgb(16 23 74 / .08); }
+.pasos-tramite { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: .92rem; line-height: 1.45; }
+.pasos-tramite a { color: var(--azul); font-weight: 500; text-decoration-thickness: 2px; text-decoration-color: var(--turquesa); }
+.tramite__fuente { font-size: .75rem; }
+
 /* Diálogos */
 .dialogo {
   width: min(520px, calc(100vw - 24px)); max-height: calc(100dvh - 48px); border: 0; border-radius: var(--r-xl); padding: 28px 24px 24px;
@@ -546,4 +589,6 @@ h1, h2, h3 { margin: 0; line-height: 1.1; }
   details > * { display: block !important; }
   .ficha, .uso__sello, .uso--principal, .estados__punto, .dato { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .uso__ir, .usos__nota { display: none !important; }
+  .tramite__opciones, .tramite__no { display: none !important; }
+  .tramite__panel[hidden] { display: none !important; }
 }

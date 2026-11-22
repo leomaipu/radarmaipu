@@ -140,15 +140,13 @@ def giros(request):
 
 
 def construir_informe(lat: float, lon: float, giro: str, escala: str | None, frente_via: str | None) -> dict:
-    """Informe completo: motor de nucleo + checklist de la base + comercio cercano."""
+    """Informe completo: motor de nucleo + documentos adicionales de Rentas (panel) + comercio cercano."""
     cfg = prc_config.cargar()
     with cliente_gis() as client:
         gis = prc_gis.consultar_punto(client, lon, lat, cfg)
     inf = informe_mod.generar(lat, lon, giro, cfg, gis, escala=escala, frente_via=frente_via)
     g = cfg["giros"]["giros"][giro]
-    items = checklist_para(giro, g["clase"], g["alcohol"])
-    if items:
-        inf["checklist_rentas"] = {"estado": "lista_oficial", "items": items}
+    inf["checklist_rentas"]["adicionales"] = checklist_para(giro, g["clase"], g["alcohol"])
     try:
         inf["comercio_cercano"] = comercio.resumen(lon, lat, g, settings.RADAR["RADIO_COMERCIO_M"])
     except Exception:  # la base puede no estar cargada aún: el informe se entrega igual

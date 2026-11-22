@@ -67,7 +67,8 @@ def test_informe_tiene_la_forma_del_documento():
                            "descripcion": "Zona Habitacional 6: Maipú Norte - Sector Villas Pehuén"}
     assert inf["giro"]["clase_ordenanza"] == "2.2 Comercio"
     assert inf["resultado"]["articulo"] == "Art. 34, ZH-6"
-    assert inf["checklist_rentas"] == {"estado": "pendiente_lista_oficial", "items": []}
+    assert inf["checklist_rentas"]["estado"] == "lista_oficial"
+    assert [r["codigo"] for r in inf["checklist_rentas"]["regimenes"]] == ["mef", "comercial"]
     assert inf["aviso"] == informe.AVISO
     assert any(f.get("pagina") == 27 for f in inf["fuentes"])
 

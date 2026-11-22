@@ -303,7 +303,15 @@ def test_panel_muestra_la_ficha_del_lugar(web):
     assert set(botones) <= set(LENG["giros_referencia"])
     # El detalle técnico sigue disponible para quien quiera verificar.
     assert "Detalle técnico" in html and "Art. 34, ZH-6" in html and "Compatible con condiciones" in html
-    assert 'aria-label="' not in re.search(r'<summary>.*?Detalle técnico.*?</summary>', html, re.S).group(0)
+    assert 'aria-label="' not in re.search(r'<summary>(?:(?!</summary>).)*Detalle técnico.*?</summary>', html, re.S).group(0)
+
+
+def test_secciones_en_el_orden_pedido_por_rentas(web):
+    """Documentos para Rentas, luego comercio cercano, normas de la zona y al final el detalle técnico."""
+    html = web.get("/panel/informe/", {"lat": LAT, "lon": LON, "giro": "bazar"}).content.decode()
+    titulos = re.findall(r'<summary>.*?</span>\s*([^<]+?)\s*(?:<|·)', html, re.S)
+    assert titulos == ["Documentos para Rentas", "Comercio cercano", "Normas de la zona", "Detalle técnico"]
+    assert html.index("Informe orientativo.") < html.index("Documentos para Rentas")
 
 
 def test_panel_sin_zona_no_ofrece_otros_giros(monkeypatch, db):
@@ -316,3 +324,19 @@ def test_panel_sin_zona_no_ofrece_otros_giros(monkeypatch, db):
 def test_panel_con_frente_confirmado(web):
     html = web.get("/panel/informe/", {"lat": LAT, "lon": LON, "giro": "bazar", "frente_via": "T8P"}).content.decode()
     assert "Indicaste que tu local da a Av. Pajaritos" in html and "Se puede</p>" in html
+
+
+def test_documentos_para_rentas_por_regimen(web):
+    html = web.get("/panel/informe/", {"lat": LAT, "lon": LON, "giro": "fuente_soda"}).content.decode()
+    assert re.search(r'value="mef" data-regimen-opcion checked', html)
+    assert re.search(r'data-regimen-panel="comercial"[^>]*hidden', html)
+    assert not re.search(r'data-regimen-panel="mef"[^>]*hidden', html)
+    assert "Baños para clientes" in html and "Declaración jurada simple" in html and "Solo si te aplica" in html
+    assert 'href="https://www.sii.cl/servicios_online/1031-1034.html" target="_blank" rel="noopener"' in html
+
+
+def test_discoteca_no_ofrece_microempresa_familiar(web):
+    html = web.get("/panel/informe/", {"lat": LAT, "lon": LON, "giro": "discoteca"}).content.decode()
+    assert re.search(r'value="mef" data-regimen-opcion disabled', html)
+    assert re.search(r'value="comercial" data-regimen-opcion checked', html)
+    assert 'data-regimen-panel="mef"' not in html
