@@ -37,7 +37,7 @@ def test_la_configuracion_no_tiene_referencias_rotas():
     (lambda c: c["rubros"]["alimentos"]["giros"].append("no_existe"), "giro desconocido"),
     (lambda c: c["regimenes"]["mef"]["no_disponible"]["giros"].append("no_existe"), "giro desconocido"),
     (lambda c: c["regimenes"]["comercial"].update(no_disponible={"giros": ["bazar"], "motivo": "x"}), "al menos un régimen"),
-    (lambda c: c["regimenes"]["mef"]["excepciones_zonificacion"].update(nada="x"), "excepciones_zonificacion"),
+    (lambda c: c["regimenes"]["mef"]["avisos_por_rubro"].update(nada="x"), "avisos_por_rubro"),
     (lambda c: c["regimenes"]["mef"]["pasos"].append({"texto": "x", "enlace": "nada"}), "enlace desconocido"),
 ])
 def test_validar_detecta_errores_de_configuracion(roto, error):
@@ -60,7 +60,7 @@ def test_todo_giro_tiene_lista_con_fuente_en_cada_regimen_disponible(codigo):
 def test_microempresa_familiar_lleva_las_declaraciones_y_el_sii():
     mef = regimen(armar("bazar"), "mef")
     assert {"mef_dj_simple", "mef_inofensiva", "mef_sii", "cedula", "smapa"} <= ids(mef)
-    assert mef["excepciones"] == []
+    assert mef["avisos"] == []
     assert "com_recepcion" not in ids(mef)
     assert "zonificación" in mef["zonificacion"] and "Reglamento Sanitario" in mef["zonificacion"]
     assert len(mef["requisitos"]) == 4
@@ -148,7 +148,7 @@ def test_trabajadores_extranos_segun_el_reglamento():
 def test_la_exencion_de_zonificacion_no_alcanza_a_los_alcoholes():
     for codigo in ("botilleria", "restaurante_con_alcohol"):
         mef = regimen(armar(codigo), "mef")
-        assert mef["disponible"] and len(mef["excepciones"]) == 1 and "Ley de Alcoholes" in mef["excepciones"][0]
+        assert mef["disponible"] and len(mef["avisos"]) == 1 and "Ley de Alcoholes" in mef["avisos"][0]
 
 
 def test_giros_que_la_referencia_permite_con_otra_autorizacion_siguen_como_mef():
@@ -186,4 +186,13 @@ def test_el_vecino_ve_nombres_de_listas_y_no_codigos():
 def test_texto_plano_respeta_el_regimen_pedido():
     ck = armar("bazar")
     assert informe._texto_checklist(ck, "comercial")[0].startswith("Patente comercial")
-    assert informe._texto_checklist(armar("bar"), "mef")[0].startswith("Patente comercial")
+    lineas = informe._texto_checklist(armar("bar"), "mef")
+    assert lineas[0].startswith("Microempresa familiar: Probablemente") and lineas[1].startswith("Patente comercial")
+
+
+@pytest.mark.parametrize("codigo, servicio", [("gas_licuado", "SEC"), ("farmacia", "SEREMI de Salud"),
+                                              ("hotel", "SEREMI de Salud"), ("vulcanizacion", "SEREMI de Salud")])
+def test_la_microempresa_familiar_avisa_permisos_de_otros_servicios(codigo, servicio):
+    """DTO 102, art. 4: Rentas no los pide para la patente, pero la actividad igual los necesita."""
+    avisos = regimen(armar(codigo), "mef")["avisos"]
+    assert avisos and any(servicio in a and "Consúltalo" in a for a in avisos)

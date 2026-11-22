@@ -146,6 +146,7 @@ def construir_informe(lat: float, lon: float, giro: str, escala: str | None, fre
         gis = prc_gis.consultar_punto(client, lon, lat, cfg)
     inf = informe_mod.generar(lat, lon, giro, cfg, gis, escala=escala, frente_via=frente_via)
     g = cfg["giros"]["giros"][giro]
+    # Pendiente: el modelo del panel no distingue régimen, así que estos documentos se muestran en todos.
     inf["checklist_rentas"]["adicionales"] = checklist_para(giro, g["clase"], g["alcohol"])
     try:
         inf["comercio_cercano"] = comercio.resumen(lon, lat, g, settings.RADAR["RADIO_COMERCIO_M"])

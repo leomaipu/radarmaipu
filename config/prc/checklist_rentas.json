@@ -25,8 +25,13 @@
         "La actividad es lícita y no es peligrosa, contaminante ni molesta para los vecinos."
       ],
       "zonificacion": "La ley libera a la microempresa familiar de las limitaciones de zonificación del Plan Regulador para obtener la patente. Igual debe cumplir el Reglamento Sanitario de los Alimentos si trabaja con alimentos. Rentas confirma si tu caso califica.",
-      "excepciones_zonificacion": {
-        "alcohol": "Esta liberación no alcanza a la venta de alcohol: la patente de alcoholes debe cumplir la Ley de Alcoholes, incluidas sus reglas de ubicación y distancia, y necesita acuerdo del Concejo Municipal."
+      "avisos_por_rubro": {
+        "_nota": "Lo que la liberación de la microempresa familiar NO alcanza (DTO 102/2002, art. 4: la municipalidad no considera esas autorizaciones para la patente, pero la actividad igual las necesita). Referencia: Decreto 3466/2026 de Río Claro, arts. 6, 9 y 17.",
+        "alcohol": "Esta liberación no alcanza a la venta de alcohol: la patente de alcoholes debe cumplir la Ley de Alcoholes, incluidas sus reglas de ubicación y distancia, y necesita acuerdo del Concejo Municipal.",
+        "combustibles": "Rentas no te pide la resolución SEC para esta patente, pero vender o guardar gas o combustibles en tu casa igual debe cumplir la normativa de la SEC. Consúltalo antes de partir.",
+        "farmacia": "Rentas no te pide la resolución sanitaria para esta patente, pero una farmacia igual necesita autorización de la SEREMI de Salud para funcionar. Consúltalo antes de partir.",
+        "alojamiento": "Rentas no te la pide para esta patente, pero alojar personas puede requerir autorización de la SEREMI de Salud u otro servicio. Consúltalo antes de partir.",
+        "taller_industrial": "Rentas no te la pide para esta patente, pero algunos talleres necesitan autorización de la SEREMI de Salud u otro servicio. Consúltalo antes de partir."
       },
       "no_disponible": {
         "_nota": "Giros que no pueden acogerse a la microempresa familiar: los que la ordenanza de referencia de Río Claro (Decreto 3466/2026, art. 9) excluye por ser molestos (bares, pubs, discotecas, boites) y los que por su tamaño no caben en una casa habitación (Ley 19.749; DTO 102/2002, art. 5). Lista orientativa: Rentas de Maipú debe validarla.",
@@ -49,7 +54,7 @@
       "requisitos_titulo": "",
       "requisitos": [],
       "zonificacion": "Todos los documentos quedan sujetos a que la zonificación permita tu negocio en esa dirección. Por eso Radar Maipú te muestra primero qué dice el Plan Regulador.",
-      "excepciones_zonificacion": {},
+      "avisos_por_rubro": {},
       "fuente": "DL 3.063, art. 26; MAIPU_01",
       "aviso": "",
       "pasos": [
@@ -68,11 +73,13 @@
                             "pollos_asados", "distribucion_alimentos", "restaurante", "fuente_soda", "mercado", "supermercado",
                             "amasanderia", "botilleria", "bar", "pub", "restaurante_con_alcohol", "discoteca", "cabaret_boite"]},
     "elaboracion_alimentos": {"nombre": "preparación de alimentos",
+                              "_nota": "DS 977, art. 32: producción, elaboración y transformación. Pendiente validar con Rentas o la SEREMI si carnicería y fiambrería (trozado) entran aquí.",
                               "giros": ["pollos_asados", "amasanderia", "restaurante", "fuente_soda", "restaurante_con_alcohol",
                                         "bar", "pub", "discoteca", "cabaret_boite"]},
     "consumo_en_local": {"nombre": "consumo de alimentos en el local",
                          "giros": ["restaurante", "fuente_soda", "restaurante_con_alcohol", "bar", "pub", "discoteca", "cabaret_boite"]},
     "farmacia": {"nombre": "farmacia", "giros": ["farmacia"]},
+    "alojamiento": {"nombre": "alojamiento de personas", "giros": ["hostal", "hotel", "apart_hotel", "motel"]},
     "taller_industrial": {"nombre": "taller o actividad productiva",
                           "giros": ["taller_mecanico", "taller_pintura_desabolladura", "vulcanizacion", "imprenta", "vidrieria",
                                     "amasanderia", "taller_tejidos_ceramica", "taller_bicicletas", "lavanderia"]},

@@ -306,9 +306,11 @@ def _texto_checklist(ck: dict, regimen: str | None = None) -> list[str]:
     """Documentos del régimen pedido (o del sugerido) en texto plano. Los demás regímenes quedan en el JSON."""
     disponibles = {r["codigo"]: r for r in ck.get("regimenes", []) if r["disponible"]}
     reg = disponibles.get(regimen or "") or disponibles.get(ck.get("regimen_sugerido", ""))
+    pedido = next((r for r in ck.get("regimenes", []) if r["codigo"] == regimen and not r["disponible"]), None)
     if reg is None:
         return ["- Rentas aún no publica la lista oficial de documentos."]
-    lineas = [f"{reg['nombre']}: {reg['bajada']}", *reg.get("excepciones", [])]
+    lineas = [f"{pedido['nombre']}: {pedido['motivo_no_disponible']}"] if pedido else []
+    lineas += [f"{reg['nombre']}: {reg['bajada']}", *reg.get("avisos", [])]
     lineas += [f"- {d['documento']}" + (f": {d['detalle']}" if d.get("detalle") else "") for d in reg["documentos"]]
     for grupo in reg["si_te_aplica"]:
         lineas += [f"- {grupo['caso']}: " + "; ".join(d["documento"] for d in grupo["items"]) + "."]

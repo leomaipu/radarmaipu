@@ -429,11 +429,11 @@ h1, h2, h3 { margin: 0; line-height: 1.1; }
 .opcion-regimen:has(input:focus-visible) { box-shadow: var(--foco); }
 .opcion-regimen--no { cursor: not-allowed; border-style: dashed; color: var(--tinta-3); background: var(--fondo-2); }
 .opcion-regimen--no input { cursor: not-allowed; }
-.tramite__no, .tramite__nota { display: flex; gap: 10px; align-items: flex-start; margin: 0; padding: 12px 14px; border-radius: var(--r-m); font-size: .88rem; line-height: 1.45; }
+.tramite__no, .tramite__nota, .tramite__alerta { display: flex; gap: 10px; align-items: flex-start; margin: 0; padding: 12px 14px; border-radius: var(--r-m); font-size: .88rem; line-height: 1.45; }
 .tramite__no { background: var(--fondo-2); }
 .tramite__alerta { background: var(--amarillo-suave); }
 .tramite__nota { background: var(--turquesa-suave); }
-.tramite__no svg, .tramite__nota svg { width: 20px; height: 20px; flex: none; margin-top: 1px; }
+.tramite__no svg, .tramite__nota svg, .tramite__alerta svg { width: 20px; height: 20px; flex: none; margin-top: 1px; }
 .tramite__panel { display: grid; gap: 10px; min-width: 0; }
 .tramite__panel[hidden] { display: none; }
 .tramite__titulo { font-size: 1.1rem; font-weight: 800; margin: 4px 0 0; }

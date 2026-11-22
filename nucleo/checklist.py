@@ -75,7 +75,7 @@ def _regimen(codigo: str, reg: dict, rubros: list[str], cfg_ck: dict, codigo_gir
     orden_casos = [c for c in cfg_ck["casos"] if c in casos]
     enlaces = cfg_ck.get("enlaces", {})
     ok = disponible(reg, codigo_giro)
-    excepciones = reg.get("excepciones_zonificacion", {})
+    avisos = reg.get("avisos_por_rubro", {})
     return {
         "codigo": codigo,
         "nombre": reg["nombre"],
@@ -86,7 +86,7 @@ def _regimen(codigo: str, reg: dict, rubros: list[str], cfg_ck: dict, codigo_gir
         "requisitos_titulo": reg.get("requisitos_titulo", ""),
         "requisitos": list(reg.get("requisitos", [])),
         "zonificacion": reg.get("zonificacion", ""),
-        "excepciones": [excepciones[r] for r in rubros if r in excepciones],
+        "avisos": [avisos[r] for r in rubros if r in avisos],
         "aviso": reg.get("aviso", ""),
         "fuente": _legible(reg.get("fuente", ""), nombres),
         "pasos": [{"texto": p["texto"], **({"enlace": enlaces[p["enlace"]]} if p.get("enlace") else {})}
@@ -132,8 +132,8 @@ def validar(cfg_ck: dict, giros: dict) -> list[str]:
         for g in r.get("no_disponible", {}).get("giros", []):
             if g not in giros:
                 errores.append(f"{nombre_reg}.no_disponible: giro desconocido {g}")
-        if set(r.get("excepciones_zonificacion", {})) - rubros:
-            errores.append(f"{nombre_reg}.excepciones_zonificacion: rubro desconocido")
+        if {k for k in r.get("avisos_por_rubro", {}) if not k.startswith("_")} - rubros:
+            errores.append(f"{nombre_reg}.avisos_por_rubro: rubro desconocido")
         for p in r.get("pasos", []):
             if p.get("enlace") and p["enlace"] not in cfg_ck.get("enlaces", {}):
                 errores.append(f"paso con enlace desconocido {p['enlace']}")

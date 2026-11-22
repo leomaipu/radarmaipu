@@ -24,7 +24,7 @@
     </div>
     {% endif %}
     {% if r.zonificacion %}<p class="tramite__nota"><svg aria-hidden="true"><use href="#i-info"/></svg><span>{{ r.zonificacion }}</span></p>{% endif %}
-    {% for x in r.excepciones %}<p class="tramite__no tramite__alerta"><svg aria-hidden="true"><use href="#i-alerta"/></svg><span>{{ x }}</span></p>{% endfor %}
+    {% for x in r.avisos %}<p class="tramite__alerta"><svg aria-hidden="true"><use href="#i-alerta"/></svg><span>{{ x }}</span></p>{% endfor %}
     {% if ck.rubros %}<p class="sutil">Según tu negocio, la lista incluye lo que se exige para: {% for ru in ck.rubros %}{{ ru.nombre|lower }}{% if not forloop.last %}; {% endif %}{% endfor %}.</p>{% endif %}
 
     <h5 class="tramite__subtitulo">Documentos que debes llevar</h5>

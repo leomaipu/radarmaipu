@@ -4,6 +4,7 @@ import re
 
 import pytest
 from django.test import Client
+from django.conf import settings
 
 from api import views as api_views
 from nucleo import informe, prc_config, usos
@@ -340,3 +341,11 @@ def test_discoteca_no_ofrece_microempresa_familiar(web):
     assert re.search(r'value="mef" data-regimen-opcion disabled', html)
     assert re.search(r'value="comercial" data-regimen-opcion checked', html)
     assert 'data-regimen-panel="mef"' not in html
+
+
+def test_aviso_de_alcoholes_se_ve_y_se_imprime(web):
+    html = web.get("/panel/informe/", {"lat": LAT, "lon": LON, "giro": "botilleria"}).content.decode()
+    assert '<p class="tramite__alerta">' in html and "Ley de Alcoholes" in html
+    css = (settings.BASE_DIR / "web/static/web/css/app.css").read_text(encoding="utf-8")
+    impresion = css[css.index("@media print"):]
+    assert ".tramite__alerta" not in impresion
