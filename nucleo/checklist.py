@@ -37,49 +37,70 @@ def _de_rubros(rubros: list[str]) -> Especificacion:
     return lambda item: not item.get("rubros") or bool(set(item["rubros"]) & set(rubros))
 
 
+def _sin_rubros_excluidos(rubros: list[str]) -> Especificacion:
+    """Para ítems genéricos que otro ítem más específico ya cubre en esos rubros."""
+    return lambda item: not set(item.get("excepto_rubros", [])) & set(rubros)
+
+
 def _cumple(item: dict, specs: list[Especificacion]) -> bool:
     return all(s(item) for s in specs)
 
 
-def _publico(item: dict) -> dict:
-    return {k: item[k] for k in CAMPOS_ITEM if item.get(k)}
+def _legible(fuente: str, nombres: dict) -> str:
+    """Cambia los códigos de las listas de Rentas (MAIPU_02_A) por su nombre, para el vecino."""
+    for codigo in sorted((c for c in nombres if not c.startswith("_")), key=len, reverse=True):
+        fuente = fuente.replace(codigo, nombres[codigo])
+    return fuente
 
 
-def _regimen(codigo: str, reg: dict, items: list[dict], rubros: list[str], cfg_ck: dict, disponible: bool) -> dict:
-    specs = [_de_regimen(codigo), _de_rubros(rubros)]
-    aplican = [i for i in items if _cumple(i, specs)]
+def _publico(item: dict, nombres: dict) -> dict:
+    salida = {k: item[k] for k in CAMPOS_ITEM if item.get(k)}
+    salida["fuente"] = _legible(item["fuente"], nombres)
+    return salida
+
+
+def disponible(reg: dict, codigo_giro: str) -> bool:
+    return codigo_giro not in reg.get("no_disponible", {}).get("giros", [])
+
+
+def _regimen(codigo: str, reg: dict, rubros: list[str], cfg_ck: dict, codigo_giro: str) -> dict:
+    specs = [_de_regimen(codigo), _de_rubros(rubros), _sin_rubros_excluidos(rubros)]
+    aplican = [i for i in cfg_ck["items"] if _cumple(i, specs)]
+    nombres = cfg_ck.get("fuentes_lista", {})
+    pub = lambda i: _publico(i, nombres)  # noqa: E731
     casos: dict[str, list[dict]] = {}
     for i in aplican:
         if i["tipo"] == "documento" and i.get("caso"):
-            casos.setdefault(i["caso"], []).append(_publico(i))
+            casos.setdefault(i["caso"], []).append(pub(i))
     orden_casos = [c for c in cfg_ck["casos"] if c in casos]
     enlaces = cfg_ck.get("enlaces", {})
+    ok = disponible(reg, codigo_giro)
+    excepciones = reg.get("excepciones_zonificacion", {})
     return {
         "codigo": codigo,
         "nombre": reg["nombre"],
         "corto": reg["corto"],
         "bajada": reg["bajada"],
-        "disponible": disponible,
-        "motivo_no_disponible": "" if disponible else cfg_ck["giros_sin_mef"]["motivo"],
+        "disponible": ok,
+        "motivo_no_disponible": "" if ok else reg["no_disponible"]["motivo"],
         "requisitos_titulo": reg.get("requisitos_titulo", ""),
         "requisitos": list(reg.get("requisitos", [])),
         "zonificacion": reg.get("zonificacion", ""),
+        "excepciones": [excepciones[r] for r in rubros if r in excepciones],
         "aviso": reg.get("aviso", ""),
-        "fuente": reg.get("fuente", ""),
+        "fuente": _legible(reg.get("fuente", ""), nombres),
         "pasos": [{"texto": p["texto"], **({"enlace": enlaces[p["enlace"]]} if p.get("enlace") else {})}
                   for p in reg.get("pasos", [])],
-        "documentos": [_publico(i) for i in aplican if i["tipo"] == "documento" and not i.get("caso")],
+        "documentos": [pub(i) for i in aplican if i["tipo"] == "documento" and not i.get("caso")],
         "si_te_aplica": [{"caso": cfg_ck["casos"][c], "items": casos[c]} for c in orden_casos],
-        "condiciones": [_publico(i) for i in aplican if i["tipo"] == "condicion"],
+        "condiciones": [pub(i) for i in aplican if i["tipo"] == "condicion"],
     }
 
 
 def armar(codigo: str, giro: dict, cfg_ck: dict) -> dict:
     """Checklist para un giro, con un bloque por régimen. El régimen elegido por defecto va marcado."""
     rubros = rubros_del_giro(codigo, giro, cfg_ck)
-    sin_mef = codigo in cfg_ck["giros_sin_mef"]["giros"]
-    regimenes = [_regimen(c, r, cfg_ck["items"], rubros, cfg_ck, disponible=not (c == "mef" and sin_mef))
-                 for c, r in cfg_ck["regimenes"].items()]
+    regimenes = [_regimen(c, r, rubros, cfg_ck, codigo) for c, r in cfg_ck["regimenes"].items()]
     defecto = cfg_ck["regimen_por_defecto"]
     if not any(r["codigo"] == defecto and r["disponible"] for r in regimenes):
         defecto = next(r["codigo"] for r in regimenes if r["disponible"])
@@ -105,10 +126,14 @@ def validar(cfg_ck: dict, giros: dict) -> list[str]:
         for g in cfg_ck["rubros"][nombre].get("giros", []):
             if g not in giros:
                 errores.append(f"rubro {nombre}: giro desconocido {g}")
-    for g in cfg_ck["giros_sin_mef"]["giros"]:
-        if g not in giros:
-            errores.append(f"giros_sin_mef: giro desconocido {g}")
-    for r in cfg_ck["regimenes"].values():
+    if not any(not r.get("no_disponible", {}).get("giros") for r in cfg_ck["regimenes"].values()):
+        errores.append("debe haber al menos un régimen disponible para todos los giros")
+    for nombre_reg, r in cfg_ck["regimenes"].items():
+        for g in r.get("no_disponible", {}).get("giros", []):
+            if g not in giros:
+                errores.append(f"{nombre_reg}.no_disponible: giro desconocido {g}")
+        if set(r.get("excepciones_zonificacion", {})) - rubros:
+            errores.append(f"{nombre_reg}.excepciones_zonificacion: rubro desconocido")
         for p in r.get("pasos", []):
             if p.get("enlace") and p["enlace"] not in cfg_ck.get("enlaces", {}):
                 errores.append(f"paso con enlace desconocido {p['enlace']}")
@@ -124,7 +149,7 @@ def validar(cfg_ck: dict, giros: dict) -> list[str]:
             errores.append(f"{ident}: falta documento o fuente")
         if not i.get("regimenes") or set(i["regimenes"]) - regimenes:
             errores.append(f"{ident}: régimen desconocido")
-        if set(i.get("rubros", [])) - rubros:
+        if (set(i.get("rubros", [])) | set(i.get("excepto_rubros", []))) - rubros:
             errores.append(f"{ident}: rubro desconocido")
         if i.get("caso") and i["caso"] not in casos:
             errores.append(f"{ident}: caso desconocido")

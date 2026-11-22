@@ -67,7 +67,7 @@
   <p class="nota-confirmada"><svg aria-hidden="true"><use href="#i-check"/></svg> Indicaste que tu local da a <strong>{{ vm.frente_confirmado.via }}</strong>. La DOM lo verificará en el Certificado de Informaciones Previas. <button type="button" class="enlace" data-frente="">Deshacer</button></p>
   {% endif %}
 
-  <details class="acordeon acordeon--rentas">
+  <details class="acordeon acordeon--rentas" open>
     <summary><span class="acordeon__icono"><svg aria-hidden="true"><use href="#i-lista"/></svg></span>Documentos para Rentas</summary>
     {% include "web/parciales/_checklist.html" %}
   </details>

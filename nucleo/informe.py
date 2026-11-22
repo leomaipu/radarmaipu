@@ -276,8 +276,8 @@ ETIQUETA = {usos.PERMITIDO: "Permitido", usos.CON_CONDICION: "Permitido con cond
             usos.NO_PERMITIDO: "No permitido", usos.NO_CONCLUYENTE: "No concluyente"}
 
 
-def texto(informe: dict) -> str:
-    """Versión para la app: aviso visible, luego zona, resultado del giro y advertencias."""
+def texto(informe: dict, regimen: str | None = None) -> str:
+    """Versión para la app, en el orden del informe web: zona, resultado, documentos para Rentas y advertencias."""
     z, r, g = informe["zona"], informe["resultado"], informe["giro"]
     if z.get("ordenanza"):
         zona_txt = f"Zona {z['ordenanza']}" + (f": {z['descripcion']}" if z.get("descripcion") else "")
@@ -294,20 +294,21 @@ def texto(informe: dict) -> str:
                r["motivo"]]
     if r.get("articulo"):
         lineas.append(f"Referencia: {r['articulo']}.")
-    lineas += ["", "3. ADVERTENCIAS"]
+    lineas += ["", "3. DOCUMENTOS PARA RENTAS", *_texto_checklist(informe["checklist_rentas"], regimen)]
+    lineas += ["", "4. ADVERTENCIAS"]
     lineas += [f"- {a['texto']}" for a in informe["advertencias"]] or ["- Sin advertencias."]
-    lineas += ["", "4. DOCUMENTOS PARA RENTAS", *_texto_checklist(informe["checklist_rentas"])]
     fuentes = [f["titulo"] + (f", p. {f['pagina']}" if f.get("pagina") else "") for f in informe["fuentes"]]
     lineas += ["", "Fuentes: " + "; ".join(fuentes) + ".", "", f"AVISO: {informe['aviso']}"]
     return "\n".join(lineas)
 
 
-def _texto_checklist(ck: dict) -> list[str]:
-    """Documentos del régimen sugerido, en texto plano. Los demás regímenes quedan en el JSON."""
-    reg = next((r for r in ck.get("regimenes", []) if r["codigo"] == ck.get("regimen_sugerido")), None)
+def _texto_checklist(ck: dict, regimen: str | None = None) -> list[str]:
+    """Documentos del régimen pedido (o del sugerido) en texto plano. Los demás regímenes quedan en el JSON."""
+    disponibles = {r["codigo"]: r for r in ck.get("regimenes", []) if r["disponible"]}
+    reg = disponibles.get(regimen or "") or disponibles.get(ck.get("regimen_sugerido", ""))
     if reg is None:
         return ["- Rentas aún no publica la lista oficial de documentos."]
-    lineas = [f"{reg['nombre']} ({reg['bajada']})"]
+    lineas = [f"{reg['nombre']}: {reg['bajada']}", *reg.get("excepciones", [])]
     lineas += [f"- {d['documento']}" + (f": {d['detalle']}" if d.get("detalle") else "") for d in reg["documentos"]]
     for grupo in reg["si_te_aplica"]:
         lineas += [f"- {grupo['caso']}: " + "; ".join(d["documento"] for d in grupo["items"]) + "."]

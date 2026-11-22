@@ -256,8 +256,8 @@ def test_consultas_usan_lista_blanca_de_campos_y_punto_wgs84():
 def test_texto_muestra_aviso_y_tres_bloques():
     t = informe.texto(generar())
     assert t.startswith("AVISO: " + informe.AVISO)
-    assert "1. ZONA" in t and "2. RESULTADO DEL GIRO" in t and "3. ADVERTENCIAS" in t
-    assert t.index("1. ZONA") < t.index("2. RESULTADO DEL GIRO") < t.index("3. ADVERTENCIAS")
+    assert "1. ZONA" in t and "2. RESULTADO DEL GIRO" in t and "4. ADVERTENCIAS" in t
+    assert t.index("1. ZONA") < t.index("2. RESULTADO DEL GIRO") < t.index("3. DOCUMENTOS PARA RENTAS") < t.index("4. ADVERTENCIAS")
 
 
 # API

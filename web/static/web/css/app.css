@@ -424,12 +424,14 @@ h1, h2, h3 { margin: 0; line-height: 1.1; }
 .opcion-regimen input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
 .opcion-regimen__corto { font-weight: 700; }
 .opcion-regimen__nombre { font-size: .8rem; color: var(--tinta-2); }
-.opcion-regimen:has(input:checked) { border-color: var(--azul); background: var(--violeta-suave); box-shadow: inset 0 0 0 1px var(--azul); }
+.opcion-regimen:has(input:checked) { border-color: var(--azul); background: var(--violeta-suave); box-shadow: inset 0 0 0 2px var(--azul); padding-right: 40px; }
+.opcion-regimen:has(input:checked)::after { content: ""; position: absolute; top: 12px; right: 12px; width: 20px; height: 20px; border-radius: 50%; background: var(--azul) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3L15 7' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 20px no-repeat; }
 .opcion-regimen:has(input:focus-visible) { box-shadow: var(--foco); }
 .opcion-regimen--no { cursor: not-allowed; border-style: dashed; color: var(--tinta-3); background: var(--fondo-2); }
 .opcion-regimen--no input { cursor: not-allowed; }
 .tramite__no, .tramite__nota { display: flex; gap: 10px; align-items: flex-start; margin: 0; padding: 12px 14px; border-radius: var(--r-m); font-size: .88rem; line-height: 1.45; }
 .tramite__no { background: var(--fondo-2); }
+.tramite__alerta { background: var(--amarillo-suave); }
 .tramite__nota { background: var(--turquesa-suave); }
 .tramite__no svg, .tramite__nota svg { width: 20px; height: 20px; flex: none; margin-top: 1px; }
 .tramite__panel { display: grid; gap: 10px; min-width: 0; }
@@ -456,7 +458,7 @@ h1, h2, h3 { margin: 0; line-height: 1.1; }
 .caso__titulo { margin: 6px 0 0; font-weight: 700; font-size: .88rem; }
 .caso .documento { border-bottom-color: rgb(16 23 74 / .08); }
 .pasos-tramite { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: .92rem; line-height: 1.45; }
-.pasos-tramite a { color: var(--azul); font-weight: 500; text-decoration-thickness: 2px; text-decoration-color: var(--turquesa); }
+.pasos-tramite a { display: inline-flex; align-items: center; min-height: 44px; color: var(--azul); font-weight: 500; text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--turquesa); }
 .tramite__fuente { font-size: .75rem; }
 
 /* Diálogos */

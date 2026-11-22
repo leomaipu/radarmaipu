@@ -349,3 +349,13 @@ def test_check_de_django_valida_la_checklist(monkeypatch):
     cfg["checklist_rentas"]["items"][0]["regimenes"] = ["no_existe"]
     monkeypatch.setattr(prc_config, "cargar", lambda: cfg)
     assert [e.id for e in revisar_checklist()] == ["tramites.E001"]
+
+
+def test_api_texto_con_regimen(monkeypatch):
+    monkeypatch.setattr(api_views, "cliente_gis", lambda: gis_falso())
+    c = Client()
+    base = {"lat": LAT, "lon": LON, "giro": "bazar", "formato": "texto"}
+    texto = c.get("/api/informe", {**base, "regimen": "comercial"}).content.decode()
+    assert "3. DOCUMENTOS PARA RENTAS\nPatente comercial o industrial" in texto
+    assert "Microempresa familiar:" in c.get("/api/informe", base).content.decode()
+    assert c.get("/api/informe", {**base, "regimen": "otro"}).status_code == 422

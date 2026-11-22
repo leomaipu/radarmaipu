@@ -377,6 +377,13 @@
   const anuncio = $("#anuncio");
   function anunciar(texto) { anuncio.textContent = ""; setTimeout(() => (anuncio.textContent = texto), 60); }
   // Documentos para Rentas: muestra el bloque del régimen elegido (microempresa familiar o patente comercial).
+  // Al imprimir se abren todos los acordeones y después se dejan como estaban.
+  let cerrados = [];
+  window.addEventListener("beforeprint", () => {
+    cerrados = $$("#informe details:not([open])");
+    cerrados.forEach((d) => (d.open = true));
+  });
+  window.addEventListener("afterprint", () => { cerrados.forEach((d) => (d.open = false)); cerrados = []; });
   function mostrarRegimen(raiz, codigo) {
     $$("[data-regimen-panel]", raiz).forEach((p) => (p.hidden = p.dataset.regimenPanel !== codigo));
   }
@@ -385,6 +392,8 @@
     if (!r) return;
     estado.regimen = r.value;
     mostrarRegimen(r.closest("[data-tramite]"), r.value);
+    const panel = $(`[data-regimen-panel="${CSS.escape(r.value)}"]`, r.closest("[data-tramite]"));
+    if (panel) anunciar(`Documentos para ${panel.querySelector(".tramite__titulo").textContent}.`);
   });
   cuerpo.addEventListener("click", (e) => {
     const f = e.target.closest("[data-frente]");
