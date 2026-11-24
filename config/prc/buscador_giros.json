@@ -1,0 +1,45 @@
+{
+  "_nota": "Buscador de giros en lenguaje natural ('vendo completos y churrascos' -> Fuente de soda). Solo sugiere: el vecino confirma el giro y el veredicto lo sigue dando el motor de reglas. Funciona en dos modos: léxico (siempre disponible, sin servicios externos) y semántico (embeddings de un modelo local en Ollama, si RM_OLLAMA_URL está configurada). Cambiar aquí, no en el código. Los umbrales del modo semántico se calibran en el servidor con 'manage.py evaluar_buscador --calibrar'.",
+  "max_caracteres": 120,
+  "min_caracteres": 3,
+  "max_sugerencias": 3,
+  "lexico": {
+    "_nota": "Puntaje entre 0 y 1: qué parte de la consulta (ponderada por lo informativa que es cada palabra) aparece en las frases del giro. Las palabras se comparan por su raíz (stemmer Snowball en español) y sin tildes.",
+    "umbral_minimo": 0.25,
+    "peso_prefijo": 0.8,
+    "largo_minimo_prefijo": 4
+  },
+  "semantico": {
+    "_nota": "Similitud coseno máxima entre la consulta y cada frase del giro. 'prefijo_consulta' y 'prefijo_documento' son para modelos que los piden (p. ej., nomic-embed-text: 'search_query: ' y 'search_document: ').",
+    "modelo": "paraphrase-multilingual",
+    "prefijo_consulta": "",
+    "prefijo_documento": "",
+    "timeout_s": 3,
+    "pausa_tras_falla_s": 60,
+    "tamano_lote": 64,
+    "peso_semantico": 0.7,
+    "peso_lexico": 0.3,
+    "umbral_minimo": 0.45
+  },
+  "palabras_vacias": [
+    "a", "al", "algo", "con", "de", "del", "el", "en", "es", "esta", "este", "la", "las", "lo", "los", "mi", "mis",
+    "para", "por", "que", "se", "su", "sus", "un", "una", "unos", "unas", "y", "o", "u", "e", "me", "yo", "mismo", "misma",
+    "quiero", "quisiera", "queremos", "poner", "abrir", "instalar", "tener", "tengo", "hacer", "hago", "hacemos",
+    "vender", "vendo", "vendemos", "venta", "ventas", "compro", "negocio", "local", "casa", "emprendimiento", "pyme",
+    "barrio", "como", "tipo", "cosas", "etc"
+  ],
+  "ejemplos": {
+    "_nota": "Frases extra por giro, además del nombre y los sinónimos de giros.json. Se agregan solo mirando el conjunto 'desarrollo' de tests/datos/frases_giros.json, nunca el de 'prueba'.",
+    "bar": ["schopería", "cervecería", "tragos", "cantina"],
+    "pub": ["schopería", "cervecería", "tragos"],
+    "restaurante_con_alcohol": ["restorán con vino o cerveza"],
+    "electronica": ["electrodomésticos", "refrigeradores", "lavadoras", "televisores", "audio", "computadores"],
+    "articulos_deportivos": ["camping", "pesca", "bicicletas", "gimnasio", "balones"],
+    "restaurante": ["almuerzos", "colaciones", "menú del día", "comida casera", "restorán", "delivery de comida"],
+    "fuente_soda": ["sopaipillas", "empanadas", "hamburguesas", "papas fritas", "churrascos", "colaciones"],
+    "amasanderia": ["tortas", "kuchen", "queques", "pasteles", "galletas", "dulces chilenos"],
+    "bazar": ["juguetes", "artículos de regalo", "cachureos"],
+    "reparacion_electronica": ["servicio técnico", "reparación de celulares", "arreglo de televisores", "reparación de electrodomésticos", "arreglo de computadores"],
+    "articulos_salud": ["insumos médicos", "artículos ortopédicos"]
+  }
+}

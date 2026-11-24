@@ -14,6 +14,7 @@ from django.templatetags.static import static
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_GET
 
+from api import buscador as buscador_mod
 from api.views import construir_informe
 from nucleo import geocode, prc_config
 from nucleo import informe as informe_mod
@@ -87,6 +88,17 @@ def panel_informe(request):
         "puntos": puntos,
         "consulta": {"lat": lat, "lon": lon, "giro": giro, "escala": escala or ""},
     })
+
+
+@require_GET
+def panel_sugerir_giro(request):
+    """Sugerencias de giro para una descripción libre. La consulta no se guarda ni se registra."""
+    b = buscador_mod.buscador()
+    q = b.consulta_valida(request.GET.get("q") or "")
+    sugerencias = b.buscar(q).sugerencias if q else []
+    r = render(request, "web/parciales/sugerir_giro.html", {"sugerencias": sugerencias, "q": q})
+    r["Cache-Control"] = "no-store"
+    return r
 
 
 @require_GET

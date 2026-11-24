@@ -300,6 +300,10 @@ pytest-django==4.14.0 \
     --hash=sha256:26787dd3f422cfbab8f55b80a776e2edea7a11092cb74e960bef1312515708ef \
     --hash=sha256:c533b08d89cc675efcd5398eea270b34547e35f9a3608e2c9748dd88428ea187
     # via -r requirements.in
+snowballstemmer==3.0.1 \
+    --hash=sha256:6cd7b3897da8d6c9ffb968a6781fa6532dce9c3618a4b127d920dab764a19064 \
+    --hash=sha256:6d5eeeec8e9f84d4d56b847692bacf79bc2c8e90c7f80ca4444ff8b6f2e52895
+    # via -r requirements.in
 sqlparse==0.6.1 \
     --hash=sha256:3be5a72d04c873d690d7c6dedd33d6fae2ef82759881ceec02fc2efd0cba564f \
     --hash=sha256:ca722573f848ff2d30e40ea30f53a104b7dea7635ea9285891263eb2c58fb6e7

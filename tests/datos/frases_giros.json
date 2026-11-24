@@ -1,0 +1,717 @@
+{
+ "_nota": "Frases de vecinos para medir el buscador de giros. 'esperado' son los giros aceptables (vacío: Radar no tiene ese giro y debe decir que no lo encuentra). 'desarrollo' se usa para ajustar sinónimos, ejemplos y pesos; 'prueba' NO se mira al ajustar: sirve para medir de verdad. La partición se hizo alternando antes de ajustar nada.",
+ "frases": [
+  {
+   "frase": "quiero poner un almacén en mi casa",
+   "esperado": [
+    "abarrotes"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "vendo completos y churrascos",
+   "esperado": [
+    "fuente_soda"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "un minimarket de barrio",
+   "esperado": [
+    "abarrotes"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "arreglo celulares y notebooks",
+   "esperado": [
+    "reparacion_electronica"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "venta de sopaipillas y café",
+   "esperado": [
+    "fuente_soda",
+    "restaurante"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "hago uñas acrílicas",
+   "esperado": [
+    "peluqueria"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "barbería para hombres",
+   "esperado": [
+    "peluqueria"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "un cyber con computadores para arrendar",
+   "esperado": [
+    "servicios_internet"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "saco fotocopias e imprimo trabajos",
+   "esperado": [
+    "fotocopias",
+    "centro_copiado"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "vendo pan amasado que hago yo misma",
+   "esperado": [
+    "amasanderia"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "vender pan que compro a una panadería grande",
+   "esperado": [
+    "panaderia_venta"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "verdulería",
+   "esperado": [
+    "frutas_verduras"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "vendo cecinas y quesos",
+   "esperado": [
+    "fiambreria"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "parchar neumáticos",
+   "esperado": [
+    "vulcanizacion"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "desabollar y pintar autos",
+   "esperado": [
+    "taller_pintura_desabolladura"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "lavado y planchado de ropa",
+   "esperado": [
+    "lavanderia"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "pet shop",
+   "esperado": [
+    "mascotas"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "comida para perros y gatos",
+   "esperado": [
+    "mascotas"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "plantas y maceteros",
+   "esperado": [
+    "vivero"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "arreglos florales para matrimonios",
+   "esperado": [
+    "floreria"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "ropa americana",
+   "esperado": [
+    "vestuario_calzado"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "venta de zapatillas",
+   "esperado": [
+    "vestuario_calzado"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "cuadernos, lápices y útiles para el colegio",
+   "esperado": [
+    "libreria"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "regalos y cotillón para cumpleaños",
+   "esperado": [
+    "bazar"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "arrendar piezas a estudiantes",
+   "esperado": [
+    "hostal"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "cerveza artesanal para tomar en el local",
+   "esperado": [
+    "bar",
+    "pub"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "schopería",
+   "esperado": [
+    "bar",
+    "pub",
+    "restaurante_con_alcohol"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "venta de carbón y leña",
+   "esperado": [
+    "carbon_lena"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "distribuir balones de gas",
+   "esperado": [
+    "gas_licuado"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "barraca de materiales de construcción",
+   "esperado": [
+    "materiales_construccion"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "repuestos para autos",
+   "esperado": [
+    "repuestos_automovil"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "taller para arreglar bicicletas",
+   "esperado": [
+    "taller_bicicletas"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "hago cerámica en frío",
+   "esperado": [
+    "taller_tejidos_ceramica",
+    "artesanias"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "tejidos a crochet",
+   "esperado": [
+    "taller_tejidos_ceramica",
+    "artesanias"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "manualidades hechas a mano",
+   "esperado": [
+    "artesanias"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "modista: basta de pantalones y arreglos",
+   "esperado": [
+    "costura"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "zapatero que pone tapillas",
+   "esperado": [
+    "reparacion_calzado"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "imprenta de tarjetas de presentación",
+   "esperado": [
+    "imprenta"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "vidrios y espejos a medida",
+   "esperado": [
+    "vidrieria"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "pollos a las brasas",
+   "esperado": [
+    "pollos_asados"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "sushi a domicilio",
+   "esperado": [
+    "restaurante"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "pizzería",
+   "esperado": [
+    "restaurante"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "cafetería con pasteles",
+   "esperado": [
+    "fuente_soda",
+    "restaurante",
+    "amasanderia"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "kiosco con dulces y bebidas",
+   "esperado": [
+    "confites_bebidas"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "farmacia de barrio",
+   "esperado": [
+    "farmacia"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "perfumería",
+   "esperado": [
+    "farmacia"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "ortopedia, sillas de ruedas y bastones",
+   "esperado": [
+    "articulos_salud"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "venta de celulares y accesorios",
+   "esperado": [
+    "telefonia",
+    "electronica"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "lavadoras y refrigeradores",
+   "esperado": [
+    "electronica"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "electrodomésticos",
+   "esperado": [
+    "electronica"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "menaje y decoración para la casa",
+   "esperado": [
+    "accesorios_hogar"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "venta de telas por metro",
+   "esperado": [
+    "textiles"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "artículos de camping y pesca",
+   "esperado": [
+    "articulos_deportivos"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "distribuidora de dulces a almacenes",
+   "esperado": [
+    "distribucion_alimentos"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "compra y venta de autos usados",
+   "esperado": [
+    "compraventa_automoviles"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "maquinaria agrícola",
+   "esperado": [
+    "venta_maquinarias"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "discoteca",
+   "esperado": [
+    "discoteca"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "hotel para turistas",
+   "esperado": [
+    "hotel"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "motel",
+   "esperado": [
+    "motel"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "hostal",
+   "esperado": [
+    "hostal"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "botillería",
+   "esperado": [
+    "botilleria"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "venta de vino y cerveza para llevar",
+   "esperado": [
+    "botilleria"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "restaurante con vino",
+   "esperado": [
+    "restaurante_con_alcohol"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "restorán de comida casera",
+   "esperado": [
+    "restaurante"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "colaciones para trabajadores",
+   "esperado": [
+    "restaurante",
+    "fuente_soda"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "empanadas de pino para llevar",
+   "esperado": [
+    "fuente_soda",
+    "amasanderia",
+    "restaurante"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "tortas y kuchenes por encargo",
+   "esperado": [
+    "amasanderia"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "carnicería",
+   "esperado": [
+    "carniceria"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "vendo carne y pollo",
+   "esperado": [
+    "carniceria"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "frutas de temporada",
+   "esperado": [
+    "frutas_verduras"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "ferretería",
+   "esperado": [
+    "ferreteria"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "tornillos, clavos y herramientas",
+   "esperado": [
+    "ferreteria"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "salón de belleza",
+   "esperado": [
+    "peluqueria"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "depilación y cejas",
+   "esperado": [
+    "peluqueria"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "taller mecánico",
+   "esperado": [
+    "taller_mecanico"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "cambio de aceite y frenos",
+   "esperado": [
+    "taller_mecanico"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "venta de juguetes",
+   "esperado": [
+    "bazar"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "paquetería: hilos, botones y cierres",
+   "esperado": [
+    "bazar",
+    "textiles"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "arreglo de televisores",
+   "esperado": [
+    "reparacion_electronica"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "instalaciones eléctricas y reparaciones",
+   "esperado": [
+    "reparacion_electronica"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "tintorería",
+   "esperado": [
+    "lavanderia"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "residencial",
+   "esperado": [
+    "hostal"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "supermercado",
+   "esperado": [
+    "supermercado"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "mall",
+   "esperado": [
+    "centro_comercial"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "feria o mercado techado",
+   "esperado": [
+    "mercado"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "venta de diarios y revistas",
+   "esperado": [
+    "confites_bebidas"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "cigarros y bebidas",
+   "esperado": [
+    "confites_bebidas"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "karaoke con tragos",
+   "esperado": [
+    "bar",
+    "pub",
+    "discoteca"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "revisión técnica de vehículos",
+   "esperado": [
+    "revision_tecnica"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "bencinera",
+   "esperado": [
+    "estacion_servicio"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "encuadernación de tesis",
+   "esperado": [
+    "imprenta"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "internet y llamadas",
+   "esperado": [
+    "servicios_internet"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "vendo ropa de guagua",
+   "esperado": [
+    "vestuario_calzado"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "accesorios de moda, aros y carteras",
+   "esperado": [
+    "vestuario_calzado"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "lentes ópticos",
+   "esperado": [],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "clases de inglés",
+   "esperado": [],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "tatuajes",
+   "esperado": [],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "venta de bicicletas nuevas",
+   "esperado": [
+    "articulos_deportivos"
+   ],
+   "conjunto": "prueba"
+  },
+  {
+   "frase": "insumos médicos",
+   "esperado": [
+    "articulos_salud",
+    "farmacia"
+   ],
+   "conjunto": "desarrollo"
+  },
+  {
+   "frase": "frutos secos a granel",
+   "esperado": [
+    "abarrotes",
+    "confites_bebidas"
+   ],
+   "conjunto": "prueba"
+  }
+ ]
+}

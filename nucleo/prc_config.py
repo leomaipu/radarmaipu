@@ -7,7 +7,7 @@ from pathlib import Path
 
 DIR_DEFAULT = Path(__file__).resolve().parent.parent / "config" / "prc"
 ARCHIVOS = ("zonas", "usos_comercio", "giros", "modificaciones", "alturas", "vialidad", "riesgos",
-            "checklist_rentas")
+            "checklist_rentas", "buscador_giros")
 
 
 def leer(directorio: str | Path | None = None) -> dict:

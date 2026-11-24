@@ -103,10 +103,14 @@
         </div>
 
         <div class="buscador buscador--claro">
-          <label class="sr" for="filtro-giro">Buscar giro</label>
+          <label class="sr" for="filtro-giro">Describe tu negocio o busca el giro</label>
           <svg class="buscador__icono" aria-hidden="true"><use href="#i-buscar"/></svg>
-          <input id="filtro-giro" type="search" placeholder="Buscar: almacén, peluquería, hostal…" autocomplete="off">
+          <input id="filtro-giro" type="search" name="q" maxlength="120" placeholder="Ej.: vendo completos, arreglo celulares…"
+                 autocomplete="off" aria-describedby="sugerencias-giro"
+                 hx-get="{% url 'web:panel_sugerir_giro' %}" hx-trigger="input changed delay:450ms, search"
+                 hx-target="#sugerencias-giro" hx-sync="this:replace">
         </div>
+        <div id="sugerencias-giro" aria-live="polite"></div>
 
         <fieldset class="giros" id="lista-giros">
           <legend class="sr">Elige el giro de tu negocio</legend>
@@ -122,7 +126,7 @@
             {% endfor %}
           </div>
           {% endfor %}
-          <p class="sutil" id="sin-giros" hidden>No encontramos ese giro. Prueba con otra palabra.</p>
+          <p class="sutil" id="sin-giros" hidden>Ningún giro de la lista contiene esas palabras. Mira las sugerencias de arriba o prueba con otra palabra.</p>
         </fieldset>
 
         <fieldset class="escala">
