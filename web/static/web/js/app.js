@@ -293,8 +293,8 @@
   });
   $$('input[name="escala"]').forEach((r) => r.addEventListener("change", () => { estado.escala = r.value; cambioDeConsulta(); }));
   const sinTildes = (t) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-  $("#filtro-giro").addEventListener("input", (e) => {
-    const q = sinTildes(e.target.value.trim());
+  function filtrarGiros(texto) {
+    const q = sinTildes(texto.trim());
     let visibles = 0;
     $$("[data-grupo]").forEach((g) => {
       let enGrupo = 0;
@@ -305,6 +305,26 @@
       g.hidden = enGrupo === 0; visibles += enGrupo;
     });
     $("#sin-giros").hidden = visibles > 0;
+  }
+  $("#filtro-giro").addEventListener("input", (e) => {
+    filtrarGiros(e.target.value);
+    if (e.target.value.trim().length < 3) $("#sugerencias-giro").replaceChildren();
+  });
+  // Sugerencias del buscador: al elegir una se marca el giro y la lista vuelve a mostrarse completa.
+  $("#sugerencias-giro").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-sugerencia]");
+    if (!b) return;
+    const filtro = $("#filtro-giro");
+    htmx.trigger(filtro, "htmx:abort");
+    filtro.value = "";
+    filtrarGiros("");
+    $("#sugerencias-giro").replaceChildren();
+    const nombre = b.querySelector(".sugerencia__nombre").textContent;
+    elegirGiro(b.dataset.sugerencia, { desplazar: true });
+    // El botón desaparece: el foco pasa al giro elegido para no perder la posición (teclado y lector de pantalla).
+    const radio = radios.find((x) => x.value === b.dataset.sugerencia);
+    if (radio) radio.focus({ preventScroll: true });
+    anunciar(`Elegiste ${nombre}.`);
   });
   $("#btn-simular").addEventListener("click", () => simular());
 
@@ -326,6 +346,17 @@
       .catch(() => {});
   }
   document.body.addEventListener("htmx:afterSwap", (e) => {
+    if (e.detail.target.id === "sugerencias-giro") {
+      // Con sugerencias a la vista, el aviso de "ningún giro de la lista" sobra.
+      const n = $$(".sugerencia", e.detail.target).length;
+      if (n) $("#sin-giros").hidden = true;
+      const hay = n || $("[data-sin-sugerencias]", e.detail.target) ? n : null;
+      if (hay !== null && hay !== estado.sugerenciasAnunciadas) {  // solo cuando cambia el conteo
+        anunciar(n === 1 ? "1 sugerencia de giro." : n ? `${n} sugerencias de giro.` : "Sin sugerencias de giro.");
+      }
+      estado.sugerenciasAnunciadas = hay;
+      return;
+    }
     if (e.detail.target.id === "resultados-busqueda") {
       $$(".direccion span", e.detail.target).forEach((s) => (s.textContent = bonita(s.textContent)));
       return;

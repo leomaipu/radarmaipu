@@ -10,7 +10,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.measure import D
 from django.http import HttpResponse
-from ninja import NinjaAPI, Query
+from ninja import Field, NinjaAPI, Query, Schema
 from ninja.errors import HttpError
 
 from nucleo import geocode, informe as informe_mod, prc_config, prc_gis
@@ -19,6 +19,7 @@ from nucleo.dominios import cargar as dominios
 from territorio.models import Barrio, CargaGIS, Calle, Patente
 from tramites.models import checklist_para
 
+from . import buscador as buscador_mod
 from . import comercio
 
 api = NinjaAPI(title="Radar Maipú", version="0.3.0", urls_namespace="api",
@@ -137,6 +138,20 @@ def buscar_direccion(request, q: str = Query(..., min_length=3, max_length=150))
 @api.get("/giros")
 def giros(request):
     return {"resultados": prc_config.giros_publicos(prc_config.cargar())}
+
+
+class ConsultaGiro(Schema):
+    q: str = Field(..., max_length=200, description="Descripción libre del negocio")
+
+
+@api.post("/giros/sugerir")
+def sugerir_giros(request, datos: ConsultaGiro):
+    """Sugiere giros para una descripción libre ("vendo completos y churrascos"). Solo sugiere: el giro lo
+    confirma el vecino y el veredicto lo da /api/informe. Va por POST para que el texto no quede en la URL ni en
+    los registros de acceso; Radar no lo guarda."""
+    res = buscador_mod.buscador().buscar(datos.q)
+    return {"modo": res.modo, "sugerencias": [
+        {"codigo": s.codigo, "nombre": s.nombre, "puntaje": s.puntaje, "frase": s.frase} for s in res.sugerencias]}
 
 
 def construir_informe(lat: float, lon: float, giro: str, escala: str | None, frente_via: str | None) -> dict:

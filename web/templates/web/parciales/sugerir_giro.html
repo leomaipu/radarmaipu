@@ -1,0 +1,16 @@
+{% if sugerencias %}
+<div class="sugerencias">
+  <p class="sugerencias__titulo">¿Tu negocio es alguno de estos?</p>
+  <ul class="sugerencias__lista" role="list">
+    {% for s in sugerencias %}
+    <li><button type="button" class="sugerencia" data-sugerencia="{{ s.codigo }}">
+      <span class="sugerencia__nombre">{{ s.nombre }}</span>
+      {% if s.frase %}<span class="sugerencia__por">Se parece a «{{ s.frase|lower }}»</span>{% endif %}
+    </button></li>
+    {% endfor %}
+  </ul>
+  <p class="sutil">Es una sugerencia: confirma que tu negocio corresponde. Si ninguno calza, borra el texto para ver la lista completa.</p>
+</div>
+{% elif q %}
+<p class="sutil sugerencias__nada" data-sin-sugerencias>No encontramos un giro para «{{ q }}». Prueba describiéndolo de otra forma, borra el texto para ver la lista completa o consulta en Rentas.</p>
+{% endif %}

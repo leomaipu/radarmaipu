@@ -124,4 +124,7 @@ RADAR = {
     "CENTRO": [-33.5106, -70.7574],
     "API_DOCS_PUBLICA": _env_bool("RM_API_DOCS_PUBLICA"),
     "RADIO_COMERCIO_M": 300,
+    # Buscador de giros: con RM_OLLAMA_URL vacía funciona solo en modo léxico (sin servicios externos).
+    "OLLAMA_URL": os.environ.get("RM_OLLAMA_URL", ""),
+    "OLLAMA_MODELO": os.environ.get("RM_OLLAMA_MODELO", ""),  # vacío: el de config/prc/buscador_giros.json
 }

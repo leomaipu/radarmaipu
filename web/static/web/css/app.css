@@ -241,6 +241,16 @@ h1, h2, h3 { margin: 0; line-height: 1.1; }
 .chip[aria-pressed="true"] { background: var(--azul); border-color: var(--azul); color: #fff; }
 .chip--claro { min-height: 32px; padding: 0 12px; border: 0; background: rgb(255 255 255 / .6); font-size: .8rem; cursor: default; }
 
+.sugerencias { margin: -4px 0 14px; padding: 12px 14px; border-radius: var(--r-m); background: var(--turquesa-suave); }
+.sugerencias__titulo { margin: 0 0 8px; font-weight: 700; }
+.sugerencias__lista { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 6px; }
+.sugerencia { width: 100%; display: grid; gap: 2px; min-height: 48px; padding: 8px 14px; text-align: left; border: 2px solid var(--linea); border-radius: var(--r-m); background: #fff; cursor: pointer; transition: border-color var(--t-rapida); }
+.sugerencia:hover { border-color: var(--azul); }
+.sugerencia:focus-visible { box-shadow: var(--foco); }
+.sugerencia__nombre { font-weight: 700; }
+.sugerencia__por { font-size: .8rem; color: var(--tinta-2); }
+.sugerencias .sutil { margin: 0; font-size: .8rem; }
+.sugerencias__nada { margin: -4px 0 12px; }
 .giros { border: 0; margin: 0; padding: 0; }
 .giros__grupo { margin-bottom: 8px; }
 .giros__titulo { position: sticky; top: -4px; z-index: 1; margin: 0; padding: 10px 0 6px; background: #fff; font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--tinta-3); }

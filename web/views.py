@@ -12,8 +12,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.templatetags.static import static
 from django.views.decorators.cache import cache_control
-from django.views.decorators.http import require_GET
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET, require_POST
 
+from api import buscador as buscador_mod
 from api.views import construir_informe
 from nucleo import geocode, prc_config
 from nucleo import informe as informe_mod
@@ -87,6 +89,18 @@ def panel_informe(request):
         "puntos": puntos,
         "consulta": {"lat": lat, "lon": lon, "giro": giro, "escala": escala or ""},
     })
+
+
+@csrf_exempt  # solo lectura: no cambia estado. POST para que el texto del vecino no quede en URLs ni logs.
+@require_POST
+def panel_sugerir_giro(request):
+    """Sugerencias de giro para una descripción libre. Radar no guarda la consulta."""
+    b = buscador_mod.buscador()
+    q = b.consulta_valida(request.POST.get("q") or "")
+    sugerencias = b.buscar(q).sugerencias if q else []
+    r = render(request, "web/parciales/sugerir_giro.html", {"sugerencias": sugerencias, "q": q})
+    r["Cache-Control"] = "no-store"
+    return r
 
 
 @require_GET
