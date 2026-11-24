@@ -345,10 +345,39 @@ def test_comando_de_evaluacion(sin_ollama, capsys):
     salida = capsys.readouterr().out
     assert "[desarrollo] modo=lexico" in salida and "[prueba] modo=lexico" in salida
     call_command("evaluar_buscador", "--url", "", "--calibrar")
-    assert "umbral  top1%" in capsys.readouterr().out
+    assert "peso_sem  umbral  top1%" in capsys.readouterr().out
 
 
 def test_calibrar_no_modifica_la_configuracion_cargada():
     antes = copy.deepcopy(CB)
     call_command("evaluar_buscador", "--url", "", "--calibrar", "--json")
     assert prc_config.cargar()["buscador_giros"] == antes
+
+
+def test_calibrar_recombina_pesos_sin_consultar_de_nuevo():
+    cfg = copy.deepcopy(CFG)
+    cfg["buscador_giros"]["semantico"]["umbral_minimo"] = 0.0
+    cfg["buscador_giros"]["max_sugerencias"] = len(GIROS)
+    emb = EmbebedorConceptos()
+    b = BuscadorGiros(GIROS, cfg["buscador_giros"], emb)
+    b.preparar(esperar=True)
+    antes = emb.llamadas
+    excluir = set(CB["ejemplos"]["_respaldo"].values())
+    tabla = ev.calibrar(b, FRASES, [0.1, 0.5], [0.5, 0.9], "desarrollo", excluir)
+    assert [(f["peso_semantico"], f["umbral"]) for f in tabla] == [(0.5, 0.1), (0.5, 0.5), (0.9, 0.1), (0.9, 0.5)]
+    assert tabla[0]["frases"] == 50 - len(excluir)
+    assert emb.llamadas - antes == tabla[0]["frases"]  # una consulta por frase, no una por combinación
+
+
+def test_una_falla_inesperada_al_indexar_no_crea_un_hilo_por_tecla():
+    class Roto(EmbebedorConceptos):
+        def embeber(self, textos, *, indexacion=False):
+            self.llamadas += 1
+            raise KeyError("config")
+
+    emb, reloj = Roto(), Reloj()
+    b = BuscadorGiros(GIROS, CB, emb, reloj=reloj)
+    assert not b.preparar(esperar=True)
+    for _ in range(5):
+        b.buscar("barbería para hombres")
+    assert emb.llamadas == 1

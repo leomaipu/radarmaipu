@@ -350,7 +350,11 @@
       // Con sugerencias a la vista, el aviso de "ningún giro de la lista" sobra.
       const n = $$(".sugerencia", e.detail.target).length;
       if (n) $("#sin-giros").hidden = true;
-      if (n || $("[data-sin-sugerencias]", e.detail.target)) anunciar(n === 1 ? "1 sugerencia de giro." : n ? `${n} sugerencias de giro.` : "Sin sugerencias de giro.");
+      const hay = n || $("[data-sin-sugerencias]", e.detail.target) ? n : null;
+      if (hay !== null && hay !== estado.sugerenciasAnunciadas) {  // solo cuando cambia el conteo
+        anunciar(n === 1 ? "1 sugerencia de giro." : n ? `${n} sugerencias de giro.` : "Sin sugerencias de giro.");
+      }
+      estado.sugerenciasAnunciadas = hay;
       return;
     }
     if (e.detail.target.id === "resultados-busqueda") {

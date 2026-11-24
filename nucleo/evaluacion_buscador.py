@@ -40,16 +40,24 @@ def evaluar(buscador: BuscadorGiros, frases: list[dict], conjunto: str | None = 
     }
 
 
-def calibrar(buscador: BuscadorGiros, frases: list[dict], umbrales: list[float], conjunto: str = "desarrollo") -> list[dict]:
-    """Aciertos por umbral. `buscador` debe estar configurado con umbral 0 para ver todos los puntajes."""
-    filas = [f for f in frases if f["conjunto"] == conjunto]
+def calibrar(buscador: BuscadorGiros, frases: list[dict], umbrales: list[float], pesos: list[float],
+             conjunto: str = "desarrollo", excluir: set[str] = frozenset()) -> list[dict]:
+    """Aciertos por peso semántico y umbral, sin volver a consultar el modelo: recombina los puntajes léxico y
+    semántico de cada giro. `buscador` debe estar configurado con umbral 0 y sin límite de sugerencias.
+    `excluir`: frases copiadas como ejemplos (darían similitud 1 y sesgarían la calibración)."""
+    filas = [f for f in frases if f["conjunto"] == conjunto and f["frase"] not in excluir]
     resultados = [(f, buscador.buscar(f["frase"])) for f in filas]
+    semantico = any(r.modo == "semantico" for _, r in resultados)
     salida = []
-    for u in umbrales:
-        con, sin = [], []
-        for f, res in resultados:
-            filtrado = Resultado(modo=res.modo, sugerencias=[s for s in res.sugerencias if s.puntaje >= u])
-            (con if f["esperado"] else sin).append((filtrado, f["esperado"]))
-        pct = lambda xs, n: round(100 * sum(_acierta(r, e, n) for r, e in xs) / len(xs), 1) if xs else None  # noqa: E731
-        salida.append({"umbral": u, "top1_pct": pct(con, 1), "top3_pct": pct(con, 3), "sin_giro_rechazadas_pct": pct(sin, 1)})
+    for w in (pesos if semantico else [0.0]):
+        for u in umbrales:
+            con, sin = [], []
+            for f, res in resultados:
+                puntuadas = [((w * s.semantico + (1 - w) * s.lexico) if s.semantico is not None else s.lexico, s)
+                             for s in res.sugerencias]
+                elegidas = [s for p, s in sorted(puntuadas, key=lambda x: (-x[0], x[1].nombre)) if p >= u]
+                (con if f["esperado"] else sin).append((Resultado(modo=res.modo, sugerencias=elegidas), f["esperado"]))
+            pct = lambda xs, n: round(100 * sum(_acierta(r, e, n) for r, e in xs) / len(xs), 1) if xs else None  # noqa: E731
+            salida.append({"peso_semantico": w if semantico else None, "umbral": u, "frases": len(filas),
+                           "top1_pct": pct(con, 1), "top3_pct": pct(con, 3), "sin_giro_rechazadas_pct": pct(sin, 1)})
     return salida

@@ -42,10 +42,15 @@ class Command(BaseCommand):
             cfg = copy.deepcopy(cfg)
             cfg["buscador_giros"]["lexico"]["umbral_minimo"] = 0.0
             cfg["buscador_giros"]["semantico"]["umbral_minimo"] = 0.0
+            cfg["buscador_giros"]["max_sugerencias"] = len(cfg["giros"]["giros"])
             b = buscador_mod.crear(cfg, url, modelo)
             b.preparar(esperar=True)
-            salida = {"modo": b.buscar("almacén").modo,
-                      "calibracion": ev.calibrar(b, frases, [round(0.05 * i, 2) for i in range(2, 17)])}
+            # Las frases de desarrollo copiadas como ejemplos se excluyen: darían similitud 1.
+            excluir = set(cfg["buscador_giros"]["ejemplos"].get("_respaldo", {}).values())
+            conjunto = "validacion" if "validacion" in conjuntos else "desarrollo"
+            salida = {"modo": b.buscar("almacén").modo, "conjunto": conjunto,
+                      "calibracion": ev.calibrar(b, frases, [round(0.05 * i, 2) for i in range(2, 17)],
+                                                 [0.5, 0.6, 0.7, 0.8, 0.9], conjunto, excluir)}
         else:
             b = buscador_mod.crear(cfg, url, modelo)
             b.preparar(esperar=True)  # el índice semántico no se cuenta en la latencia
@@ -59,10 +64,13 @@ class Command(BaseCommand):
             self.stdout.write(json.dumps(salida, ensure_ascii=False, indent=1))
             return
         if calibrar:
-            self.stdout.write(f"Modo: {salida['modo']}  (conjunto 'desarrollo')")
-            self.stdout.write("umbral  top1%  top3%  sin_giro_rechazadas%")
-            for f in salida["calibracion"]:
-                self.stdout.write(f"{f['umbral']:>6}  {f['top1_pct']!s:>5}  {f['top3_pct']!s:>5}  {f['sin_giro_rechazadas_pct']!s:>5}")
+            filas = salida["calibracion"]
+            self.stdout.write(f"Modo: {salida['modo']}  (conjunto '{salida['conjunto']}', {filas[0]['frases']} frases, "
+                              "sin las copiadas como ejemplos)")
+            self.stdout.write("peso_sem  umbral  top1%  top3%  sin_giro_rechazadas%")
+            for f in filas:
+                self.stdout.write(f"{f['peso_semantico']!s:>8}  {f['umbral']:>6}  {f['top1_pct']!s:>5}  {f['top3_pct']!s:>5}  "
+                                  f"{f['sin_giro_rechazadas_pct']!s:>5}")
             return
         for conjunto, r in salida.items():
             self.stdout.write(f"[{conjunto}] modo={','.join(r['modos'])} frases={r['frases']} top1={r['top1_pct']}% "

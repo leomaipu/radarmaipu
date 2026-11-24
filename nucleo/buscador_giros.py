@@ -20,9 +20,12 @@ import threading
 import time
 import unicodedata
 from dataclasses import dataclass, field
+import logging
 from typing import Protocol, Sequence
 
 import snowballstemmer
+
+log = logging.getLogger(__name__)
 
 _STEMMER = snowballstemmer.stemmer("spanish")
 _PALABRA = re.compile(r"[a-z0-9ñ]+")
@@ -174,7 +177,8 @@ class BuscadorGiros:
     def _armar_indice(self) -> None:
         try:
             indice = IndiceSemantico(self.frases, self.embebedor, self.cfg["semantico"])
-        except (EmbeddingsNoDisponibles, ValueError, TypeError):
+        except Exception as e:  # cualquier falla deja registro y pausa: nunca un hilo nuevo por cada tecla
+            log.warning("No se pudo armar el índice semántico de giros (%s): modo léxico", type(e).__name__)
             with self._candado:
                 self._fallo_en = self._reloj()
             return
