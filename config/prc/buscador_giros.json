@@ -15,11 +15,13 @@
     "prefijo_consulta": "",
     "prefijo_documento": "",
     "timeout_s": 3,
+    "timeout_indexacion_s": 120,
     "pausa_tras_falla_s": 60,
     "tamano_lote": 64,
     "peso_semantico": 0.7,
     "peso_lexico": 0.3,
-    "umbral_minimo": 0.45
+    "umbral_minimo": 0.45,
+    "_nota_umbrales": "peso_semantico, peso_lexico y umbral_minimo son valores iniciales SIN CALIBRAR. No activar RADAR_OLLAMA=si en producción hasta correr 'manage.py evaluar_buscador --calibrar' en el servidor, fijar aquí los valores medidos y registrar el resultado en el PR."
   },
   "palabras_vacias": [
     "a", "al", "algo", "con", "de", "del", "el", "en", "es", "esta", "este", "la", "las", "lo", "los", "mi", "mis",
@@ -29,17 +31,27 @@
     "barrio", "como", "tipo", "cosas", "etc"
   ],
   "ejemplos": {
-    "_nota": "Frases extra por giro, además del nombre y los sinónimos de giros.json. Se agregan solo mirando el conjunto 'desarrollo' de tests/datos/frases_giros.json, nunca el de 'prueba'.",
-    "bar": ["schopería", "cervecería", "tragos", "cantina"],
-    "pub": ["schopería", "cervecería", "tragos"],
-    "restaurante_con_alcohol": ["restorán con vino o cerveza"],
-    "electronica": ["electrodomésticos", "refrigeradores", "lavadoras", "televisores", "audio", "computadores"],
-    "articulos_deportivos": ["camping", "pesca", "bicicletas", "gimnasio", "balones"],
-    "restaurante": ["almuerzos", "colaciones", "menú del día", "comida casera", "restorán", "delivery de comida"],
-    "fuente_soda": ["sopaipillas", "empanadas", "hamburguesas", "papas fritas", "churrascos", "colaciones"],
-    "amasanderia": ["tortas", "kuchen", "queques", "pasteles", "galletas", "dulces chilenos"],
-    "bazar": ["juguetes", "artículos de regalo", "cachureos"],
-    "reparacion_electronica": ["servicio técnico", "reparación de celulares", "arreglo de televisores", "reparación de electrodomésticos", "arreglo de computadores"],
-    "articulos_salud": ["insumos médicos", "artículos ortopédicos"]
+    "_nota": "Frases extra por giro, además del nombre y los sinónimos de giros.json. Cada una responde a una frase FALLIDA del conjunto 'desarrollo' de tests/datos/frases_giros.json (se indica cuál). No agregar nada inspirado en 'prueba' ni en 'validacion'.",
+    "bar": ["schopería"],
+    "pub": ["schopería"],
+    "restaurante_con_alcohol": ["schopería"],
+    "electronica": ["refrigeradores", "lavadoras"],
+    "articulos_deportivos": ["camping", "pesca"],
+    "restaurante": ["colaciones"],
+    "fuente_soda": ["colaciones"],
+    "amasanderia": ["tortas", "kuchen"],
+    "bazar": ["juguetes"],
+    "reparacion_electronica": ["arreglo de televisores"],
+    "articulos_salud": ["insumos médicos"],
+    "_respaldo": {
+      "schopería": "schopería",
+      "refrigeradores, lavadoras": "lavadoras y refrigeradores",
+      "camping, pesca": "artículos de camping y pesca",
+      "colaciones": "colaciones para trabajadores",
+      "tortas, kuchen": "tortas y kuchenes por encargo",
+      "juguetes": "venta de juguetes",
+      "arreglo de televisores": "arreglo de televisores",
+      "insumos médicos": "insumos médicos"
+    }
   }
 }

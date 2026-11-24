@@ -106,11 +106,11 @@
           <label class="sr" for="filtro-giro">Describe tu negocio o busca el giro</label>
           <svg class="buscador__icono" aria-hidden="true"><use href="#i-buscar"/></svg>
           <input id="filtro-giro" type="search" name="q" maxlength="120" placeholder="Ej.: vendo completos, arreglo celulares…"
-                 autocomplete="off" aria-describedby="sugerencias-giro"
-                 hx-get="{% url 'web:panel_sugerir_giro' %}" hx-trigger="input changed delay:450ms, search"
+                 autocomplete="off"
+                 hx-post="{% url 'web:panel_sugerir_giro' %}" hx-trigger="input changed delay:450ms, search"
                  hx-target="#sugerencias-giro" hx-sync="this:replace">
         </div>
-        <div id="sugerencias-giro" aria-live="polite"></div>
+        <div id="sugerencias-giro"></div>
 
         <fieldset class="giros" id="lista-giros">
           <legend class="sr">Elige el giro de tu negocio</legend>

@@ -14,8 +14,10 @@ buscador_giros.json. Los umbrales y pesos están en buscador_giros.json.
 from __future__ import annotations
 
 import math
+import numbers
 import re
 import threading
+import time
 import unicodedata
 from dataclasses import dataclass, field
 from typing import Protocol, Sequence
@@ -27,11 +29,12 @@ _PALABRA = re.compile(r"[a-z0-9ñ]+")
 
 
 class Embebedor(Protocol):
-    """Puerto: convierte textos en vectores. Lanza EmbeddingsNoDisponibles si el servicio no responde."""
+    """Puerto: convierte textos en vectores. Lanza EmbeddingsNoDisponibles si el servicio no responde.
+    `indexacion=True` marca los lotes del índice (pueden tardar más que una consulta)."""
 
     modelo: str
 
-    def embeber(self, textos: Sequence[str]) -> list[list[float]]: ...
+    def embeber(self, textos: Sequence[str], *, indexacion: bool = False) -> list[list[float]]: ...
 
 
 class EmbeddingsNoDisponibles(RuntimeError):
@@ -127,14 +130,20 @@ class IndiceSemantico:
         planas = [(c, f) for c, fs in frases.items() for f in fs]
         textos = [pref + f for _, f in planas]
         lote = cfg_sem["tamano_lote"]
-        vectores = [v for i in range(0, len(textos), lote) for v in embebedor.embeber(textos[i:i + lote])]
+        vectores = [v for i in range(0, len(textos), lote)
+                    for v in embebedor.embeber(textos[i:i + lote], indexacion=True)]
         if len(vectores) != len(planas):
             raise EmbeddingsNoDisponibles("El servicio devolvió una cantidad distinta de vectores")
+        self.dimension = len(vectores[0]) if vectores else 0
+        if any(len(v) != self.dimension or not all(isinstance(x, numbers.Real) for x in v) for v in vectores):
+            raise EmbeddingsNoDisponibles("Vectores con dimensión distinta o valores no numéricos")
         self.vectores: dict[str, list[tuple[str, list[float]]]] = {}
         for (c, f), v in zip(planas, vectores):
             self.vectores.setdefault(c, []).append((f, v))
 
     def puntajes(self, vector_consulta: Sequence[float]) -> dict[str, tuple[float, str]]:
+        if len(vector_consulta) != self.dimension or not all(isinstance(x, numbers.Real) for x in vector_consulta):
+            raise EmbeddingsNoDisponibles("Vector de consulta inválido")
         salida = {}
         for c, pares in self.vectores.items():
             sim, frase = max(((_coseno(vector_consulta, v), f) for f, v in pares), key=lambda x: x[0])
@@ -143,44 +152,79 @@ class IndiceSemantico:
 
 
 class BuscadorGiros:
-    """Fachada del buscador. El índice semántico se construye la primera vez que hay embebedor disponible."""
+    """Fachada del buscador.
 
-    def __init__(self, giros: dict, cfg_b: dict, embebedor: Embebedor | None = None):
+    El índice semántico se arma en un hilo aparte (nunca dentro de la consulta de un vecino): mientras no está
+    listo, o si falló hace menos de `pausa_tras_falla_s`, el buscador responde en modo léxico.
+    """
+
+    def __init__(self, giros: dict, cfg_b: dict, embebedor: Embebedor | None = None,
+                 reloj=time.monotonic):
         self.giros, self.cfg = giros, cfg_b
         self.vacias = frozenset(sin_tildes(p) for p in cfg_b["palabras_vacias"])
         self.frases = frases_por_giro(giros, cfg_b)
         self.lexico = IndiceLexico(self.frases, cfg_b["lexico"], self.vacias)
         self.embebedor = embebedor
         self._semantico: IndiceSemantico | None = None
+        self._hilo: threading.Thread | None = None
+        self._fallo_en: float | None = None
+        self._reloj = reloj
         self._candado = threading.Lock()
+
+    def _armar_indice(self) -> None:
+        try:
+            indice = IndiceSemantico(self.frases, self.embebedor, self.cfg["semantico"])
+        except (EmbeddingsNoDisponibles, ValueError, TypeError):
+            with self._candado:
+                self._fallo_en = self._reloj()
+            return
+        with self._candado:
+            self._semantico, self._fallo_en = indice, None
+
+    def preparar(self, esperar: bool = False) -> bool:
+        """Lanza la construcción del índice si hace falta. Con `esperar`, bloquea hasta terminar (comandos, pruebas).
+        Devuelve si el índice semántico quedó listo."""
+        if self.embebedor is None:
+            return False
+        with self._candado:
+            if self._semantico is not None:
+                return True
+            reciente = self._fallo_en is not None and self._reloj() - self._fallo_en < self.cfg["semantico"]["pausa_tras_falla_s"]
+            if (self._hilo is None or not self._hilo.is_alive()) and not (reciente and not esperar):
+                self._hilo = threading.Thread(target=self._armar_indice, name="indice-giros", daemon=True)
+                self._hilo.start()
+            hilo = self._hilo
+        if esperar and hilo is not None:
+            hilo.join()
+        return self._semantico is not None
 
     def consulta_valida(self, consulta: str) -> str | None:
         texto = " ".join((consulta or "").split())[: self.cfg["max_caracteres"]]
         return texto if len(texto) >= self.cfg["min_caracteres"] else None
 
-    def _indice_semantico(self) -> IndiceSemantico:
-        with self._candado:
-            if self._semantico is None:
-                self._semantico = IndiceSemantico(self.frases, self.embebedor, self.cfg["semantico"])
-            return self._semantico
-
     def _mejor_frase_lexica(self, codigo: str, consulta: str) -> str:
-        rs = set(raices(consulta, self.vacias))
-        return max(self.frases[codigo], key=lambda f: len(rs & set(raices(f, self.vacias))))
+        """Frase del giro que más palabras comparte con la consulta (también por prefijo); vacía si ninguna."""
+        rs = list(dict.fromkeys(raices(consulta, self.vacias)))
+        mejor, puntaje = "", 0.0
+        for f in self.frases[codigo]:
+            bolsa = set(raices(f, self.vacias))
+            p = sum(self.lexico._coincidencia(r, bolsa) for r in rs)
+            if p > puntaje:
+                mejor, puntaje = f, p
+        return mejor
 
     def buscar(self, consulta: str) -> Resultado:
-        """Sugerencias ordenadas. Si el embebedor falla, responde en modo léxico (lanza solo si la consulta es vacía)."""
+        """Sugerencias ordenadas. Sin índice semántico listo, o si el embebedor falla, responde en modo léxico."""
         texto = self.consulta_valida(consulta)
         if texto is None:
             return Resultado(modo="lexico")
         lex = self.lexico.puntajes(texto)
         sem = None
-        if self.embebedor is not None:
+        if self.preparar():
             try:
-                indice = self._indice_semantico()
                 [vq] = self.embebedor.embeber([self.cfg["semantico"].get("prefijo_consulta", "") + texto])
-                sem = indice.puntajes(vq)
-            except (EmbeddingsNoDisponibles, ValueError):
+                sem = self._semantico.puntajes(vq)
+            except (EmbeddingsNoDisponibles, ValueError, TypeError):
                 sem = None
         if sem is not None:
             cs = self.cfg["semantico"]

@@ -24,7 +24,11 @@
 # Ollama (opcional, apagado por defecto): contenedor maipu-radar-ollama en la red INTERNA (sin Internet), usuario
 #   10002, raíz de solo lectura, ~1 GB de RAM. El modelo de embeddings se descarga una vez con un contenedor
 #   temporal que sí sale a Internet; después Ollama no tiene salida. Sin Ollama, el buscador funciona en modo léxico.
-#      RADAR_OLLAMA_IMG=ollama/ollama:<versión>   RADAR_OLLAMA_MODELO=paraphrase-multilingual   RADAR_OLLAMA_MEM=1g
+#   La imagen es obligatoria y debe ir fijada por versión y digest (revisar la última estable en hub.docker.com):
+#      sudo RADAR_OLLAMA=si RADAR_OLLAMA_IMG=ollama/ollama:X.Y.Z@sha256:<digest> bash 14-app-radar.sh <tar.gz>
+#      Opcionales: RADAR_OLLAMA_MODELO=paraphrase-multilingual   RADAR_OLLAMA_MEM=1g
+#   Antes de abrirlo a vecinos: calibrar los umbrales (el script imprime la calibración) y fijarlos en
+#   config/prc/buscador_giros.json.
 set -euo pipefail
 [[ $EUID -eq 0 ]] || { echo "Ejecutar con sudo"; exit 1; }
 umask 022
@@ -44,7 +48,7 @@ ADMIN_EMAIL="${EMAIL_ADMIN:-leonardo.trincado@maipu.cl}"
 RADAR_SOLO_IPS="${RADAR_SOLO_IPS:-si}"
 RADAR_PRUEBAS="${RADAR_PRUEBAS:-si}"
 RADAR_OLLAMA="${RADAR_OLLAMA:-no}"
-IMG_OLLAMA="${RADAR_OLLAMA_IMG:-ollama/ollama:0.12.0}"   # fijar una versión probada; nunca :latest
+IMG_OLLAMA="${RADAR_OLLAMA_IMG:-}"   # obligatoria con RADAR_OLLAMA=si: ollama/ollama:X.Y.Z@sha256:...
 MODELO_OLLAMA="${RADAR_OLLAMA_MODELO:-paraphrase-multilingual}"
 MEM_OLLAMA="${RADAR_OLLAMA_MEM:-1g}"
 GUNICORN_WORKERS="${GUNICORN_WORKERS:-2}"   # VM de 3,8 GB: ~150 MB la app, ~40 MB la base
@@ -68,7 +72,9 @@ VERSION="$(basename "$TGZ" .tar.gz | sed "s/^${REPO}-//")"
 IMG="maipu/${APP}:${VERSION}"
 [[ $RADAR_SOLO_IPS == si || $RADAR_SOLO_IPS == no ]] || { echo "RADAR_SOLO_IPS debe ser si o no"; exit 1; }
 [[ $RADAR_OLLAMA == si || $RADAR_OLLAMA == no ]] || { echo "RADAR_OLLAMA debe ser si o no"; exit 1; }
-[[ "$IMG_OLLAMA" =~ ^ollama/ollama:[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "RADAR_OLLAMA_IMG debe fijar una versión (ollama/ollama:X.Y.Z)"; exit 1; }
+if [[ $RADAR_OLLAMA == si && ! "$IMG_OLLAMA" =~ ^ollama/ollama:[0-9]+\.[0-9]+\.[0-9]+@sha256:[0-9a-f]{64}$ ]]; then
+  echo "Con RADAR_OLLAMA=si, RADAR_OLLAMA_IMG debe fijar versión y digest: ollama/ollama:X.Y.Z@sha256:<64 hex>"; exit 1
+fi
 [[ "$MODELO_OLLAMA" =~ ^[a-z0-9][a-z0-9._-]*(:[a-z0-9._-]+)?$ ]] || { echo "RADAR_OLLAMA_MODELO inválido"; exit 1; }
 [[ "$MEM_OLLAMA" =~ ^[0-9]+[mg]$ ]] || { echo "RADAR_OLLAMA_MEM inválido (p. ej. 1g)"; exit 1; }
 
@@ -195,7 +201,7 @@ if [[ $RADAR_OLLAMA == si ]]; then
     mem_limit: ${MEM_OLLAMA}
     pids_limit: 200
     healthcheck:
-      test: ["CMD", "ollama", "list"]
+      test: ["CMD", "ollama", "show", "${MODELO_OLLAMA}"]   # responde y tiene el modelo
       interval: 30s
       timeout: 10s
       start_period: 30s
@@ -295,11 +301,13 @@ fi
 if [[ $RADAR_OLLAMA == si ]]; then
   docker pull -q "$IMG_OLLAMA" | sed 's/^/   /'
   # El modelo se descarga una sola vez, con un contenedor temporal que sí sale a Internet (red apps).
-  if [[ ! -e "$DATOS_OLLAMA/manifests/registry.ollama.ai/library/${MODELO_OLLAMA%%:*}" ]]; then
+  NOMBRE_MOD="${MODELO_OLLAMA%%:*}"; ETIQUETA_MOD="latest"; [[ "$MODELO_OLLAMA" == *:* ]] && ETIQUETA_MOD="${MODELO_OLLAMA#*:}"
+  if [[ ! -e "$DATOS_OLLAMA/manifests/registry.ollama.ai/library/$NOMBRE_MOD/$ETIQUETA_MOD" ]]; then
     echo "   Descargando el modelo $MODELO_OLLAMA (una vez)"
     TMP_OLL="maipu-${APP}-ollama-descarga-$$"
-    docker run -d --rm --name "$TMP_OLL" --network maipu-apps -u 10002:10002 --cap-drop ALL \
-      --security-opt no-new-privileges:true -e HOME=/tmp -e OLLAMA_MODELS=/modelos --tmpfs /tmp:size=64m \
+    docker run -d --rm --name "$TMP_OLL" --network maipu-apps -u 10002:10002 --cap-drop ALL --read-only \
+      --memory "$MEM_OLLAMA" --pids-limit 200 --security-opt no-new-privileges:true \
+      -e HOME=/tmp -e OLLAMA_MODELS=/modelos --tmpfs /tmp:size=64m \
       -v "$DATOS_OLLAMA:/modelos" "$IMG_OLLAMA" serve >/dev/null
     for i in {1..20}; do docker exec "$TMP_OLL" ollama list >/dev/null 2>&1 && break; sleep 1; done
     if ! docker exec "$TMP_OLL" ollama pull "$MODELO_OLLAMA" >/dev/null 2>&1; then
@@ -324,8 +332,10 @@ if [[ $RADAR_OLLAMA == si ]]; then
     echo -n "."; sleep 3
     [[ $i -eq 40 ]] && { echo; aviso "Ollama no quedó sano: el buscador sigue en modo léxico. Revisa: docker logs --tail 60 maipu-$APP-ollama"; }
   done
-  echo "   Medición del buscador de giros:"
+  echo "   Medición del buscador de giros (modo semántico, umbrales actuales):"
   docker exec maipu-$APP python manage.py evaluar_buscador 2>&1 | sed 's/^/   /' || aviso "No se pudo medir el buscador"
+  echo "   Calibración (conjunto 'desarrollo'): elegir umbral y fijarlo en config/prc/buscador_giros.json"
+  docker exec maipu-$APP python manage.py evaluar_buscador --calibrar 2>&1 | sed 's/^/   /' || aviso "No se pudo calibrar"
 fi
 
 # Administrador inicial (la contraseña queda en un archivo 600; no se imprime)

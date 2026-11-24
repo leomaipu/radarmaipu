@@ -1,6 +1,7 @@
 """Mide el buscador de giros con frases etiquetadas (tests/datos/frases_giros.json)."""
 from __future__ import annotations
 
+import math
 import statistics
 import time
 from typing import Callable
@@ -34,7 +35,7 @@ def evaluar(buscador: BuscadorGiros, frases: list[dict], conjunto: str | None = 
         "top1_pct": pct(con_giro, "top1"), "top3_pct": pct(con_giro, "top3"),
         "sin_giro_rechazadas_pct": pct(sin_giro, "top1"),
         "latencia_ms": {"p50": round(statistics.median(tiempos), 1) if tiempos else None,
-                        "p95": round(sorted(tiempos)[max(0, int(len(tiempos) * 0.95) - 1)], 1) if tiempos else None},
+                        "p95": round(sorted(tiempos)[max(0, math.ceil(len(tiempos) * 0.95) - 1)], 1) if tiempos else None},
         "fallos": [d for d in detalle if not d["top3"]],
     }
 

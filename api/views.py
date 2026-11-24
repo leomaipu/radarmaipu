@@ -10,7 +10,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.measure import D
 from django.http import HttpResponse
-from ninja import NinjaAPI, Query
+from ninja import Field, NinjaAPI, Query, Schema
 from ninja.errors import HttpError
 
 from nucleo import geocode, informe as informe_mod, prc_config, prc_gis
@@ -140,11 +140,16 @@ def giros(request):
     return {"resultados": prc_config.giros_publicos(prc_config.cargar())}
 
 
-@api.get("/giros/sugerir")
-def sugerir_giros(request, q: str = Query(..., max_length=200, description="Descripción libre del negocio")):
+class ConsultaGiro(Schema):
+    q: str = Field(..., max_length=200, description="Descripción libre del negocio")
+
+
+@api.post("/giros/sugerir")
+def sugerir_giros(request, datos: ConsultaGiro):
     """Sugiere giros para una descripción libre ("vendo completos y churrascos"). Solo sugiere: el giro lo
-    confirma el vecino y el veredicto lo da /api/informe. La consulta no se guarda."""
-    res = buscador_mod.buscador().buscar(q)
+    confirma el vecino y el veredicto lo da /api/informe. Va por POST para que el texto no quede en la URL ni en
+    los registros de acceso; Radar no lo guarda."""
+    res = buscador_mod.buscador().buscar(datos.q)
     return {"modo": res.modo, "sugerencias": [
         {"codigo": s.codigo, "nombre": s.nombre, "puntaje": s.puntaje, "frase": s.frase} for s in res.sugerencias]}
 

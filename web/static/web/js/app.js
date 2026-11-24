@@ -319,8 +319,12 @@
     filtro.value = "";
     filtrarGiros("");
     $("#sugerencias-giro").replaceChildren();
+    const nombre = b.querySelector(".sugerencia__nombre").textContent;
     elegirGiro(b.dataset.sugerencia, { desplazar: true });
-    anunciar(`Elegiste ${b.querySelector(".sugerencia__nombre").textContent}.`);
+    // El botón desaparece: el foco pasa al giro elegido para no perder la posición (teclado y lector de pantalla).
+    const radio = radios.find((x) => x.value === b.dataset.sugerencia);
+    if (radio) radio.focus({ preventScroll: true });
+    anunciar(`Elegiste ${nombre}.`);
   });
   $("#btn-simular").addEventListener("click", () => simular());
 
@@ -344,7 +348,9 @@
   document.body.addEventListener("htmx:afterSwap", (e) => {
     if (e.detail.target.id === "sugerencias-giro") {
       // Con sugerencias a la vista, el aviso de "ningún giro de la lista" sobra.
-      if ($(".sugerencia", e.detail.target)) $("#sin-giros").hidden = true;
+      const n = $$(".sugerencia", e.detail.target).length;
+      if (n) $("#sin-giros").hidden = true;
+      if (n || $("[data-sin-sugerencias]", e.detail.target)) anunciar(n === 1 ? "1 sugerencia de giro." : n ? `${n} sugerencias de giro.` : "Sin sugerencias de giro.");
       return;
     }
     if (e.detail.target.id === "resultados-busqueda") {

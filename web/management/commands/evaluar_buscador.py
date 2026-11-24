@@ -5,7 +5,9 @@ Ejemplos (en el servidor, dentro del contenedor de la app):
   python manage.py evaluar_buscador --url ""                     # forzar modo léxico, para comparar
   python manage.py evaluar_buscador --modelo bge-m3              # probar otro modelo ya descargado en Ollama
   python manage.py evaluar_buscador --calibrar                   # aciertos por umbral, en 'desarrollo'
-Reporte: 'prueba' es la medición honesta (esas frases no se usan para ajustar).
+  python manage.py evaluar_buscador --frases /ruta/validacion.json   # frases ciegas (p. ej., escritas por Rentas)
+'desarrollo' se usa para ajustar. 'prueba' ya fue mirada una vez y quedó expuesta: la medición honesta es un
+conjunto nuevo y ciego ('validacion'), escrito por otras personas y que no se mira al ajustar.
 """
 import copy
 import json
@@ -30,22 +32,25 @@ class Command(BaseCommand):
         parser.add_argument("--calibrar", action="store_true", help="Aciertos por umbral en el conjunto 'desarrollo'")
         parser.add_argument("--fallos", action="store_true", help="Lista las frases de 'desarrollo' sin acierto")
         parser.add_argument("--json", action="store_true", help="Salida en JSON")
+        parser.add_argument("--frases", default=str(FRASES), help="Archivo de frases (mismo formato)")
 
     def handle(self, *args, url=None, modelo=None, calibrar=False, fallos=False, **opciones):
-        frases = json.loads(FRASES.read_text(encoding="utf-8"))["frases"]
+        frases = json.loads(Path(opciones["frases"]).read_text(encoding="utf-8"))["frases"]
+        conjuntos = list(dict.fromkeys(f["conjunto"] for f in frases))
         cfg = prc_config.cargar()
         if calibrar:
             cfg = copy.deepcopy(cfg)
             cfg["buscador_giros"]["lexico"]["umbral_minimo"] = 0.0
             cfg["buscador_giros"]["semantico"]["umbral_minimo"] = 0.0
             b = buscador_mod.crear(cfg, url, modelo)
+            b.preparar(esperar=True)
             salida = {"modo": b.buscar("almacén").modo,
                       "calibracion": ev.calibrar(b, frases, [round(0.05 * i, 2) for i in range(2, 17)])}
         else:
             b = buscador_mod.crear(cfg, url, modelo)
-            b.buscar("almacén")  # primera consulta: construye el índice (no se cuenta en la latencia)
+            b.preparar(esperar=True)  # el índice semántico no se cuenta en la latencia
             salida = {}
-            for conjunto in ("desarrollo", "prueba"):
+            for conjunto in conjuntos:
                 r = ev.evaluar(b, frases, conjunto)
                 if not (fallos and conjunto == "desarrollo"):
                     r.pop("fallos")

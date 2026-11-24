@@ -21,7 +21,7 @@ def crear(cfg: dict | None = None, url: str | None = None, modelo: str | None = 
     if url:
         cs = cb["semantico"]
         embebedor = OllamaEmbebedor(url, modelo or settings.RADAR["OLLAMA_MODELO"] or cs["modelo"],
-                                    cs["timeout_s"], cs["pausa_tras_falla_s"])
+                                    cs["timeout_s"], cs["pausa_tras_falla_s"], cs["timeout_indexacion_s"])
     return BuscadorGiros(cfg["giros"]["giros"], cb, embebedor)
 
 
@@ -31,6 +31,7 @@ def buscador() -> BuscadorGiros:
     with _candado:
         if _buscador is None:
             _buscador = crear()
+            _buscador.preparar()  # arma el índice semántico en segundo plano, si hay Ollama
         return _buscador
 
 
